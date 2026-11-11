@@ -25,7 +25,7 @@ export const SEED_TOOLS = [
   { id: 't15', name: 'Search suppliers', agent: 'ops', type: 'Read', approved: true, control: 'B' }
 ];
 export const SEED_EVENTS = [
-  { id: 'TRC-1044', at: '09:44', ago: 'Just now', agent: 'atlas', actor: 'Maya Chen', action: 'Delete customer record', kind: 'inference', model: 'GPT-6', status: 'would_block', connections: ['A','C'], cost: 0.012, rule: 'Critical actions are not allowed', version: 'v1.8', reason: 'Atlas is in Observe mode. This critical tool request is recorded, not blocked by this rule. A later execution would require connection B to be governed.', evidence: true },
+  { id: 'TRC-1044', at: '09:44', ago: 'Just now', agent: 'atlas', actor: 'Maya Chen', action: 'Delete customer record', kind: 'inference', model: 'GPT-6', status: 'would_block', connections: ['A','C'], cost: 0.012, rule: 'Critical actions are not allowed', version: 'v1.8', reason: 'Atlas is in Observe mode. This critical tool request is recorded, not blocked by this rule. Controlling the later execution requires routing that tool through the gateway.', evidence: true },
   { id: 'TRC-1042', at: '09:42', ago: 'Just now', agent: 'atlas', actor: 'Maya Chen', action: 'Search knowledge base', kind: 'tool', model: 'GPT-6', status: 'allowed', connections: ['A','B','C'], cost: 0.014, rule: 'Approved read access', version: 'v1.8', reason: 'Maya can search support articles. The tool ran through the protected connection.', evidence: true },
   { id: 'TRC-1041', at: '09:40', ago: '2 min ago', agent: 'invoice', actor: 'No user identity', action: 'Change payment details', kind: 'inference', model: 'GPT-6', status: 'would_block', connections: ['A'], cost: 0.021, rule: 'Critical actions need approval', version: 'v1.8', reason: 'This request would be blocked if rules were enforced. The tool was only requested by the model, not executed through this platform.', evidence: true },
   { id: 'TRC-1040', at: '09:38', ago: '4 min ago', agent: 'ops', actor: 'No user identity', action: 'Delete warehouse', kind: 'tool', model: 'Claude Sonnet', status: 'blocked', connections: ['A','B'], cost: 0.009, rule: 'Critical actions are not approved', version: 'v1.8', reason: 'The actual tool execution was blocked before it reached the connected tool.', evidence: true },
@@ -42,13 +42,13 @@ export const SEED_APPROVALS = [
 ];
 export const POLICY_PRESETS = [
   { id: 1, name: 'Safe start', subtitle: 'Allow approved read and write actions.', summary: 'Read and write requests are allowed if approved. Critical and unclassified actions are denied when enforcement is on.' },
-  { id: 2, name: 'Role-based', subtitle: 'Require user roles and critical-action review.', summary: 'Writes require an identified user with the right role. Critical tool execution also requires connection B and human approval.' },
+  { id: 2, name: 'Role-based', subtitle: 'Require user roles and critical-action review.', summary: 'Writes require an identified user with the right role. Critical tool execution also requires tool execution control and human approval.' },
   { id: 3, name: 'Strict', subtitle: 'Deny unless a rule explicitly permits the action.', summary: 'Actions are denied unless explicit rules permit them. Critical operations still require appropriate safeguards.' }
 ];
 export const CONNECTIONS = [
-  { id: 'A', name: 'Monitor AI requests', short: 'AI requests', description: 'See model calls, usage, costs and the tool requests the model makes.', adds: 'Observe and control the inference channel. Tool intent is visible, but direct execution is not.', icon: 'activity' },
-  { id: 'B', name: 'Control tool execution', short: 'Tool execution', description: 'Route tools through one controlled connection before they run.', adds: 'Check real parameters, prevent execution, manage credentials and request approval.', icon: 'plug' },
-  { id: 'C', name: 'Identify users', short: 'User identity', description: 'Know which person asked the agent to act.', adds: 'Use verified user roles, personalized access and spend attribution.', icon: 'users' }
+  { id: 'A', name: 'Model requests', short: 'Model', description: 'Model calls, responses, requested tools and usage.', adds: 'Observe and control the inference channel. Tool intent is visible, but direct execution is not.', icon: 'activity' },
+  { id: 'B', name: 'Tool execution', short: 'Tools', description: 'Check tool calls routed through the gateway before they run.', adds: 'Check real parameters, prevent execution, manage credentials and request approval.', icon: 'plug' },
+  { id: 'C', name: 'User identity', short: 'Identity', description: 'Identify the person behind a request when a verified token is present.', adds: 'Use verified user roles, personalized access and spend attribution.', icon: 'users' }
 ];
 export const ROUTES = [
   { id:'home', text:'Overview', icon:'layout-dashboard', group:'main' },
@@ -58,7 +58,7 @@ export const ROUTES = [
   { id:'approvals', text:'Approvals', icon:'check-circle', group:'main' },
   { id:'spending', text:'Spending', icon:'chart', group:'main' },
   { id:'audit', text:'Audit', icon:'file-search', group:'main' },
-  { id:'integrations', text:'Integrations', icon:'plug', group:'secondary' }
+  { id:'connections', text:'Connections', icon:'plug', group:'secondary' }
 ];
 export const TOUR = [
   { route:'home', title:'Overview', note:'See your agents and what needs attention.' },
@@ -67,5 +67,5 @@ export const TOUR = [
   { route:'rules', title:'Preview before enforcing', note:'See the impact before turning on a rule.' },
   { route:'approvals', title:'Approvals', note:'Review an action before it runs.' },
   { route:'audit', title:'Find the evidence', note:'Reconstruct a decision from its record.' },
-  { route:'integrations', title:'Connections', note:'Compare monitoring, tool control and user identity.' }
+  { route:'connections', title:'Connections', note:'Compare monitoring, tool control and user identity.' }
 ];

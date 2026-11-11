@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {cleanState,agentById,appendScenario,changeMode,connectionProfile,identitySamples,policyGaps,
   approvalReady,approvalBlocker,openApprovals,toggleConnection,decideApproval} from '../src/domain.js';
-import {pageRules,pageSpending,pageIntegrations,pageApprovals,pageCatalog,pageAgent} from '../src/views.js';
-const ui=(agent='atlas')=>({integrationAgent:agent,rulesAgent:agent,requestUser:'operator',catalogTab:'tools',catalogSearch:''});
+import {pageRules,pageSpending,pageConnections,pageApprovals,pageCatalog,pageAgent} from '../src/views.js';
+const ui=(agent='atlas')=>({rulesAgent:agent,requestUser:'operator',catalogTab:'tools',catalogSearch:'',connectionSearch:''});
 const setConnections=(s,keys)=>{agentById(s,'atlas').connections=[...keys];};
 const make=(keys,preset=2)=>{const s=cleanState();setConnections(s,keys);const a=agentById(s,'atlas');a.preset=preset;a.mode='enforce';return s;};
 const configurations=[['A',['A']],['A+B',['A','B']],['A+C',['A','C']],['A+B+C',['A','B','C']]];
@@ -22,8 +22,8 @@ for(const [name,keys] of configurations){
   const local=appendScenario(s,{agentId:'atlas',channel:'tool',toolId:'t5',action:'Get order status'});
   assert.equal(local.status,'outside','even A+B+C cannot stop a local tool');
   assert.equal(local.evidence,false);
-  assert.ok(pageIntegrations(s,ui()).includes(name));
-  assert.ok(pageRules(s,ui()).includes(name));
+  assert.match(pageAgent(s,ui(),'atlas','connections'),/Tool execution/);
+  assert.match(pageRules(s,ui()),/With this policy/);
  });
 }
 test('B is partial and counted by registered tools rather than number of connection switches',()=>{
@@ -33,7 +33,7 @@ test('B is partial and counted by registered tools rather than number of connect
  assert.match(connectionProfile(a).toolLabel,/4 routed · 1 outside/);
  assert.match(pageCatalog(s,ui()),/Outside gateway/);
  toggleConnection(s,'atlas','B');assert.equal(connectionProfile(a).controlledTools,0);
- assert.match(pageIntegrations(s,ui()),/Not connected/);
+ assert.match(pageAgent(s,ui(),'atlas','connections'),/Not connected/);
 });
 test('C is per-request and permits anonymous solo workload with C configured',()=>{
  const s=make(['A','C']);
@@ -89,7 +89,7 @@ test('policy 2 shows missing dependency warnings without turning B or C into pre
  const s=make(['A']);
  assert.deepEqual(policyGaps(agentById(s,'atlas')).length,2);
  assert.match(pageRules(s,ui()),/Writes require user identity/);
- assert.match(pageRules(s,ui()),/Critical execution requires tool control/);
+ assert.match(pageRules(s,ui()),/Critical execution requires routed tool calls/);
  toggleConnection(s,'atlas','C');
  assert.deepEqual(policyGaps(agentById(s,'atlas')).length,1);
  toggleConnection(s,'atlas','B');
@@ -99,6 +99,6 @@ test('policy 2 shows missing dependency warnings without turning B or C into pre
 test('view for a single agent shows a path combination, not a false governance score',()=>{
  const s=make(['A','B']);
  const html=pageAgent(s,ui(),'atlas');
- assert.match(html,/Connected paths/);assert.match(html,/4 routed · 1 outside/);
+ assert.match(html,/Tools routed/);assert.match(html,/4 routed · 1 outside/);
  assert.doesNotMatch(html,/66\.7%|2 of 3.*coverage/i);
 });

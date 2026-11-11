@@ -120,8 +120,8 @@ export function approvalBlocker(state,item){
 export function policyGaps(agent){
   if(agent.preset!==2)return [];
   const gaps=[];
-  if(!hasConnection(agent,'C'))gaps.push('Writes require user identity (C)');
-  if(!hasConnection(agent,'B'))gaps.push('Critical execution requires tool control (B)');
+  if(!hasConnection(agent,'C'))gaps.push('Writes require user identity');
+  if(!hasConnection(agent,'B'))gaps.push('Critical execution requires routed tool calls');
   return gaps;
 }
 export function totalSpend(state){return state.agents.reduce((s,a)=>s+a.spent,0);}
@@ -167,13 +167,13 @@ export function appendScenario(state,{agentId='atlas',action='Delete customer re
     }else if(agent.preset===2){
       rule='Role-based';
       if(!approved){decision='deny';reason='Approve this tool in Catalog before using it.';}
-      else if(write&&!withIdentity){decision='deny';reason='Write actions require an identified user (connection C).';}
+      else if(write&&!withIdentity){decision='deny';reason='Write actions require an identified user.';}
       else if(write&&userRole!=='operator'){decision='deny';reason='This user role cannot write.';}
-      else if(critical&&!withIdentity){decision='deny';reason='This policy requires an identified user (connection C).';}
-      else if(critical&&!hasConnection(agent,'B')){decision='deny';reason='Critical actions need tool execution control (connection B).';}
+      else if(critical&&!withIdentity){decision='deny';reason='This policy requires an identified user.';}
+      else if(critical&&!hasConnection(agent,'B')){decision='deny';reason='Critical actions need tool execution control.';}
       else if(critical&&userRole!=='operator'){decision='deny';reason='This user role cannot request critical actions.';}
       else if(critical&&channel==='tool'){decision='pending';reason='This tool must be approved by another person before it runs.';}
-      else if(critical&&channel==='inference'){decision='allow';reason='The model may request this tool. Execution requires a separate approval through connection B.';}
+      else if(critical&&channel==='inference'){decision='allow';reason='The model may request this tool. Execution requires separate approval through tool execution control.';}
     }else if(agent.preset===3){decision='deny';rule='Strict';reason='No explicit permission has been configured for this action.';}
     if(decision==='pending')status=agent.mode==='observe'?'would_block':'pending';
     else if(decision==='deny')status=agent.mode==='observe'?'would_block':'blocked';
