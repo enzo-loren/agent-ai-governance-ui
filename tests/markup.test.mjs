@@ -12,10 +12,11 @@ test('Every primary destination renders an explicit page heading and main landma
   assert.match(html(page),/<h1>/);
  }
 });
-test('The product is always visibly marked as a demo',()=>{
+test('One quiet Preview label replaces repeated demo disclaimers and marketing copy',()=>{
  for(const page of ['home','catalog','activity','rules','approvals','spending','audit','integrations']){
-  assert.match(html(page),/Interactive demo/);
-  assert.match(html(page),/Sample data only/);
+  const output=html(page);
+  assert.match(output,/>Preview<\/span>/);
+  assert.doesNotMatch(output,/Interactive demo|Sample data only|Every agent\.<br>One clear view|Nothing here connects to your systems/);
  }
 });
 test('Auditor never receives write or approval actions in markup',()=>{
@@ -31,7 +32,7 @@ test('Auditor never receives write or approval actions in markup',()=>{
 test('A-only demo shows missing B/C and distinguishes tool execution from model request',()=>{
  const text=renderPage(state,ui,'integrations');
  assert.match(text,/Control tool execution/);assert.match(text,/Identify users/);
- assert.match(text,/Local tools outside B are not covered/);
+ assert.match(text,/Only routed MCP tools can be stopped/);
 });
 test('No shadow-mode jargon leaks into first-level product copy',()=>{
  const screens=['home','catalog','activity','rules','approvals','spending','audit','integrations'];
