@@ -61,3 +61,7 @@
   --preview-text:#e3d0ff;--preview-bg:#382d50;--preview-outline:#68518f;
   --neutral-text:#c6d2d2;--neutral-bg:#2a383b;--neutral-outline:#4c6263;
 }
+/* Each palette has its own dark surfaces: a violet selection must not leave a forest hero. */
+:root[data-theme='forest'][data-appearance='dark'] {--accent-soft:#263c3a;--accent-ink:#d8f7e9;--hero-top:#213f38;--hero-bottom:#1d3835;}
+:root[data-theme='violet'][data-appearance='dark'] {--accent-soft:#332e49;--accent-ink:#e3dcff;--hero-top:#2b2546;--hero-bottom:#24213d;}
+:root[data-theme='ocean'][data-appearance='dark'] {--accent-soft:#233d49;--accent-ink:#c5edff;--hero-top:#183a4b;--hero-bottom:#153443;}
