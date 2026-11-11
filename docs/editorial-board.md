@@ -31,3 +31,12 @@ This is the process-only decision log required by *Scientific Writing Editor*. I
 ## Audit of exclusions
 
 Raw YAML/Cedar/JSON, AWS services, Object Lock modes and token propagation belong to documentation and optional detail—not home KPIs. No unsupported “platform is safe” percentages. No comparison of Cloudscape “quality”; only observation that it resembles AWS and was flagged during review. No invented timing, security guarantees, test coverage of backend or return-on-investment figures.
+
+## 2026-11-11 · Agent-centric navigation and connection language
+
+- Product UI names **Model requests**, **Tool execution** and **User identity**; A, B and C remain stable internal connection IDs and technical requirements references. This is a terminology change, not a change in the domain model.
+- Connections is a searchable agent directory, using the same cards as Catalog. Its destination is the agent's **Connections** tab. The small native agent selector was removed; the same selection workflow supports large organizations. This follows [NN/g guidance on long selects](https://www.nngroup.com/articles/dropdown-list/) and [GOV.UK research on select usability](https://design-system.service.gov.uk/components/select/).
+- Both directories render an initial batch of 24 agents with a Show more action. A production server-backed directory will also need pagination and query handling.
+- Connection state continues to describe the configured path, **not** a blanket assertion that all tools or requests are covered. The details view keeps per-tool routing and named/unnamed request counts.
+- Existing `#/integrations` links remain readable through a legacy route alias, while visible navigation uses `#/connections`.
+- Reasoning belongs in this board and the Git commit, not in the product's first-level copy.

@@ -50,3 +50,9 @@ The proposed first-level catalog answers operational questions without a composi
 - **Integrations:** A/B/C remains visible, with practical consequences; a toggle affects subsequent requests and current operational status, not historical events.
 
 No tool should be presented as globally "safe" simply because it is approved or routed. Those facts are necessary but insufficient to establish policy outcome, effective role, configured guardrails, or external bypass prevention.
+
+## Agent navigation and terminology
+
+The UI uses **Model requests**, **Tool execution** and **User identity** instead of the connection identifiers A/B/C. The technical specification and implementation still use A/B/C to keep policy, trace and test mappings stable.
+
+The Connections section lists agents with the same searchable card pattern as Catalog. Editing connections takes place within a particular agent (`#/agent/:id/connections`), so selection survives navigation and no global selector is required. Rendering 24 agents initially avoids displaying hundreds of cards at once; backend paging is outside this static implementation.
