@@ -20,7 +20,7 @@ function fullAgentLink(agent){return agent?`#/agent/${encodeURIComponent(agent.i
 function requestAs(state,ui,agent){
   if(!hasConnection(agent,'C'))return '';
   const current=ui.requestUser||'operator';
-  return `<label class="request-user"><span>Request as</span><select class="field-select" id="request-user" aria-label="End-user identity for test requests"><option value="operator" ${current==='operator'?'selected':''}>Maya · operator</option><option value="reader" ${current==='reader'?'selected':''}>Eli · read only</option><option value="none" ${current==='none'?'selected':''}>No user identity</option></select></label>`;
+  return `<label class="request-user" for="request-user"><span class="request-user-label">Request as</span><span class="request-user-field"><select id="request-user" aria-label="End-user identity for test requests"><option value="operator" ${current==='operator'?'selected':''}>Maya · operator</option><option value="reader" ${current==='reader'?'selected':''}>Eli · read only</option><option value="none" ${current==='none'?'selected':''}>No user identity</option></select>${I('down',16)}</span></label>`;
 }
 function personBadge(agent){return `<div class="avatar ${safe(agent.accent||'mint')}" aria-hidden="true">${safe(agent.initials)}</div>`;}
 function agentRow(agent){return `<div class="agent-row">${personBadge(agent)}<div class="agent-info"><a href="${fullAgentLink(agent)}" class="agent-name">${safe(agent.name)}</a><div class="agent-small">${safe(agent.team)} · ${safe(agent.owner)}</div></div><div class="agent-right">${connectionDots(agent)}<span class="pill pill-outlined mini">${agent.mode==='observe'?'Observe':agent.mode==='enforce'?'Enforce':'Paused'}</span><a class="icon-btn" aria-label="Open ${safe(agent.name)}" href="${fullAgentLink(agent)}">${I('chevron',16)}</a></div></div>`;}
@@ -146,20 +146,25 @@ export function pageRules(state,ui,id="",embedded=false){
   const requested=agentById(state,id);
   if(!requested)return empty("Agent not found","Return to Rules to choose another agent.");
   const a=requested;
-  const preset=POLICY_PRESETS.find(p=>p.id===a.preset);const gaps=policyGaps(a);
+  const preset=POLICY_PRESETS.find(p=>p.id===a.preset);
+  const candidate=ui.policyPreview?.agentId===a.id?POLICY_PRESETS.find(p=>p.id===ui.policyPreview.preset):null;
+  const selected=candidate||preset;
+  const changed=selected.id!==a.preset;
+  const gaps=policyGaps({...a,preset:selected.id});
   const profile=connectionProfile(a),impact=previewImpact(state,a.id);
   const hasB=hasConnection(a,'B'),hasC=hasConnection(a,'C');
-  const writeText=a.preset===1?'Allowed if approved':a.preset===2?(hasC?'Allowed for permitted user roles':'Blocked · Connect user identity'):'Blocked until a specific rule permits it';
-  const criticalText=a.preset===1?'Blocked':a.preset===2?(!hasC?'Blocked · Requires user identity':!hasB?'Blocked · Requires tool control':'Can request a second-person approval'):'Blocked until a specific rule permits it';
+  const writeText=selected.id===1?'Allowed if approved':selected.id===2?(hasC?'Allowed for permitted user roles':'Blocked · Connect user identity'):'Blocked until a specific rule permits it';
+  const criticalText=selected.id===1?'Blocked':selected.id===2?(!hasC?'Blocked · Requires user identity':!hasB?'Blocked · Requires tool control':'Can request a second-person approval'):'Blocked until a specific rule permits it';
   const toolText=hasB?`${profile.toolLabel}; only those executions are checked`:'Connect tool execution to check tool calls';
   return `${embedded?'':pageHeading('Policy','Rules',`Rules for ${a.name}`)}
   <div class="toolbar"><span class="pill pill-outlined">${a.mode==='observe'?'Observe':a.mode==='enforce'?'Enforce':'Paused'}</span><span class="pill pill-outlined">${profile.toolLabel}</span>${!embedded?`<a class="btn tiny" href="${fullAgentLink(a)}">Agent details ${I('arrow',12)}</a>`:''}</div>
-  ${gaps.length?`<div class="banner">${I('info',18)}<div class="banner-content"><strong>Some actions need another connection.</strong><div class="small">${gaps.map(safe).join(' · ')}</div></div><a href="${fullAgentLink(a)}/connections" class="btn tiny">Connections ${I('arrow',13)}</a></div>`:''}
+  ${gaps.length?`<div class="banner">${I('info',18)}<div class="banner-content"><strong>${changed?'This policy needs another connection.':'Some actions need another connection.'}</strong><div class="small">${gaps.map(safe).join(' · ')}</div></div><a href="${fullAgentLink(a)}/connections" class="btn tiny">Connections ${I('arrow',13)}</a></div>`:''}
   ${requestAs(state,ui,a)}<div class="section-head"><h2>Policy preset</h2></div>
-  <div class="policy-grid">${POLICY_PRESETS.map(p=>`<button type="button" class="policy-card ${a.preset===p.id?'selected':''}" data-action="choose-preset" data-id="${safe(a.id)}" data-value="${p.id}" ${canEdit(state)?'':'disabled'} aria-pressed="${a.preset===p.id}"><span class="policy-num">PRESET ${p.id}</span>${a.preset===p.id?`<span class="chosen">${I('check-circle',19)}</span>`:''}<h3>${safe(p.name)}</h3><p>${safe(p.subtitle)}</p></button>`).join('')}</div>
-  <div class="grid-2 mt-6"><section class="card card-pad"><div class="card-title-row"><div><h2 class="card-title">With this policy</h2><p class="card-subtitle">${safe(preset.name)} · ${profile.toolLabel}</p></div></div>
+  <div class="policy-grid">${POLICY_PRESETS.map(p=>`<button type="button" id="policy-preset-${safe(a.id)}-${p.id}" class="policy-card ${selected.id===p.id?'selected':''} ${a.preset===p.id?'active':''}" data-action="choose-preset" data-id="${safe(a.id)}" data-value="${p.id}" aria-pressed="${selected.id===p.id}"><span class="policy-num">PRESET ${p.id}</span>${a.preset===p.id?`<span class="policy-active-label">Active</span>`:''}${selected.id===p.id?`<span class="chosen">${I('check-circle',19)}</span>`:''}<h3>${safe(p.name)}</h3><p>${safe(p.subtitle)}</p></button>`).join('')}</div>
+  ${changed?`<section class="policy-preview" aria-live="polite"><div class="policy-preview-info"><strong>Previewing ${safe(selected.name)}</strong><p>${safe(selected.summary)} Current policy: ${safe(preset.name)}. No changes have been applied.</p></div><div class="policy-preview-actions">${btn('Cancel preview','cancel-policy-preview',{data:`data-id="${safe(a.id)}"`})}${btn('Apply policy','review-policy-change',{variant:'primary',data:`data-id="${safe(a.id)}" data-value="${selected.id}"`,disabled:!canEdit(state)})}</div></section>`:''}
+  <div class="grid-2 mt-6"><section class="card card-pad"><div class="card-title-row"><div><h2 class="card-title">${changed?'If this policy is applied':'With this policy'}</h2><p class="card-subtitle">${safe(selected.name)} · ${profile.toolLabel}</p></div></div>
   <div class="capability-list">
-    <div class="capability-line"><span>${I('check',16)} Read</span><strong>${a.preset===3?'Needs explicit rule':'Approved tools allowed'}</strong></div>
+    <div class="capability-line"><span>${I('check',16)} Read</span><strong>${selected.id===3?'Needs explicit rule':'Approved tools allowed'}</strong></div>
     <div class="capability-line"><span>${I('shield-check',16)} Write</span><strong>${writeText}</strong></div>
     <div class="capability-line"><span>${I('lock',16)} Critical</span><strong>${criticalText}</strong></div>
     <div class="capability-line"><span>${I('plug',16)} Tool execution</span><strong>${toolText}</strong></div>
@@ -309,7 +314,7 @@ export function renderModal(state,ui){
   if(m.kind==='new-agent-key')return modalShell('Agent created','key',`<p>Example key (not valid). It will be hidden when you close this window.</p><div class="code-box"><pre>BASE_URL=https://demo.invalid/inference/v1\nAPI_KEY=demo-not-valid-${safe(m.id||'new-agent')}</pre><button class="copy-code" data-action="copy-demo-key" data-id="${safe(m.id)}">${I('copy',12)} Copy</button></div>`, `<div class="modal-actions">${btn('Open agent','navigate',{variant:'primary',data:`data-route="agent/${safe(m.id)}"`})}</div>`);
   if(m.kind==='policy-change'){
     const a=agentById(state,m.id);const policy=POLICY_PRESETS.find(p=>p.id===m.preset);if(!a||!policy)return '';
-    return modalShell('Change the active policy?','shield-check',`<p><strong>${safe(policy.name)}</strong> will replace the current policy on ${safe(a.name)}.</p><div class="tip">${I('info',16)}<span>${safe(policy.summary)} </span></div>`,`<div class="modal-actions">${btn('Cancel','close-overlay')}${btn('Apply policy','confirm-preset',{variant:'primary',data:`data-id="${safe(a.id)}" data-value="${policy.id}"`})}</div>`);
+    return modalShell('Apply policy to this agent?','shield-check',`<p>Agent: <strong>${safe(a.name)}</strong></p><p>Current policy: <strong>${safe(POLICY_PRESETS.find(p=>p.id===a.preset)?.name||'None')}</strong><br>New policy: <strong>${safe(policy.name)}</strong></p><div class="tip">${I('info',16)}<span>${safe(policy.summary)} ${a.mode==='enforce'?'The new rules will apply to subsequent requests through the gateway.':'The new policy will be saved, but policy denials remain in Observe until enforcement is enabled.'}</span></div>`,`<div class="modal-actions">${btn('Cancel','close-overlay')}${btn('Confirm policy change','confirm-preset',{variant:'primary',data:`data-id="${safe(a.id)}" data-value="${policy.id}"`})}</div>`);
   }
   if(m.kind==='enforce'){
     const a=agentById(state,m.id);if(!a)return '';
