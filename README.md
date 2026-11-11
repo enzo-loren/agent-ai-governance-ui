@@ -87,12 +87,24 @@ docs/                        UX traceability and editorial decisions
 ## Deploy to a separate GitHub Pages repository
 
 1. Create a **new public** GitHub repository, e.g. `agent-governance-experience`, **without** a GitHub-generated README (this project already has one).
-2. Add it as this project's remote and push its branch:
+2. If you have a working Git clone of this source, add its remote and push:
 
    ```bash
    git remote add origin https://github.com/<your-user>/agent-governance-experience.git
    git push -u origin main
    ```
+
+   If instead you downloaded the **source ZIP** from the project handoff, it contains a `COMMIT_HISTORY.bundle` file preserving the full verbose editorial commits. Extract the ZIP and, from inside its folder, restore the original Git history:
+
+   ```bash
+   git clone COMMIT_HISTORY.bundle ./site
+   cd site
+   git remote remove origin
+   git remote add origin https://github.com/<your-user>/agent-governance-experience.git
+   git push -u origin main
+   ```
+
+   (This is preferable to `git init` + one big commit, which would lose the editorial change history.)
 3. In **Settings → Pages → Build and deployment**, choose **GitHub Actions** as the source. The committed [`pages.yml`](.github/workflows/pages.yml) runs tests, packages `dist/`, and deploys it automatically on pushes to `main`.
 4. Inspect the **Actions** tab; GitHub Pages provides the actual published URL when deployment succeeds. The site requires **no backend or secrets**.
 
