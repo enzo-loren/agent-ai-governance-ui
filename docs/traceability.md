@@ -1,0 +1,39 @@
+# Screen-to-requirement mapping
+
+**Sources:** [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-governance-platform/blob/main/insumo/requisitos.yaml); [`insumo/contexto/04-ux.md`](https://github.com/enzo-loren/agentic-ai-governance-platform/blob/main/insumo/contexto/04-ux.md); [`insumo/contexto/03-politicas-y-estado-inicial.md`](https://github.com/enzo-loren/agentic-ai-governance-platform/blob/main/insumo/contexto/03-politicas-y-estado-inicial.md); [the deployed guide](https://enzo-loren.github.io/ai-governance-platform-docs/); [`assets/console-data.json`](https://github.com/enzo-loren/ai-governance-platform-docs/blob/main/assets/console-data.json). The **requirements YAML governs** if another document disagrees.
+
+| Previous screen(s) | New destination | Mapped scope (not implemented backend) |
+| --- | --- | --- |
+| S0 agent registration | Catalog → Add agent; Agent detail | REG-02, CON-01: per-agent credential display is one-time *only in simulation* |
+| S0 live flow | Activity | CON-03, CON-02: event status, reason, filters, pause (simulated, not under-3-second backend latency) |
+| S1 governance coverage | Catalog → Agent detail, Integrations | CON-04, POL-03: A/B/C coverage and absent controls, with clear gaps |
+| S1 tool inventory | Catalog → Tools | INF-02, CON-07: class and approval state (sample metadata) |
+| S1 shadow evaluation | Activity → Would block; Rules | POL-01, REG-01: Observe previews denials; do not claim active enforcement |
+| S2 agent mode and suspension | Agent detail, Rules | REG-01, REG-03, INF-05: confirm Enforce, pause and restore, with B-boundary caveat |
+| S2 spending and limits | Spending | CON-06, FIN-01/02: simulated spend, daily budget, alerts |
+| S3 identity and role | Integrations → C; Agent detail; role preview | IDN-01, GRD-03, CON-01: no live OIDC; do not confuse role preview with real token |
+| S3 per-person spending | Spending (future upgrade) | FIN-03: needs actual per-user attribution with C; intentionally not fabricated |
+| S4 tool gateway | Integrations → B; Catalog Tools | MCP-01, PLT-02, GRD-04: real execution distinct from model intent |
+| S4 policy builder | Rules | POL-04: preset selection simulated; parameter-level Cedar rule editor intentionally deferred |
+| S4 connection guide | Integrations → A/B/C drawers | OPS-01: steps and fictitious example snippets; genuine setup remains external |
+| S5 approvals | Approvals | HITL-01/02/03, CON-05: reviewer and decision state simulated, separated by role |
+| S6 search | Audit | EVD-02: searchable transaction and sample status |
+| S6 forensic path | Activity → See why; Audit → detail | EVD-03/05/06: explanation, version and synthetic record, not Object Lock proof |
+
+## Semantic policy boundaries
+
+**Expected platform behavior (source-derived):**
+
+- A always exists. A+B, A+C, and A+B+C are distinct supported combinations, never a compulsory sequence B→C.
+- Discovery mode has policies evaluated without their blocking effect for specific controls; authentication, some guardrails and limits may remain active. Do not describe it as bypassing every control.
+- A can block or inspect the *model's intent to call a tool*. B centralizes *real calls* to tools via the MCP gateway and provides enforcement on parameters/answers. Unconnected local tools remain outside that control.
+- C propagates a verified OIDC end-user token from the customer's application/agent to gateway so identity/role-aware decisions are possible; merely choosing a UI role cannot achieve C.
+- When a policy requires B or C and they are absent, do not display the unavailable control as active.
+- Suspending inference does not mechanically guarantee an agent cannot execute an external/local tool independently. The mockup makes this limitation visible.
+- A complete audit proof needs backend evidence and relevant retention settings; a static frontend cannot verify these properties.
+
+## Prototype coverage and deferred behaviors
+
+**Working simulated interactions:** catalog search, create demo agent, once-visible example key, agent view, A/B/C toggles (except A), simulate inference vs actual tool, Observe/Enforce preview, simulated pause/resume, synthetic traces and status filter, pause synthetic activity feed, preset selection with confirmation, budget update, approval and reviewer role preview, audit search and explanation drawer, guided tour, appearance and reset.
+
+**Not delivered:** actual AWS infrastructure, OpenAI-compatible proxy, secrets issuance, JWT verification, Cedar engine, MCP routing or live tool discovery, immutable S3 evidence, CloudWatch/OpenTelemetry, under-3-second live visibility, production RBAC, per-person cost attribution, parameter-level visual policy editor, a full integrated agent demo, real finops metering. They are architectural requirements, not features validated by this repository.
