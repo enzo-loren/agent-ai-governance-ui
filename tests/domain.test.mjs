@@ -15,8 +15,9 @@ test('A is on by default and B/C can be individually absent', () => {
 });
 test('Observe mode records a simulated policy denial without enforcing it', () => {
   const s=cleanState();
+  changeMode(s,'atlas','observe');
   const e=appendScenario(s,{agentId:'atlas',channel:'inference'});
-  assert.equal(e.status,'would_block');assert.match(e.reason,/recorded, not blocked/);
+  assert.equal(e.status,'would_block');assert.match(e.reason,/observed, not enforced/);
   assert.equal(e.kind,'inference');
 });
 test('Enforce mode blocks a critical tool on the connected MCP channel',()=>{
