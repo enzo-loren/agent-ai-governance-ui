@@ -40,3 +40,11 @@ Raw YAML/Cedar/JSON, AWS services, Object Lock modes and token propagation belon
 - Connection state continues to describe the configured path, **not** a blanket assertion that all tools or requests are covered. The details view keeps per-tool routing and named/unnamed request counts.
 - Existing `#/integrations` links remain readable through a legacy route alias, while visible navigation uses `#/connections`.
 - Reasoning belongs in this board and the Git commit, not in the product's first-level copy.
+
+## Multi-agent consistency review · 2026-11-11
+
+- Rules no longer selects an agent through an all-agent dropdown: Catalog, Connections, and Rules now use the same searchable directory, with a shared `Agent → Overview / Connections / Rules` hierarchy.
+- Activity, Approvals, Spending, and Audit preserve an explicitly scoped agent in deep links; global lists remain global. Hidden filters must never silently exclude events when a user follows an agent link.
+- Large tables show bounded batches and a visible result count. This is **DOM control**, not server pagination. Requirements involving event timing, correlation, and immutable evidence remain separate from frontend behavior.
+- In Spending, previously recorded user-attributed events remain historical evidence after identity is disconnected; the current connection is not retroactively applied to those events.
+- Detailed findings, residual design questions, and verification conditions are in [`scale-ux-audit.md`](scale-ux-audit.md). No claims of security coverage are inferred from card counts or test counts.

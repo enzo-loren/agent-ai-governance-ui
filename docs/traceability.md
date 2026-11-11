@@ -56,3 +56,11 @@ No tool should be presented as globally "safe" simply because it is approved or 
 The UI uses **Model requests**, **Tool execution** and **User identity** instead of the connection identifiers A/B/C. The technical specification and implementation still use A/B/C to keep policy, trace and test mappings stable.
 
 The Connections section lists agents with the same searchable card pattern as Catalog. Editing connections takes place within a particular agent (`#/agent/:id/connections`), so selection survives navigation and no global selector is required. Rendering 24 agents initially avoids displaying hundreds of cards at once; backend paging is outside this static implementation.
+
+## High-volume navigation and transaction grouping · 2026-11-11
+
+- **CON-04 / POL-04:** Rules uses the same agent-selection directory as Catalog and Connections, with per-agent policy settings. It does **not** implement a full visual rule constructor or bulk policy rollout.
+- **CON-03 / EVD-02:** Activity and Audit search and render bounded batches, preserving agent-specific links. The client-side fixture cannot establish near-real-time delivery, server pagination, immutable evidence, or date-indexed querying.
+- **CON-05:** Approvals separates pending and reviewed decisions, supports search, and renders 20 results initially. Reviewer authorization, expiration, and conflicts require a backend.
+- **CON-06 / FIN-01 / FIN-03:** Spending provides agent-scoped budgets and a bounded historical per-person view, but its fixture totals do not validate real billing or cost attribution.
+- **EVD-05 / EVD-06:** The fixture has trace IDs but no workflow/session/parent relationship. An audit trail across hundreds of multi-step flows requires additional event correlation fields and a dedicated drill-down. See [`scale-ux-audit.md`](scale-ux-audit.md).
