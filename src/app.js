@@ -1,12 +1,12 @@
 import { cleanState, safeReadState, canEdit, canApprove, agentById, safeId, appendScenario, changeMode, toggleConnection, decideApproval } from './domain.js';
-import { TOUR, CONNECTIONS } from './data.js';
+import { TOUR, CONNECTIONS, POLICY_PRESETS } from './data.js';
 import { renderPage, renderAppShell, integrationInstructions } from './views.js';
 
 const STORE = 'agent-governance-preview-v2';
 const app = document.getElementById('app');
 function loadStoredState(){try{return localStorage.getItem(STORE)}catch{return null}}
 let state = safeReadState(loadStoredState());
-let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogToolLimit:30, catalogPeopleLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, rulesSearch:'', rulesLimit:24, activitySearch:'', activityAgentSearch:'', activityLimit:30, activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', auditLimit:30, approvalsSearch:'', approvalsView:'pending', approvalsLimit:20, spendingSearch:'', spendingLimit:24, personLimit:24, requestUser:'operator' };
+let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogToolLimit:30, catalogPeopleLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, rulesSearch:'', rulesLimit:24, activitySearch:'', activityAgentSearch:'', activityLimit:30, activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', auditLimit:30, approvalsSearch:'', approvalsView:'pending', approvalsLimit:20, spendingSearch:'', spendingLimit:24, personLimit:24, requestUser:'operator', policyPreview:null };
 let toastTimer;
 let beforeOverlayFocus = null;
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch{ /* Browser storage may be disabled */ }}
@@ -72,15 +72,26 @@ function setupEvents(){
    case 'show-more-persons':ui.personLimit+=24;render({keepScroll:true});break;
    case 'add-agent':if(allowEdit())openOverlay('modal',{kind:'add-agent'});break;
    case 'choose-preset':{
-    if(!allowEdit())break;
     const a=agentById(state,element.dataset.id);if(!a)break;
     const next=Number(element.dataset.value);
-    if(a.mode==='enforce' && a.preset!==next){openOverlay('modal',{kind:'policy-change',id:a.id,preset:next});break;}
-    a.preset=next;persist();showToast('Policy updated');break;
+    if(!POLICY_PRESETS.some(p=>p.id===next))break;
+    ui.policyPreview=next===a.preset?null:{agentId:a.id,preset:next};
+    render({keepScroll:true,focusId:`policy-preset-${a.id}-${next}`});break;
+   }
+   case 'cancel-policy-preview':ui.policyPreview=null;render({keepScroll:true});break;
+   case 'review-policy-change':{
+    if(!allowEdit())break;
+    const a=agentById(state,element.dataset.id);
+    const next=Number(element.dataset.value);
+    if(!a||next===a.preset||!POLICY_PRESETS.some(p=>p.id===next)||ui.policyPreview?.agentId!==a.id||ui.policyPreview.preset!==next)break;
+    openOverlay('modal',{kind:'policy-change',id:a.id,preset:next});break;
    }
    case 'confirm-preset':{
-    if(!allowEdit())break;const a=agentById(state,element.dataset.id);if(!a)break;
-    a.preset=Number(element.dataset.value);ui.modal=null;persist();showToast('Policy updated');break;
+    if(!allowEdit())break;
+    const a=agentById(state,element.dataset.id);
+    const next=Number(element.dataset.value);
+    if(!a||ui.modal?.kind!=='policy-change'||ui.modal.id!==a.id||ui.modal.preset!==next||!POLICY_PRESETS.some(p=>p.id===next))break;
+    a.preset=next;ui.policyPreview=null;ui.modal=null;persist();showToast('Policy updated');break;
    }
    case 'preview-enforce':if(allowEdit())openOverlay('modal',{kind:'enforce',id:element.dataset.id});break;
    case 'confirm-mode':{
@@ -129,7 +140,7 @@ function setupEvents(){
    case 'appearance':state.appearance=element.dataset.value;persist();render({keepScroll:true,focusOverlay:true});announce(`${state.appearance} appearance`);break;
    case 'reset-request':openOverlay('modal',{kind:'reset'});break;
    case 'confirm-reset':{
-    const prefs={theme:state.theme,appearance:state.appearance,role:state.role};state={...cleanState(),...prefs};ui.drawer=null;ui.modal=null;ui.activityPaused=false;ui.pausedIds=null;ui.catalogSearch='';ui.connectionSearch='';ui.rulesSearch='';ui.activitySearch='';ui.activityAgentSearch='';ui.activityStatus='all';ui.auditSearch='';ui.approvalsSearch='';ui.approvalsView='pending';ui.spendingSearch='';ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;ui.connectionLimit=24;ui.rulesLimit=24;ui.activityLimit=30;ui.auditLimit=30;ui.approvalsLimit=20;ui.spendingLimit=24;ui.personLimit=24;persist();go('home');showToast('Workspace reset');break;
+    const prefs={theme:state.theme,appearance:state.appearance,role:state.role};state={...cleanState(),...prefs};ui.drawer=null;ui.modal=null;ui.policyPreview=null;ui.activityPaused=false;ui.pausedIds=null;ui.catalogSearch='';ui.connectionSearch='';ui.rulesSearch='';ui.activitySearch='';ui.activityAgentSearch='';ui.activityStatus='all';ui.auditSearch='';ui.approvalsSearch='';ui.approvalsView='pending';ui.spendingSearch='';ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;ui.connectionLimit=24;ui.rulesLimit=24;ui.activityLimit=30;ui.auditLimit=30;ui.approvalsLimit=20;ui.spendingLimit=24;ui.personLimit=24;persist();go('home');showToast('Workspace reset');break;
    }
    case 'tour-start':state.tour=0;persist();go(TOUR[0].route);break;
    case 'tour-next':{
@@ -187,6 +198,6 @@ function setupEvents(){
     else if(!event.shiftKey&&document.activeElement===nodes.at(-1)){event.preventDefault();nodes[0].focus();}
   }
  });
- window.addEventListener('hashchange',()=>{ui.drawer=null;ui.modal=null;ui.navOpen=false;render();window.scrollTo({top:0,behavior:'instant'});document.getElementById('main')?.focus({preventScroll:true});});
+ window.addEventListener('hashchange',()=>{ui.drawer=null;ui.modal=null;ui.policyPreview=null;ui.navOpen=false;render();window.scrollTo({top:0,behavior:'instant'});document.getElementById('main')?.focus({preventScroll:true});});
 }
 setupEvents();setAppearance();render();

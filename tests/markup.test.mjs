@@ -19,14 +19,15 @@ test('One quiet Preview label replaces repeated demo disclaimers and marketing c
   assert.doesNotMatch(output,/Interactive demo|Sample data only|Every agent\.<br>One clear view|Nothing here connects to your systems/);
  }
 });
-test('Auditor never receives write or approval actions in markup',()=>{
+test('Auditor can preview policies but does not receive commit or approval actions',()=>{
  const audit=structuredClone(state);audit.role='auditor';
  const catalog=renderPage(audit,ui,'catalog');
  assert.doesNotMatch(catalog,/data-action="add-agent"/);
  assert.doesNotMatch(renderPage(audit,ui,'rules'),/id="rules-agent"/);
  const buttons=renderPage(audit,ui,'agent','atlas','rules').match(/data-action="choose-preset"[^>]*>/g)||[];
  assert.equal(buttons.length,3);
- buttons.forEach(b=>assert.match(b,/\bdisabled\b/));
+ buttons.forEach(b=>assert.doesNotMatch(b,/\bdisabled\b/));
+ assert.doesNotMatch(renderPage(audit,ui,'agent','atlas','rules'),/data-action="review-policy-change"/);
  assert.match(renderPage(audit,ui,'approvals'),/data-action="approval-confirm"[^>]*disabled/);
 });
 test('Connections directory uses agent cards, not a separate native select',()=>{

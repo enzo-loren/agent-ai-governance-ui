@@ -48,3 +48,11 @@ Raw YAML/Cedar/JSON, AWS services, Object Lock modes and token propagation belon
 - Large tables show bounded batches and a visible result count. This is **DOM control**, not server pagination. Requirements involving event timing, correlation, and immutable evidence remain separate from frontend behavior.
 - In Spending, previously recorded user-attributed events remain historical evidence after identity is disconnected; the current connection is not retroactively applied to those events.
 - Detailed findings, residual design questions, and verification conditions are in [`scale-ux-audit.md`](scale-ux-audit.md). No claims of security coverage are inferred from card counts or test counts.
+
+## Policy selection versus application · 2026-11-11
+
+- A policy card is a **read-only selection for preview**, not a mutation. This prevents an exploratory click from changing authorization behavior. The UI distinguishes **Active** (saved policy) from the **selected preview** and renders the candidate's rule consequences without changing the saved agent state.
+- Changes require an explicit **Apply policy** action and a second **Confirm policy change** dialog identifying the agent and both policies. This applies in Observe and Enforce; Observe remains Observe after saving a preset. Cancellation, navigation and reset discard the temporary preview, while modal cancellation preserves it for further comparison.
+- Source constraints remain intact: role-restricted writes depend on verified identity, real tool execution checks apply only to routed tools, and exploratory policy preview is not backend enforcement. An Auditor can inspect the same policy explanations but cannot apply a change.
+- `Request as` remains a test-request identity selector; it is not authentication. Its label, native keyboard behavior, focus indicator, field width and dropdown icon now follow the form controls used elsewhere, including narrow screens and semantic themes.
+- Verification: 52 Node tests; local static build; rendered Chromium walkthrough of selection, cancellation, confirmation, auditor restrictions, Observe handling, and selector geometry at 320, 390, 670, 900, 1100 and 1440px. The test fixtures represent the frontend, not production authorization.
