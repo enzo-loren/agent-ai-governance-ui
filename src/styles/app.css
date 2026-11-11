@@ -110,3 +110,7 @@ hr{border:0;height:1px;background:var(--border);margin:22px 0}.muted{color:var(-
 .toolbar .input-wrap.grow{flex:1 1 220px;max-width:560px;min-width:180px}
 .agent-tabs{overflow-x:auto;scrollbar-width:thin}
 @media(max-width:670px){.scope-bar{align-items:flex-start}.scope-bar>span{flex-basis:100%}.toolbar .input-wrap.grow{max-width:none;min-width:100%;width:100%}}
+
+/* Keep request simulation actions inside their agent-detail card. */
+.request-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.request-actions .btn{min-width:0;width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center}
