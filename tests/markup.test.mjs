@@ -4,16 +4,16 @@ import {readFileSync} from 'node:fs';
 import {cleanState} from '../src/domain.js';
 import {renderAppShell,renderPage} from '../src/views.js';
 const state=cleanState();
-const ui={activityAgent:'all',activityStatus:'all',catalogTab:'agents',rulesAgent:'atlas',integrationAgent:'atlas'};
+const ui={activityAgent:'all',activityStatus:'all',catalogTab:'agents',rulesAgent:'atlas',connectionSearch:''};
 const html=route=>renderAppShell(state,ui,route,renderPage(state,ui,route));
 test('Every primary destination renders an explicit page heading and main landmark',()=>{
- for(const page of ['home','catalog','activity','rules','approvals','spending','audit','integrations']){
+ for(const page of ['home','catalog','activity','rules','approvals','spending','audit','connections']){
   assert.match(html(page),/<main [^>]*id="main"/);
   assert.match(html(page),/<h1>/);
  }
 });
 test('One quiet Preview label replaces repeated demo disclaimers and marketing copy',()=>{
- for(const page of ['home','catalog','activity','rules','approvals','spending','audit','integrations']){
+ for(const page of ['home','catalog','activity','rules','approvals','spending','audit','connections']){
   const output=html(page);
   assert.match(output,/>Preview<\/span>/);
   assert.doesNotMatch(output,/Interactive demo|Sample data only|Every agent\.<br>One clear view|Nothing here connects to your systems/);
@@ -29,13 +29,17 @@ test('Auditor never receives write or approval actions in markup',()=>{
  buttons.forEach(b=>assert.match(b,/\bdisabled\b/));
  assert.match(renderPage(audit,ui,'approvals'),/data-action="approval-confirm"[^>]*disabled/);
 });
-test('A-only demo shows missing B/C and distinguishes tool execution from model request',()=>{
- const text=renderPage(state,ui,'integrations');
- assert.match(text,/Control tool execution/);assert.match(text,/Identify users/);
- assert.match(text,/Only routed MCP tools can be stopped/);
+test('Connections directory uses agent cards, not a separate native select',()=>{
+ const list=renderPage(state,ui,'connections');
+ assert.match(list,/Manage connections/);
+ assert.match(list,/connection-search/);
+ assert.doesNotMatch(list,/id="integration-agent"/);
+ const detail=renderPage(state,ui,'agent','atlas','connections');
+ assert.match(detail,/Tool execution/);assert.match(detail,/User identity/);
+ assert.match(detail,/Only routed tools are checked before execution/);
 });
 test('No shadow-mode jargon leaks into first-level product copy',()=>{
- const screens=['home','catalog','activity','rules','approvals','spending','audit','integrations'];
+ const screens=['home','catalog','activity','rules','approvals','spending','audit','connections'];
  for(const page of screens){const source=renderPage(state,ui,page);assert.doesNotMatch(source,/en sombra|shadow mode/i);}
 });
 test('Semantic tokens control palette and dark appearance',()=>{

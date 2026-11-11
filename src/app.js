@@ -1,27 +1,27 @@
 import { cleanState, safeReadState, canEdit, canApprove, agentById, safeId, appendScenario, changeMode, toggleConnection, decideApproval } from './domain.js';
-import { TOUR } from './data.js';
+import { TOUR, CONNECTIONS } from './data.js';
 import { renderPage, renderAppShell, integrationInstructions } from './views.js';
 
 const STORE = 'agent-governance-preview-v2';
 const app = document.getElementById('app');
 function loadStoredState(){try{return localStorage.getItem(STORE)}catch{return null}}
 let state = safeReadState(loadStoredState());
-let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogSearch:'', activitySearch:'', activityAgent:'all', activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', integrationAgent:'atlas', rulesAgent:'atlas', requestUser:'operator' };
+let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, activitySearch:'', activityAgent:'all', activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', rulesAgent:'atlas', requestUser:'operator' };
 let toastTimer;
 let beforeOverlayFocus = null;
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch{ /* Browser storage may be disabled */ }}
 function route(){
   const value=location.hash.replace(/^#\/?/,'')||'home';
-  const [name,rawId]=value.split('/');
-  return {name:name||'home',id:rawId?decodeURIComponent(rawId):''};
+  const [name,rawId,section]=value.split('/');
+  return {name:name||'home',id:rawId?decodeURIComponent(rawId):'',section:section||'overview'};
 }
 function announce(message){const node=document.getElementById('announcer');if(node)node.textContent=message;}
 function setAppearance(){document.documentElement.setAttribute('data-theme',state.theme);document.documentElement.setAttribute('data-appearance',state.appearance);}
 function render(opts={}){
   const oldY=window.scrollY;
   setAppearance();
-  const {name,id}=route();
-  app.innerHTML=renderAppShell(state,ui,name,renderPage(state,ui,name,id));
+  const {name,id,section}=route();
+  app.innerHTML=renderAppShell(state,ui,name,renderPage(state,ui,name,id,section),section);
   if(opts.keepScroll)window.scrollTo({top:oldY,behavior:'instant'});
   const target=opts.focusId?document.getElementById(opts.focusId):null;
   if(target){target.focus({preventScroll:true});const v=target.value;try{target.setSelectionRange(v.length,v.length)}catch{}}
@@ -56,9 +56,11 @@ function setupEvents(){
    case 'open-event':openOverlay('drawer',{kind:'event',id:element.dataset.id});break;
    case 'open-connection':openOverlay('drawer',{kind:'connection',id:element.dataset.id});break;
    case 'open-explainer':openOverlay('drawer',{kind:'explainer',id:element.dataset.topic});break;
-   case 'catalog-tab':ui.catalogTab=element.dataset.value;ui.catalogSearch='';ui.catalogToolFilter='all';render({keepScroll:true});break;
+   case 'catalog-tab':ui.catalogTab=element.dataset.value;ui.catalogSearch='';ui.catalogToolFilter='all';ui.catalogAgentLimit=24;render({keepScroll:true});break;
    case 'catalog-tool-filter':ui.catalogToolFilter=element.dataset.value||'all';render({keepScroll:true});break;
-   case 'open-integration-agent':ui.integrationAgent=element.dataset.id;state.selectedAgent=element.dataset.id;persist();go('integrations');break;
+   case 'open-integration-agent':state.selectedAgent=element.dataset.id;persist();go(`agent/${encodeURIComponent(element.dataset.id)}/connections`);break;
+   case 'show-more-catalog':ui.catalogAgentLimit+=24;render({keepScroll:true});break;
+   case 'show-more-connections':ui.connectionLimit+=24;render({keepScroll:true});break;
    case 'add-agent':if(allowEdit())openOverlay('modal',{kind:'add-agent'});break;
    case 'choose-preset':{
     if(!allowEdit())break;
@@ -106,7 +108,10 @@ function setupEvents(){
    case 'edit-budget':if(allowEdit())openOverlay('modal',{kind:'budget',id:element.dataset.id});break;
    case 'toggle-connection':{
     if(!allowEdit())break;
-    toggleConnection(state,element.dataset.agent,element.dataset.id);persist();showToast(`Connection ${element.dataset.id} updated`);break;
+    if(!toggleConnection(state,element.dataset.agent,element.dataset.id))break;
+    const agent=agentById(state,element.dataset.agent);
+    const name=CONNECTIONS.find(c=>c.id===element.dataset.id)?.name||'Connection';
+    persist();showToast(`${name} ${agent?.connections.includes(element.dataset.id)?'connected':'disconnected'}`);break;
    }
    case 'copy-connection':copyText(integrationInstructions[element.dataset.id]?.snippet||'');break;
    case 'copy-trace':copyText(element.dataset.value||'');break;
@@ -135,12 +140,12 @@ function setupEvents(){
   } else if(id==='request-user'){ui.requestUser=value;render({keepScroll:true});}
   else if(id==='activity-agent'){ui.activityAgent=value;render({keepScroll:true});}
   else if(id==='activity-status'){ui.activityStatus=value;render({keepScroll:true});}
-  else if(id==='integration-agent'){ui.integrationAgent=value;state.selectedAgent=value;persist();render({keepScroll:true});}
   else if(id==='rules-agent'){ui.rulesAgent=value;state.selectedAgent=value;persist();render({keepScroll:true});}
  });
  document.addEventListener('input',event=>{
-  const id=event.target.id;if(!['catalog-search','activity-search','audit-search'].includes(id))return;
-  if(id==='catalog-search')ui.catalogSearch=event.target.value;
+  const id=event.target.id;if(!['catalog-search','connection-search','activity-search','audit-search'].includes(id))return;
+  if(id==='catalog-search'){ui.catalogSearch=event.target.value;ui.catalogAgentLimit=24;}
+  else if(id==='connection-search'){ui.connectionSearch=event.target.value;ui.connectionLimit=24;}
   else if(id==='activity-search')ui.activitySearch=event.target.value;
   else ui.auditSearch=event.target.value;
   render({keepScroll:true,focusId:id});
