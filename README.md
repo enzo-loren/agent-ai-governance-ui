@@ -84,31 +84,18 @@ tests/                       Node domain and markup tests
 docs/                        UX traceability and editorial decisions
 ```
 
-## Deploy to a separate GitHub Pages repository
+## Publish this repository on GitHub Pages
 
-1. Create a **new public** GitHub repository, e.g. `agent-governance-experience`, **without** a GitHub-generated README (this project already has one).
-2. If you have a working Git clone of this source, add its remote and push:
+This project is proposed through a pull request in [`enzo-loren/agent-ai-governance-ui`](https://github.com/enzo-loren/agent-ai-governance-ui). **A pull request is not itself a live deployment.** Review the UI and quality checks before merging.
 
-   ```bash
-   git remote add origin https://github.com/<your-user>/agent-governance-experience.git
-   git push -u origin main
-   ```
+1. Go to **Settings → Pages → Build and deployment** and choose **GitHub Actions**.
+2. Review and merge the prototype pull request into `main` when ready. (Do not merge before review.)
+3. [`.github/workflows/pages.yml`](.github/workflows/pages.yml) runs `npm run check && npm run build` and deploys the `dist/` directory after a push to `main`. The [quality workflow](.github/workflows/quality.yml) runs the same checks on the pull request.
+4. Confirm the actual deployed address in the Actions run or the Pages settings before sharing it. For a normal public repository with default Pages settings, GitHub typically uses a project-site URL, but **the repository has not been verified live yet**.
 
-   If instead you downloaded the **source ZIP** from the project handoff, it contains a `COMMIT_HISTORY.bundle` file preserving the full verbose editorial commits. Extract the ZIP and, from inside its folder, restore the original Git history:
+The source used for this PR came from a verified offline ZIP and its Git bundle. The verbose editorial rationale was carried into the PR's individual commits. The ZIP-only `COMMIT_HISTORY.bundle` is not needed in this repository and is deliberately not committed; the GitHub commit history replaces it.
 
-   ```bash
-   git clone COMMIT_HISTORY.bundle ./site
-   cd site
-   git remote remove origin
-   git remote add origin https://github.com/<your-user>/agent-governance-experience.git
-   git push -u origin main
-   ```
-
-   (This is preferable to `git init` + one big commit, which would lose the editorial change history.)
-3. In **Settings → Pages → Build and deployment**, choose **GitHub Actions** as the source. The committed [`pages.yml`](.github/workflows/pages.yml) runs tests, packages `dist/`, and deploys it automatically on pushes to `main`.
-4. Inspect the **Actions** tab; GitHub Pages provides the actual published URL when deployment succeeds. The site requires **no backend or secrets**.
-
-If an existing repository already exists, do not overwrite its branch. Set up a fresh repo or inspect the history before pushing.
+No backend, AWS credentials, stored secrets, external dependencies, or production auth flows are involved. This remains a visual and behavioral simulation.
 
 ## Evidence and UX references
 
