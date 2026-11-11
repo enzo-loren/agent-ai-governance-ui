@@ -1,0 +1,63 @@
+/*
+ * Semantic design tokens only: changing a palette changes the product globally.
+ * Component CSS must use semantic variables, never copy palette hex values.
+ * Contrast and focus styles should be re-audited when adding a new palette.
+ */
+:root {
+  font-synthesis: none;
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px;
+  --space-6: 24px; --space-7: 28px; --space-8: 32px; --space-10: 40px; --space-12: 48px;
+  --radius-xs: 7px; --radius-sm: 10px; --radius-md: 14px; --radius-lg: 18px; --radius-xl: 24px; --radius-full: 1000px;
+  --shadow-soft: 0 5px 22px rgb(27 38 37 / .035);
+  --shadow-float: 0 24px 65px rgb(23 43 39 / .15), 0 4px 12px rgb(23 43 39 / .06);
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --focus: #0b6fcb;
+  --on-accent: #fff;
+  --selection-ink: #18302c;
+  --palette-forest: #176b5a; --palette-violet: #6054b8; --palette-ocean: #146b91;
+  --avatar-sage-bg:#def2e9; --avatar-sage-ink:#28604c;
+  --avatar-lavender-bg:#eee8fb; --avatar-lavender-ink:#61528a;
+  --avatar-peach-bg:#ffecdf; --avatar-peach-ink:#a26139;
+  --avatar-blue-bg:#e1f0ff; --avatar-blue-ink:#37648c;
+  --avatar-mint-bg:#def6f0; --avatar-mint-ink:#2e7665;
+  --progress-warning:#c58b43;
+  --code-bg:#132724; --code-ink:#dbf7e9; --code-button-bg:#23483f; --code-button-border:#3d6259;
+  --success-text: #176748; --success-bg: #eaf7ef; --success-outline: #bee6cd;
+  --danger-text: #b33236; --danger-bg: #fff0f0; --danger-outline: #f4c9cb;
+  --warning-text: #875a13; --warning-bg: #fff6e5; --warning-outline: #f2deaf;
+  --info-text: #295b98; --info-bg: #eaf2ff; --info-outline: #cddff5;
+  --preview-text: #7052a7; --preview-bg: #f2ebff; --preview-outline: #dfd1f9;
+  --neutral-text: #52626a; --neutral-bg: #eef2f4; --neutral-outline: #d8e0e4;
+}
+:root[data-theme='forest'] {--accent:#176b5a;--accent-hover:#125c4d;--accent-soft:#e3f4ec;--accent-ink:#155748;--brand-art:#bde9d8;--hero-top:#e8f6ee;--hero-bottom:#d7eee5;}
+:root[data-theme='violet'] {--accent:#6054b8;--accent-hover:#4e439d;--accent-soft:#eeebfb;--accent-ink:#51459d;--brand-art:#d9d0ff;--hero-top:#f2edff;--hero-bottom:#e9e0fc;}
+:root[data-theme='ocean'] {--accent:#146b91;--accent-hover:#0d5878;--accent-soft:#e0f1f8;--accent-ink:#125a7b;--brand-art:#bee9f5;--hero-top:#e8f6fb;--hero-bottom:#d8eff6;}
+:root[data-appearance='light'] {
+  color-scheme: light;
+  --canvas:#f7f9f8; --surface:#ffffff; --surface-2:#f8faf9; --sidebar:#fdfefd;
+  --text:#1a292a;--text-muted:#667475;--text-faint:#637171;--border:#e5ece9;--border-strong:#ccd8d3;
+  --sidebar-shadow:rgba(12,48,38,.04);--hover:#f1f6f3;--overlay:rgba(9,26,27,.40);
+}
+:root[data-appearance='dark'] {
+  color-scheme: dark;
+  --selection-ink: #122d26;
+  --avatar-sage-bg:#244438; --avatar-sage-ink:#bce6d2;
+  --avatar-lavender-bg:#392f51; --avatar-lavender-ink:#ddd0ff;
+  --avatar-peach-bg:#49352a; --avatar-peach-ink:#ffd0b2;
+  --avatar-blue-bg:#274257; --avatar-blue-ink:#c5e2ff;
+  --avatar-mint-bg:#21453d; --avatar-mint-ink:#b9f3df;
+  --progress-warning:#f2d6a1;
+  --code-bg:#0b1718; --code-ink:#d3f6df; --code-button-bg:#203d35; --code-button-border:#457065;
+  --canvas:#0d171a;--surface:#172326;--surface-2:#1d2b2e;--sidebar:#121e21;
+  --text:#eff6f2;--text-muted:#b0c0bd;--text-faint:#a4b8b3;--border:#334448;--border-strong:#54696b;
+  --sidebar-shadow:rgba(0,0,0,.3);--hover:#25373b;--overlay:rgba(0,0,0,.65);
+  --accent-soft:#263c3a;--accent-ink:#d8f7e9;--hero-top:#213f38;--hero-bottom:#1d3835;
+  --success-text:#b9eacb;--success-bg:#18392d;--success-outline:#356d4a;
+  --danger-text:#ffb6b5;--danger-bg:#3b2225;--danger-outline:#714049;
+  --warning-text:#f2d6a1;--warning-bg:#41351e;--warning-outline:#766038;
+  --info-text:#bfdbff;--info-bg:#243d56;--info-outline:#416383;
+  --preview-text:#e3d0ff;--preview-bg:#382d50;--preview-outline:#68518f;
+  --neutral-text:#c6d2d2;--neutral-bg:#2a383b;--neutral-outline:#4c6263;
+}
