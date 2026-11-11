@@ -14,6 +14,7 @@ This is the process-only decision log required by *Scientific Writing Editor*. I
 | Brand palette should be adjustable without hardcoding | User request, semantic design-system practice | One token file with 3 palettes; semantic status colors independent of brand | Implemented; contrast review after any new palette |
 | Short UI strings avoid overload | NN/g progressive disclosure; user request | Action verbs, short summaries, drawer for technical reason | Design intention; user testing pending |
 | Agent spend is distinct from arbitrary LLM spend | Meeting Nov 10 | Spending by agent only; per-person attribution is explicitly unavailable without C | Grounded; backend accounting not verified |
+| Prefer operational status to a composite governance score | Explicit user direction (2026-11-11); `CON-04` still requires an index | Add Catalog → Tools / People, per-tool route and policy status, recent named requests; omit index and percentage | Design deviation tracked in `docs/traceability.md`; requirement change not approved |
 | Multi-account and very granular budgets should not block demo | Meeting Nov 10 | Keep deferred from first-level UI | Scope direction, not a formal permanent exclusion |
 
 ## Copy rules for contributors
@@ -22,7 +23,7 @@ This is the process-only decision log required by *Scientific Writing Editor*. I
 2. **Show status + cause.** “Denied” alone is not sufficient.
 3. **Never label a preview as enforcement.** “Would block” describes a counterfactual.
 4. **Never imply unconnected tools were blocked.** Explicitly state “Not covered” for local tool execution without B.
-5. **No demo data looks real.** Keep the “Interactive demo” banner and fictional examples on each destination.
+5. **Avoid repeated disclaimers.** Keep one unobtrusive Preview label in the application; distinguish real security boundaries in context and leave implementation qualifications in documentation.
 6. **Keep explanation under a click.** Show `Technical details` only when a person requests it.
 7. **A source-derived requirement is not an implemented feature.** If an implementation is absent, state so rather than weakening the requirement or inventing results.
 8. **Preserve operational caveats in the content**, but keep reasons for *word choice or organization* in this editorial board.
