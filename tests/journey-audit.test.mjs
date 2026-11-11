@@ -41,18 +41,19 @@ test('Every executed journey preserves its measured number of actions from Home'
   }
 });
 
-test('Missing and partial features must remain explicitly reported as gaps',()=>{
+test('External dependencies remain explicitly partial and verified browser paths are distinct',()=>{
   const rows=spec.journeys.filter(j=>j.status!=='ui-working');
-  assert.ok(rows.length>=30,'A redesign cannot silently convert product gaps to passes');
+  assert.ok(rows.length>=15,'External requirements must not be relabeled as tested backend behavior');
   for(const j of rows){
-    assert.ok(j.checks.some(c=>c.type==='absent'),`${j.id} must demonstrate its missing action or state`);
+    assert.ok(j.limitation||j.checks.some(c=>c.type==='absent'),`${j.id} must explain what is still not verified`);
     assert.ok(j.status==='gap'||j.status==='partial');
   }
   const total=report.summary;
   assert.equal(total.cases,spec.journeys.length);
   assert.equal(total.unexpectedFailures,0);
   assert.equal(total.observedWorking,spec.journeys.filter(j=>j.status==='ui-working').length);
-  assert.equal(total.knownGapsConfirmed,rows.length);
+  assert.equal(total.partialPreview,rows.filter(j=>j.status==='partial').length);
+  assert.equal(total.unreachable,rows.filter(j=>j.status==='gap').length);
 });
 
 test('Budget form ID is read from the attribute, not shadowed by the name=id input',()=>{

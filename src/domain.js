@@ -10,13 +10,15 @@ export const STATUS = {
   outside: { label: 'Not covered', icon: 'unplug', tone: 'neutral' },
   missing: { label: 'No evidence', icon: 'alert-triangle', tone: 'neutral' },
   approved: { label: 'Approved', icon: 'check', tone: 'positive' },
-  rejected: { label: 'Rejected', icon: 'slash', tone: 'negative' }
+  rejected: { label: 'Rejected', icon: 'slash', tone: 'negative' },
+  expired: { label: 'Expired', icon: 'clock', tone: 'warning' }
 };
+export function toolSchema(t){return t.type==='Read'?{query:'string'}:t.type==='Critical'?{amount:'number',target_id:'string'}:{amount:'number',id:'string'};}
 export const CAN_EDIT = ['operator'];
 export const CAN_APPROVE = ['approver'];
 export const DEMO_REVIEWER = 'Elena Kim';
 export function cleanState() {
-  return {agents:structuredClone(SEED_AGENTS), events:structuredClone(SEED_EVENTS), approvals:structuredClone(SEED_APPROVALS), theme:'forest', appearance:'light', role:'operator', tour:-1, selectedAgent:'atlas', budgetUnit:'day'};
+  return {agents:structuredClone(SEED_AGENTS), tools:structuredClone(SEED_TOOLS).map(t=>({...t,classification:'suggested',supervision:t.type==='Critical'?'approval':t.type==='Write'?'notify':'autonomous',schemaVersion:1,schema:toolSchema(t)})), events:structuredClone(SEED_EVENTS), approvals:structuredClone(SEED_APPROVALS), changes:[], rules:[], limits:{}, credentials:{}, identityConfig:{}, modelTariffs:{'GPT-6':{input:0.002,output:0.008},'Claude Sonnet':{input:0.003,output:0.015}}, presentation:false, userLimits:{}, theme:'forest', appearance:'light', role:'operator', tour:-1, selectedAgent:'atlas', budgetUnit:'day'};
 }
 export function safeReadState(serialized) {
   const initial=cleanState();
@@ -24,7 +26,7 @@ export function safeReadState(serialized) {
   try {
     const data=JSON.parse(serialized);
     if (!data || !Array.isArray(data.agents) || !Array.isArray(data.events) || !Array.isArray(data.approvals)) return initial;
-    return { ...initial, ...data,
+    return { ...initial, ...data, tools:Array.isArray(data.tools)?data.tools:initial.tools, changes:Array.isArray(data.changes)?data.changes:[], rules:Array.isArray(data.rules)?data.rules:[], limits:data.limits&&typeof data.limits==='object'?data.limits:{}, credentials:data.credentials&&typeof data.credentials==='object'?data.credentials:{}, identityConfig:data.identityConfig&&typeof data.identityConfig==='object'?data.identityConfig:{}, modelTariffs:data.modelTariffs&&typeof data.modelTariffs==='object'?data.modelTariffs:initial.modelTariffs, presentation:Boolean(data.presentation), userLimits:data.userLimits&&typeof data.userLimits==='object'?data.userLimits:{},
       theme:['forest','violet','ocean'].includes(data.theme)?data.theme:'forest',
       appearance:['light','dark'].includes(data.appearance)?data.appearance:'light',
       role:['operator','approver','auditor'].includes(data.role)?data.role:'operator',
@@ -38,8 +40,8 @@ export function canEdit(state){return state.role==='operator';}
 export function canApprove(state){return state.role==='approver';}
 export function hasConnection(agent,id){return !!agent?.connections.includes(id);}
 // Connection presence is not the coverage index. B is tool-by-tool; C is per request.
-export function connectionProfile(agent){
-  const declared=toolsForAgent(agent?.id);
+export function connectionProfile(agent,state){
+  const declared=toolsForAgent(agent?.id,state);
   const throughGateway=declared.filter(t=>t.control==='B' && hasConnection(agent,'B'));
   return {
     combination: `A${hasConnection(agent,'B')?'+B':''}${hasConnection(agent,'C')?'+C':''}`,
@@ -55,9 +57,11 @@ export function toolOperationalStatus(agent,tool){
   if(!agent || !tool || !hasConnection(agent,'B') || tool.control!=='B'){
     return {key:'outside',label:'Outside gateway',detail:'Tool execution is not checked here',tone:'outside'};
   }
+  if(agent.mode==='retired')return {key:'retired',label:'Retired',detail:'Agent is no longer active',tone:'outside'};
   if(agent.mode==='suspended'){
     return {key:'paused',label:'Paused',detail:'Gateway calls are rejected',tone:'blocked'};
   }
+  if(tool.reviewStatus==='rejected')return {key:'rejected',label:'Not approved',detail:'An operator rejected this tool',tone:'blocked'};
   if(!tool.approved){
     return {key:'review',label:'Needs review',detail:agent.mode==='observe'?'Review is required before enforcement':'Not permitted while rules are enforced',tone:'pending'};
   }
@@ -78,11 +82,11 @@ export function toolOperationalStatus(agent,tool){
   }
   return {key:'checked',label:'Checked on execution',detail:'Policy applies at the gateway',tone:'allowed'};
 }
-export function catalogToolSummary(agent){
-  const tally={checked:0,observe:0,review:0,rule:0,identity:0,approval:0,paused:0,outside:0};
-  for(const tool of toolsForAgent(agent?.id)){tally[toolOperationalStatus(agent,tool).key]++;}
+export function catalogToolSummary(agent,state){
+  const tally={checked:0,observe:0,review:0,rejected:0,retired:0,rule:0,identity:0,approval:0,paused:0,outside:0};
+  for(const tool of toolsForAgent(agent?.id,state)){tally[toolOperationalStatus(agent,tool).key]++;}
   const labels=[
-    ['checked','checked'],['observe','observed'],['review','need review'],['rule','need rules'],
+    ['checked','checked'],['observe','observed'],['review','need review'],['rejected','not approved'],['retired','retired'],['rule','need rules'],
     ['identity','need identity'],['approval','need approval'],['paused','paused'],['outside','outside']
   ];
   return labels.filter(([key])=>tally[key]).map(([key,label])=>`${tally[key]} ${label}`).join(' · ') || 'No tools';
@@ -138,16 +142,16 @@ export function previewImpact(state,agentId){
   return {name:agent?.name||'Agent', count:attempts.length, actions:attempts.map(e=>e.action)};
 }
 export function changeMode(state,agentId,next){
-  const agent=agentById(state,agentId);if(!agent) return false;
+  const agent=agentById(state,agentId);if(!agent||agent.mode==='retired') return false;
   if(!['observe','enforce','suspended'].includes(next)) return false;
   if(next==='suspended'&&agent.mode!=='suspended')agent.previousMode=agent.mode;
   agent.mode=next;return true;
 }
 // Evaluate each channel and policy separately. Outside-B tool attempts have no execution verdict.
-export function appendScenario(state,{agentId='atlas',action='Delete customer record',channel='tool',toolId=null,userRole='operator'}={}){
-  const agent=agentById(state,agentId);if(!agent||!['tool','inference'].includes(channel))return null;
-  const tool=SEED_TOOLS.find(t=>t.id===toolId && t.agent===agentId)
-    || SEED_TOOLS.find(t=>t.agent===agentId && t.name===action);
+export function appendScenario(state,{agentId='atlas',action='Delete customer record',channel='tool',toolId=null,userRole='operator',parameters={}}={}){
+  const agent=agentById(state,agentId);if(!agent||agent.mode==='retired'||!['tool','inference'].includes(channel))return null;
+  const tool=state.tools.find(t=>t.id===toolId && t.agent===agentId)
+    || state.tools.find(t=>t.agent===agentId && t.name===action);
   const name=tool?.name||action;
   const critical=tool ? tool.type==='Critical' : true;
   const write=tool?.type==='Write';
@@ -175,6 +179,10 @@ export function appendScenario(state,{agentId='atlas',action='Delete customer re
       else if(critical&&channel==='tool'){decision='pending';reason='This tool must be approved by another person before it runs.';}
       else if(critical&&channel==='inference'){decision='allow';reason='The model may request this tool. Execution requires separate approval through tool execution control.';}
     }else if(agent.preset===3){decision='deny';rule='Strict';reason='No explicit permission has been configured for this action.';}
+    const matching=state.rules.filter(r=>r.agent===agent.id && (!r.toolId||r.toolId===tool?.id) && (r.type==='Any'||r.type===tool?.type) && (!r.parameter || (Object.hasOwn(parameters,r.parameter) && (r.comparator==='>'?Number(parameters[r.parameter])>Number(r.value):r.comparator==='<'?Number(parameters[r.parameter])<Number(r.value):r.comparator==='='?String(parameters[r.parameter])===String(r.value):false))));
+    const deny=matching.find(r=>r.effect==='deny');const allow=matching.find(r=>r.effect==='allow');
+    if(deny){decision='deny';rule=deny.id;reason=`Example custom rule ${deny.id} denies these parameters.`;}
+    else if(allow&&agent.preset===3){decision='allow';rule=allow.id;reason=`Example custom rule ${allow.id} permits this request.`;}
     if(decision==='pending')status=agent.mode==='observe'?'would_block':'pending';
     else if(decision==='deny')status=agent.mode==='observe'?'would_block':'blocked';
     if(status==='would_block')reason=`Would be denied by ${rule}. ${reason} The policy decision was observed, not enforced.`;
@@ -191,16 +199,17 @@ export function appendScenario(state,{agentId='atlas',action='Delete customer re
   }
   return record;
 }
-export function decideApproval(state,id,decision){
+export function decideApproval(state,id,decision,reviewer=state.reviewPerson||DEMO_REVIEWER,comment=''){
   const item=state.approvals.find(x=>x.id===id);if(!item||item.status!=='pending'||!['approved','rejected'].includes(decision)||!canApprove(state))return false;
-  if(item.requestedBy===DEMO_REVIEWER || !approvalReady(state,item)) return false;
-  item.status=decision;
-  state.events.unshift({id:nextTraceId(state),at:'Now',ago:'Just now',agent:item.agent,actor:'Review team',action:item.action,kind:'tool',model:'GPT-6',status:decision==='approved'?'allowed':'blocked',connections:[...(agentById(state,item.agent)?.connections||[])],cost:0,rule:'Human decision',version:'v1.8',reason:decision==='approved'?'Another person approved this simulated execution.':'A reviewer rejected the simulated execution.',evidence:true});
+  if(item.requestedBy===reviewer || !approvalReady(state,item)) return false;
+  item.status=decision;item.reviewedBy=reviewer;item.comment=String(comment||'').slice(0,400);
+  changeRecord(state,'Execution decision',item.agent,item.id,'pending',{decision,reviewer,comment:item.comment});
+  state.events.unshift({id:nextTraceId(state),at:'Now',ago:'Just now',agent:item.agent,actor:reviewer,action:item.action,kind:'tool',model:'GPT-6',status:decision==='approved'?'allowed':'blocked',connections:[...(agentById(state,item.agent)?.connections||[])],cost:0,rule:'Human decision',version:'v1.8',reason:decision==='approved'?'Another person approved this simulated execution.':'A reviewer rejected the simulated execution.',evidence:true});
   return true;
 }
 export function toggleConnection(state,agentId,connection){
   if(!['B','C'].includes(connection))return false;
-  const agent=agentById(state,agentId);if(!agent)return false;
+  const agent=agentById(state,agentId);if(!agent||agent.mode==='retired')return false;
   agent.connections=agent.connections.includes(connection)?agent.connections.filter(x=>x!==connection):[...agent.connections,connection].sort();
   return true;
 }
@@ -208,4 +217,35 @@ export const sampleModels=[
   {name:'GPT-6',provider:'OpenAI',agentCount:2},
   {name:'Claude Sonnet',provider:'Anthropic',agentCount:1}
 ];
-export function toolsForAgent(id){return SEED_TOOLS.filter(t=>t.agent===id);}
+export function toolsForAgent(id,state){return (state?.tools||SEED_TOOLS).filter(t=>t.agent===id);}
+export function toolById(state,id){return state.tools.find(t=>t.id===id)||null;}
+export function changeRecord(state,kind,agentId,resource,before,after){
+ const record={id:`ADM-${String((state.changes||[]).length+1).padStart(4,'0')}`,kind,agent:agentId,resource,from:structuredClone(before??null),to:structuredClone(after??null),actor:state.role==='operator'?'Operator (preview)':state.role==='approver'?'Approver (preview)':'Auditor (preview)',time:new Date().toISOString()};
+ if(!Array.isArray(state.changes))state.changes=[];
+ state.changes.unshift(record);return record;
+}
+export function reviseTool(state,id,change){
+ if(!canEdit(state))return false;
+ const tool=toolById(state,id);if(!tool||agentById(state,tool.agent)?.mode==='retired'||!['Read','Write','Critical','Unclassified'].includes(change.type)||!['approved','rejected','pending'].includes(change.decision)||!['autonomous','notify','approval'].includes(change.supervision))return false;
+ if(tool.schemaVersion!==Number(change.expectedVersion))return false;
+ if(change.supervision==='approval'&&tool.control!=='B')return false;
+ const before={type:tool.type,approved:tool.approved,reviewStatus:tool.reviewStatus||'pending',classification:tool.classification||'suggested',supervision:tool.supervision,schemaVersion:tool.schemaVersion};
+ Object.assign(tool,{type:change.type,approved:change.decision==='approved',reviewStatus:change.decision,classification:'confirmed',supervision:change.supervision});
+ changeRecord(state,'Tool review',tool.agent,tool.name,before,{...before,...change});return true;
+}
+export function addRule(state,agentId,rule){
+ if(!canEdit(state)||!agentById(state,agentId))return {error:'No permission or agent'};
+ if(!['allow','deny'].includes(rule.effect)||!['Read','Write','Critical','Unclassified','Any'].includes(rule.type))return {error:'Choose a valid action and tool class'};
+ const target=rule.toolId?toolById(state,rule.toolId):null;
+ if(rule.toolId&&(!target||target.agent!==agentId))return {error:'Choose a tool belonging to this agent'};
+ if(rule.parameter){
+   if(!target)return {error:'Choose a specific tool to validate a parameter'};
+   const type=target.schema?.[rule.parameter];if(!type)return {error:`Parameter ${rule.parameter} is not in the tool schema`};
+   if(type==='number'&&!Number.isFinite(Number(rule.value)))return {error:'The value must be numeric'};
+ }
+ const next={...rule,id:`RULE-${String(state.rules.length+1).padStart(3,'0')}`,agent:agentId,version:state.rules.filter(r=>r.agent===agentId).length+1,created:new Date().toISOString(),author:'Operator (preview)'};
+ state.rules.push(next);changeRecord(state,'Custom rule',agentId,next.id,null,next);return {rule:next};
+}
+export function filterAuditEvents(state,filters={}){
+ return state.events.filter(e=>(!filters.agent||e.agent===filters.agent)&&(!filters.model||e.model===filters.model)&&(!filters.channel||e.kind===filters.channel)&&(!filters.user||e.actor.toLowerCase().includes(filters.user.toLowerCase()))&&(!filters.tool||e.action.toLowerCase().includes(filters.tool.toLowerCase()))&&(!filters.connection||e.connections.includes(filters.connection))&&(!filters.status||e.status===filters.status));
+}

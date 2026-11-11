@@ -1,58 +1,48 @@
 # Agent Governance UI
 
-Frontend for inspecting AI agents, tool execution paths, identity attribution, policy decisions, approvals, and spending.
+A static, interactive reference interface for reviewing agents, their tools, policies, requests and operational decisions. The application uses local sample data; changes remain in the browser.
 
-![Agent Governance interface](docs/preview.webp)
+**Status:** frontend prototype. It does not authenticate users, issue credentials, route inference or MCP requests, execute Cedar, or validate S3 evidence. The role and identity selectors illustrate expected product behavior rather than enforce authorization.
 
-## Development
+## Product areas
 
-Requires Node.js 20 or later. No third-party packages.
+| Area | Available workflow in the prototype |
+| --- | --- |
+| Catalog | Search agents, tools, people and models; inspect a tool; review its classification, approval and supervision |
+| Agent details | Edit sample metadata, allowed models and credential status; inspect routing and recorded activity |
+| Connections | Inspect model, tool and identity paths; configure example tool destinations and identity settings |
+| Rules | Compare presets without applying them, confirm a change, create example parameter rules and inspect history |
+| Activity | Filter recorded events, pause the sample feed, add an example request and inspect the decision |
+| Approvals | Inspect a pending execution, review masked example arguments, approve/reject with a comment, simulate expiry |
+| Spending | Review costs and sample alerts; configure budget, request/token limits, person limits and tariffs |
+| Audit | Filter decisions, inspect a sample request timeline and view administrative changes |
+
+**Tool catalog review and approval of a pending execution are separate operations.** Reviewing a tool changes its catalog status; approving an execution authorizes one specific pending request. A tool approved for the catalog is not automatically protected at execution if it remains outside the gateway.
+
+## Verification
 
 ```bash
-npm run dev     # http://127.0.0.1:4173
-npm run check   # syntax and automated tests
-npm run build   # static site in dist/
+npm run check
+npm run build
+python -m pip install playwright==1.57.0
+python -m playwright install chromium
+bash qa/run_all.sh
+python qa/generate_matrix.py
+python qa/test_extended.py
+python qa/test_distribution.py
 ```
 
-## Application
+The [journey matrix](docs/journey-matrix.md) records every tested task and alternative, its steps from Home and its outcome. The [audit](docs/user-journey-audit.md) separates working simulated UI paths from capabilities that still require backend integration. CI checks JavaScript behavior, browser interactions and the generated static distribution.
 
-The navigation includes **Overview, Catalog, Activity, Rules, Approvals, Spending, Audit,** and **Integrations**.
+## Structure
 
-- **Catalog** groups agents, tools, and people. Each tool shows its execution route, approval, and current policy handling; people appear only when identified in recorded requests.
-- **Integrations** lets the operator switch connections B and C for each agent. Changes affect current tool handling and subsequent events, not the history recorded in Activity and Audit.
-- **Rules** distinguishes observing decisions from enforcing them. Critical tool actions may require another person's approval.
-- **Appearance** contains the theme controls and workspace reset.
+- `src/data.js`: sample agents, tools, requests and policy presets.
+- `src/domain.js`: simulation state and decision rules.
+- `src/views.js`: primary navigation and screens.
+- `src/operations.js`: tool review and other task workflows.
+- `src/app.js`: routing, browser state and event handling.
+- `src/styles/tokens.css`: palette and semantic design tokens.
+- `qa/`: browser journeys and measurable outcomes.
+- `docs/`: requirement mapping, audits and editorial decisions.
 
-The connection model follows [the platform requirements](https://github.com/enzo-loren/agentic-ai-governance-platform/blob/main/insumo/requisitos.yaml):
-
-| Connection | Scope |
-| --- | --- |
-| A · Inference | Model requests, responses, declared tool calls, and model usage |
-| B · MCP | Actual execution of tools routed through the gateway; other tools remain outside it |
-| C · Identity | End-user identity on requests that carry a valid user token |
-
-A is required; B and C are independent and can have partial adoption. Observing a tool call through A does not control an execution outside B.
-
-The interface uses browser-side scenarios and local storage. It does not connect to a backend or implement AWS, Cedar, MCP, or OIDC enforcement.
-
-## Code
-
-| Path | Responsibility |
-| --- | --- |
-| `src/data.js` | Agents, tools, events, and policy fixtures |
-| `src/domain.js` | Connection and decision logic |
-| `src/views.js` | Screens, drawers, and dialogs |
-| `src/app.js` | Navigation, interactions, and persistence |
-| `src/styles/tokens.css` | Color palettes, semantic colors, spacing, and typography |
-| `src/styles/app.css` | Layout and components |
-| `tests/` | Domain and UI tests |
-| `.github/workflows/` | Pull-request checks and static-site publishing |
-
-Components use semantic design tokens; new palettes belong in `src/styles/tokens.css`, not individual component rules.
-
-## Design and requirements
-
-- [Screen-to-requirement mapping and known gaps](docs/traceability.md)
-- [UX rationale](docs/ux-rationale.md)
-- [Editorial decisions](docs/editorial-board.md)
-- [QA notes](docs/qa-notes.md)
+The source of truth is [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-governance-platform/blob/main/insumo/requisitos.yaml), with [`03-politicas-y-estado-inicial.md`](https://github.com/enzo-loren/agentic-ai-governance-platform/blob/main/insumo/contexto/03-politicas-y-estado-inicial.md) and [`04-ux.md`](https://github.com/enzo-loren/agentic-ai-governance-platform/blob/main/insumo/contexto/04-ux.md) as context. The UI favors operational catalog statuses over a numerical coverage index; this differs from the unmodified `CON-04` requirement and is tracked in [traceability](docs/traceability.md).
