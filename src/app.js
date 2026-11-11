@@ -6,7 +6,7 @@ const STORE = 'agent-governance-preview-v2';
 const app = document.getElementById('app');
 function loadStoredState(){try{return localStorage.getItem(STORE)}catch{return null}}
 let state = safeReadState(loadStoredState());
-let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, activitySearch:'', activityAgent:'all', activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', rulesAgent:'atlas', requestUser:'operator' };
+let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogToolLimit:30, catalogPeopleLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, rulesSearch:'', rulesLimit:24, activitySearch:'', activityAgentSearch:'', activityLimit:30, activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', auditLimit:30, approvalsSearch:'', approvalsView:'pending', approvalsLimit:20, spendingSearch:'', spendingLimit:24, personLimit:24, requestUser:'operator' };
 let toastTimer;
 let beforeOverlayFocus = null;
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch{ /* Browser storage may be disabled */ }}
@@ -56,11 +56,20 @@ function setupEvents(){
    case 'open-event':openOverlay('drawer',{kind:'event',id:element.dataset.id});break;
    case 'open-connection':openOverlay('drawer',{kind:'connection',id:element.dataset.id});break;
    case 'open-explainer':openOverlay('drawer',{kind:'explainer',id:element.dataset.topic});break;
-   case 'catalog-tab':ui.catalogTab=element.dataset.value;ui.catalogSearch='';ui.catalogToolFilter='all';ui.catalogAgentLimit=24;render({keepScroll:true});break;
-   case 'catalog-tool-filter':ui.catalogToolFilter=element.dataset.value||'all';render({keepScroll:true});break;
+   case 'catalog-tab':ui.catalogTab=element.dataset.value;ui.catalogSearch='';ui.catalogToolFilter='all';ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;render({keepScroll:true});break;
+   case 'catalog-tool-filter':ui.catalogToolFilter=element.dataset.value||'all';ui.catalogToolLimit=30;render({keepScroll:true});break;
+   case 'approvals-view':ui.approvalsView=element.dataset.value||'pending';ui.approvalsLimit=20;render({keepScroll:true});break;
    case 'open-integration-agent':state.selectedAgent=element.dataset.id;persist();go(`agent/${encodeURIComponent(element.dataset.id)}/connections`);break;
    case 'show-more-catalog':ui.catalogAgentLimit+=24;render({keepScroll:true});break;
    case 'show-more-connections':ui.connectionLimit+=24;render({keepScroll:true});break;
+   case 'show-more-rules':ui.rulesLimit+=24;render({keepScroll:true});break;
+   case 'show-more-tools':ui.catalogToolLimit+=30;render({keepScroll:true});break;
+   case 'show-more-people':ui.catalogPeopleLimit+=24;render({keepScroll:true});break;
+   case 'show-more-activity':ui.activityLimit+=30;render({keepScroll:true});break;
+   case 'show-more-audit':ui.auditLimit+=30;render({keepScroll:true});break;
+   case 'show-more-approvals':ui.approvalsLimit+=20;render({keepScroll:true});break;
+   case 'show-more-spending':ui.spendingLimit+=24;render({keepScroll:true});break;
+   case 'show-more-persons':ui.personLimit+=24;render({keepScroll:true});break;
    case 'add-agent':if(allowEdit())openOverlay('modal',{kind:'add-agent'});break;
    case 'choose-preset':{
     if(!allowEdit())break;
@@ -96,8 +105,8 @@ function setupEvents(){
     ui.pausedIds=ui.activityPaused?new Set(state.events.map(e=>e.id)):null;
     showToast(ui.activityPaused?'Activity feed paused':'Activity feed resumed');break;
    }
-   case 'clear-activity':ui.activitySearch='';ui.activityAgent='all';ui.activityStatus='all';render({keepScroll:true});break;
-   case 'clear-audit':ui.auditSearch='';render({keepScroll:true});break;
+   case 'clear-activity':ui.activitySearch='';ui.activityAgentSearch='';ui.activityStatus='all';ui.activityLimit=30;render({keepScroll:true});break;
+   case 'clear-audit':ui.auditSearch='';ui.auditLimit=30;render({keepScroll:true});break;
    case 'approval-confirm':if(allowApproval())openOverlay('modal',{kind:'approval',id:element.dataset.id,decision:element.dataset.value});break;
    case 'confirm-approval':{
     if(!allowApproval())break;
@@ -120,7 +129,7 @@ function setupEvents(){
    case 'appearance':state.appearance=element.dataset.value;persist();render({keepScroll:true,focusOverlay:true});announce(`${state.appearance} appearance`);break;
    case 'reset-request':openOverlay('modal',{kind:'reset'});break;
    case 'confirm-reset':{
-    const prefs={theme:state.theme,appearance:state.appearance,role:state.role};state={...cleanState(),...prefs};ui.drawer=null;ui.modal=null;ui.activityPaused=false;ui.pausedIds=null;persist();go('home');showToast('Workspace reset');break;
+    const prefs={theme:state.theme,appearance:state.appearance,role:state.role};state={...cleanState(),...prefs};ui.drawer=null;ui.modal=null;ui.activityPaused=false;ui.pausedIds=null;ui.catalogSearch='';ui.connectionSearch='';ui.rulesSearch='';ui.activitySearch='';ui.activityAgentSearch='';ui.activityStatus='all';ui.auditSearch='';ui.approvalsSearch='';ui.approvalsView='pending';ui.spendingSearch='';ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;ui.connectionLimit=24;ui.rulesLimit=24;ui.activityLimit=30;ui.auditLimit=30;ui.approvalsLimit=20;ui.spendingLimit=24;ui.personLimit=24;persist();go('home');showToast('Workspace reset');break;
    }
    case 'tour-start':state.tour=0;persist();go(TOUR[0].route);break;
    case 'tour-next':{
@@ -138,16 +147,18 @@ function setupEvents(){
   if(id==='role-select'){
     state.role=value;persist();showToast(`View role: ${value}`);
   } else if(id==='request-user'){ui.requestUser=value;render({keepScroll:true});}
-  else if(id==='activity-agent'){ui.activityAgent=value;render({keepScroll:true});}
-  else if(id==='activity-status'){ui.activityStatus=value;render({keepScroll:true});}
-  else if(id==='rules-agent'){ui.rulesAgent=value;state.selectedAgent=value;persist();render({keepScroll:true});}
+  else if(id==='activity-status'){ui.activityStatus=value;ui.activityLimit=30;render({keepScroll:true});}
  });
  document.addEventListener('input',event=>{
-  const id=event.target.id;if(!['catalog-search','connection-search','activity-search','audit-search'].includes(id))return;
-  if(id==='catalog-search'){ui.catalogSearch=event.target.value;ui.catalogAgentLimit=24;}
+  const id=event.target.id;if(!['catalog-search','connection-search','rules-search','activity-search','activity-agent-search','audit-search','approvals-search','spending-search'].includes(id))return;
+  if(id==='catalog-search'){ui.catalogSearch=event.target.value;ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;}
   else if(id==='connection-search'){ui.connectionSearch=event.target.value;ui.connectionLimit=24;}
-  else if(id==='activity-search')ui.activitySearch=event.target.value;
-  else ui.auditSearch=event.target.value;
+  else if(id==='rules-search'){ui.rulesSearch=event.target.value;ui.rulesLimit=24;}
+  else if(id==='activity-search'){ui.activitySearch=event.target.value;ui.activityLimit=30;}
+  else if(id==='activity-agent-search'){ui.activityAgentSearch=event.target.value;ui.activityLimit=30;}
+  else if(id==='audit-search'){ui.auditSearch=event.target.value;ui.auditLimit=30;}
+  else if(id==='approvals-search'){ui.approvalsSearch=event.target.value;ui.approvalsLimit=20;}
+  else if(id==='spending-search'){ui.spendingSearch=event.target.value;ui.spendingLimit=24;ui.personLimit=24;}
   render({keepScroll:true,focusId:id});
  });
  document.addEventListener('submit',event=>{

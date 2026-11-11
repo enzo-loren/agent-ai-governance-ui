@@ -102,3 +102,11 @@ hr{border:0;height:1px;background:var(--border);margin:22px 0}.muted{color:var(-
   .integration-card p{margin-bottom:22px;max-width:none}
   .integration-card .button-row{margin-top:4px}
 }
+
+/* High-volume workspace: shared scoped context, bounded lists, and responsive filters. */
+.scope-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 14px;border:1px solid var(--border);border-radius:11px;background:var(--surface-2);margin:0 0 18px;font-size:12px}
+.scope-bar>span{display:inline-flex;align-items:center;gap:7px;font-weight:750;margin-right:auto}
+.scope-bar .text-link{font-size:12px}
+.toolbar .input-wrap.grow{flex:1 1 220px;max-width:560px;min-width:180px}
+.agent-tabs{overflow-x:auto;scrollbar-width:thin}
+@media(max-width:670px){.scope-bar{align-items:flex-start}.scope-bar>span{flex-basis:100%}.toolbar .input-wrap.grow{max-width:none;min-width:100%;width:100%}}
