@@ -20,18 +20,19 @@ ROOT=Path(__file__).resolve().parents[1]
 SPEC=ROOT/'qa'/'journeys.json'
 
 
-def inline_document():
+def inline_document(root=ROOT):
     modules=[]
-    for name in ('data','domain','icons','views','app'):
-        text=(ROOT/'src'/f'{name}.js').read_text()
+    for name in ('data','domain','icons','operations','views','app'):
+        text=(root/'src'/f'{name}.js').read_text()
         text=re.sub(r'^import\s+\{[^\n]+\}\s+from\s+[^\n]+;\s*','',text,flags=re.M)
         text=re.sub(r'\bexport\s+(?=(?:const|function)\b)','',text)
         text=re.sub(r'^export\s*\{[^\n]+\};','',text,flags=re.M)
+        if name=='operations':text='const e=escapeHTML;\n'+text
         if name=='views':text='const esc=escapeHTML; const I=icon;\n'+text
         modules.append(text)
     code='\n'.join(modules)+'\nwindow.__uiAudit=()=>({state,ui,hash:location.hash});'
-    styles='\n'.join((ROOT/'src/styles'/p).read_text() for p in ('tokens.css','app.css'))
-    return f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>{styles}</style></head><body><a class="skip-link" href="#main">Skip to content</a><div id="app"></div><div id="announcer" role="status" aria-live="polite"></div><script>{code}</script></body></html>'
+    styles='\n'.join((root/'src/styles'/p).read_text() for p in ('tokens.css','app.css'))
+    return f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>{styles}</style></head><body><a class="skip-link" href="#main">Skip to content</a><div id="app"></div><div id="announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div><script>{code}</script></body></html>'
 
 
 def run_one(context,case,document):
@@ -41,7 +42,9 @@ def run_one(context,case,document):
     measured=0
     log=[]
     try:
+        if case.get('viewport'):page.set_viewport_size(case['viewport'])
         page.set_content(document,wait_until='load')
+        if case.get('setup'):page.evaluate(case['setup'])
         assert page.locator('h1').count()>0, 'The home view did not render'
         assert page.evaluate('location.hash') in ('','#/home'), 'Not at home'
         initial=page.evaluate('window.__uiAudit().state')

@@ -25,5 +25,7 @@ jobs:
       - name: Run real browser journeys and check report consistency
         run: |
           bash qa/run_all.sh
+          python -u qa/test_extended.py
+          python -u qa/test_distribution.py
           python qa/generate_matrix.py
           git diff --exit-code -- qa/journey-results.json docs/journey-matrix.md

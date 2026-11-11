@@ -124,3 +124,70 @@ hr{border:0;height:1px;background:var(--border);margin:22px 0}.muted{color:var(-
 .request-actions .btn{min-width:0;width:100%;white-space:normal;overflow-wrap:anywhere;text-align:center}
 
 @media(max-width:670px){.policy-grid .policy-card{min-height:146px;padding:18px}.policy-grid .policy-card.selected{padding:17px}.policy-grid .policy-card h3{margin:12px 0 5px}}
+
+/* Task-complete prototype controls. Semantic colors and sizes come from tokens.css. */
+.op-section{margin-bottom:22px}
+.op-section .card-title-row{flex-wrap:wrap}
+.op-section .button-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.op-action-grid{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.op-compact-list{border-top:1px solid var(--border);margin-top:12px}
+.op-list-row{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:13px 0;border-bottom:1px solid var(--border);min-width:0}
+.op-list-row>div{min-width:0;overflow-wrap:anywhere}.op-list-row strong{font-size:12px}.op-list-row p{font-size:11px;color:var(--text-muted);margin:4px 0 0}
+.op-list-row .btn{flex:none}
+.op-signal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.op-signal-grid>div{min-width:0;background:var(--surface-2);border:1px solid var(--border);border-radius:11px;padding:13px}
+.op-signal-grid strong{display:block;font-size:16px;overflow-wrap:anywhere}.op-signal-grid span{display:block;font-size:11px;color:var(--text-muted)}
+.op-note{font-size:11px;color:var(--text-muted);margin:13px 0}
+.op-attribute{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;padding:12px 0;border-bottom:1px solid var(--border);font-size:12px}
+.op-attribute>span:first-child{color:var(--text-muted)}.op-attribute strong{text-align:right}
+.op-pre{max-width:100%;white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.6 var(--font-mono);border:1px solid var(--border);border-radius:10px;padding:13px;margin:13px 0;background:var(--surface-2);color:var(--text)}
+.op-select{width:100%;max-width:100%}
+.op-modal{max-height:calc(100dvh - 34px);overflow-y:auto;overscroll-behavior:contain}
+.op-modal .field-group{display:block}.op-modal .field-input{display:block;max-width:100%;width:100%}
+.op-modal .op-textarea,.drawer .op-textarea{min-height:90px;resize:vertical}
+.op-modal .modal-actions{flex-wrap:wrap}
+.op-fieldset{border:1px solid var(--border);border-radius:11px;padding:12px;margin:12px 0}
+.op-fieldset legend{font-weight:750;padding:0 4px;font-size:12px}
+.op-check{display:flex;align-items:center;gap:12px;margin:12px 0;border:1px solid var(--border);border-radius:10px;padding:11px}
+.op-check input{width:17px;height:17px;accent-color:var(--accent)}
+.op-error{background:var(--danger-bg);color:var(--danger-text);border:1px solid var(--danger-outline);padding:9px 12px;border-radius:8px;font-size:12px}
+.op-history-entry{border-bottom:1px solid var(--border);padding:15px 0}
+.op-history-entry strong{font-size:12px}.op-history-entry p{font-size:11px;margin:4px 0}
+.op-compact-tools{display:flex;align-items:end;flex-wrap:wrap;gap:10px;margin:13px 0 19px}
+.op-compact-tools label{display:flex;flex-direction:column;gap:4px;min-width:110px;flex:1 1 130px;font-size:11px;font-weight:700;color:var(--text-muted)}
+.op-compact-tools .field-input,.op-compact-tools .field-select{width:100%;min-width:0}
+.op-reviewer{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 17px;padding:12px 14px;border:1px solid var(--border);border-radius:11px;background:var(--surface)}
+.op-reviewer>label{font-size:12px;font-weight:700}
+.op-reviewer .field-select{flex:none;width:min(235px,100%)}
+.op-audit-controls{border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:14px;margin:0 0 17px}
+.op-audit-controls .op-compact-tools{margin:0 0 12px}
+.op-audit-controls .op-compact-tools:last-child{margin-bottom:0}
+@media(max-width:670px){.op-signal-grid{grid-template-columns:1fr}.op-list-row{align-items:flex-start;flex-wrap:wrap}.op-compact-tools label{flex:1 1 100%}.op-action-grid .btn{white-space:normal}.op-modal{padding:20px}}
+/* The presentation toggle is not the guided tour; it changes reading scale and chrome. */
+.presentation-view .sidebar{display:none}
+.presentation-view.app-shell{grid-template-columns:minmax(0,1fr)}
+.presentation-view .topbar{position:static;padding:12px 30px}
+.presentation-view .page-content{width:min(1520px,100%);padding:30px 48px}
+.presentation-view .page-content h1{font-size:clamp(36px,3.8vw,55px)}
+.presentation-view .page-content h2{font-size:clamp(20px,2.1vw,27px)}
+.presentation-view .page-content .card{box-shadow:none}
+.presentation-view .page-content .muted,.presentation-view .page-content .micro{font-size:13px}
+.presentation-view .hero-art{display:none}
+.presentation-view .hero{min-height:0}
+.presentation-view .hero-main{padding:25px 30px}
+@media(max-width:670px){.presentation-view .page-content{padding:21px 15px}}
+/* Narrow desktop: integration actions stack before they can overflow a card. */
+.integration-card .button-row{flex-wrap:wrap;min-width:0}
+.integration-card .button-row .btn{flex:1 1 108px;min-width:0;white-space:normal;text-align:center}
+.op-audit-quick{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0 0 15px}
+.op-audit-quick .btn{white-space:normal}
+.tool-mobile-list{display:none}
+@media(max-width:670px){
+  .tool-desktop{display:none}
+  .tool-mobile-list{display:grid;gap:11px}
+  .tool-mobile-card{padding:16px;display:grid;gap:11px}
+  .tool-mobile-card .space-between{align-items:flex-start;flex-wrap:wrap}
+  .tool-mobile-card strong{font-size:13px;min-width:0;overflow-wrap:anywhere}
+  .tool-mobile-card p{margin:0;color:var(--text-muted);font-size:12px}
+  .tool-mobile-card .btn{flex-shrink:0}
+}

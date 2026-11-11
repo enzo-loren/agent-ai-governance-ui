@@ -36,6 +36,7 @@ const paths={
   wallet:'<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 9V5a2 2 0 0 1 2-2h12"/><path d="M16 14h4"/>',
   circle:'<circle cx="12" cy="12" r="9"/>',
   download:'<path d="M12 3v13m-4-4 4 4 4-4M4 19v2h16v-2"/>',
+  monitor:'<rect x=3 y=4 width=18 height=14 rx=2/><path d="M8 22h8m-4-4v4"/>',
   command:'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12h8m-4-4v8"/>'
 };
 export function icon(name,size=18,className=''){

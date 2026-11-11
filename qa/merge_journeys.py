@@ -15,7 +15,8 @@ output={
  'summary':{
    'cases':len(results),
    'observedWorking':sum(x['result']=='as_expected' and x['status']=='ui-working' for x in results),
-   'knownGapsConfirmed':sum(x['result']=='as_expected' and x['status']!='ui-working' for x in results),
+   'partialPreview':sum(x['result']=='as_expected' and x['status']=='partial' for x in results),
+   'unreachable':sum(x['result']=='as_expected' and x['status']=='gap' for x in results),
    'unexpectedFailures':sum(x['result']=='failed' for x in results)
  },
  'results':results

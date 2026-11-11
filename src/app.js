@@ -1,4 +1,5 @@
-import { cleanState, safeReadState, canEdit, canApprove, agentById, safeId, appendScenario, changeMode, toggleConnection, decideApproval } from './domain.js';
+import {handleOpsClick,handleOpsSubmit} from './operations.js';
+import { cleanState, safeReadState, canEdit, canApprove, agentById, safeId, appendScenario, changeMode, toggleConnection, decideApproval, changeRecord } from './domain.js';
 import { TOUR, CONNECTIONS, POLICY_PRESETS } from './data.js';
 import { renderPage, renderAppShell, integrationInstructions } from './views.js';
 
@@ -6,7 +7,7 @@ const STORE = 'agent-governance-preview-v2';
 const app = document.getElementById('app');
 function loadStoredState(){try{return localStorage.getItem(STORE)}catch{return null}}
 let state = safeReadState(loadStoredState());
-let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogToolLimit:30, catalogPeopleLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, rulesSearch:'', rulesLimit:24, activitySearch:'', activityAgentSearch:'', activityLimit:30, activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', auditLimit:30, approvalsSearch:'', approvalsView:'pending', approvalsLimit:20, spendingSearch:'', spendingLimit:24, personLimit:24, requestUser:'operator', policyPreview:null };
+let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogToolLimit:30, catalogPeopleLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, rulesSearch:'', rulesLimit:24, activitySearch:'', activityAgentSearch:'', activityLimit:30, activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', auditLimit:30, approvalsSearch:'', approvalsView:'pending', approvalsLimit:20, spendingSearch:'', spendingLimit:24, personLimit:24, requestUser:'operator', policyPreview:null, activityUser:'', activityChannel:'', auditFilters:{}, auditFiltersOpen:false, auditMode:'events', toolDraft:null, opError:'' };
 let toastTimer;
 let beforeOverlayFocus = null;
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch{ /* Browser storage may be disabled */ }}
@@ -46,6 +47,15 @@ function setupEvents(){
   const act=element.dataset.action;
   if(!act)return;
   event.preventDefault();
+  if(act.startsWith('op-')){
+   const result=handleOpsClick(state,ui,element);
+   if(!result.handled)return;
+   if(result.changed)persist();
+   if(act==='op-view-tool-reviews'||act==='op-show-agent-tools'){go('catalog');return;}
+   if(result.message)showToast(result.message);
+   else render({keepScroll:true,focusOverlay:Boolean(ui.modal||ui.drawer)});
+   return;
+  }
   switch(act){
    case 'navigate':go(element.dataset.route||'home');break;
    case 'toggle-nav':ui.navOpen=!ui.navOpen;render({keepScroll:true});break;
@@ -91,18 +101,18 @@ function setupEvents(){
     const a=agentById(state,element.dataset.id);
     const next=Number(element.dataset.value);
     if(!a||ui.modal?.kind!=='policy-change'||ui.modal.id!==a.id||ui.modal.preset!==next||!POLICY_PRESETS.some(p=>p.id===next))break;
-    a.preset=next;ui.policyPreview=null;ui.modal=null;persist();showToast('Policy updated');break;
+    const before=a.preset;a.preset=next;changeRecord(state,'Policy preset',a.id,a.name,before,next);ui.policyPreview=null;ui.modal=null;persist();showToast('Policy updated');break;
    }
    case 'preview-enforce':if(allowEdit())openOverlay('modal',{kind:'enforce',id:element.dataset.id});break;
    case 'confirm-mode':{
     if(!allowEdit())break;
-    changeMode(state,element.dataset.id,element.dataset.value);persist();ui.modal=null;showToast(element.dataset.value==='enforce'?'Rules enabled':'Agent returned to Observe');break;
+    const agent=agentById(state,element.dataset.id);if(!agent?.owner?.trim()){showToast('Assign an owner before enabling rules');break;}const previous=agent?.mode;changeMode(state,element.dataset.id,element.dataset.value);if(agent)changeRecord(state,'Agent mode',agent.id,agent.name,previous,agent.mode);persist();ui.modal=null;showToast(element.dataset.value==='enforce'?'Rules enabled':'Agent returned to Observe');break;
    }
    case 'toggle-pause':if(allowEdit())openOverlay('modal',{kind:'pause',id:element.dataset.id});break;
    case 'confirm-pause':{
     if(!allowEdit())break;
     const a=agentById(state,element.dataset.id);if(!a)break;
-    changeMode(state,a.id,a.mode==='suspended'?(a.previousMode||'observe'):'suspended');persist();ui.modal=null;showToast(a.mode==='suspended'?'Agent paused':'Agent resumed');break;
+    const previous=a.mode;changeMode(state,a.id,a.mode==='suspended'?(a.previousMode||'observe'):'suspended');changeRecord(state,'Agent mode',a.id,a.name,previous,a.mode);persist();ui.modal=null;showToast(a.mode==='suspended'?'Agent paused':'Agent resumed');break;
    }
    case 'simulate':{
     const id=element.dataset.id||'atlas';const a=agentById(state,id);if(!a)break;
@@ -116,22 +126,28 @@ function setupEvents(){
     ui.pausedIds=ui.activityPaused?new Set(state.events.map(e=>e.id)):null;
     showToast(ui.activityPaused?'Activity feed paused':'Activity feed resumed');break;
    }
-   case 'clear-activity':ui.activitySearch='';ui.activityAgentSearch='';ui.activityStatus='all';ui.activityLimit=30;render({keepScroll:true});break;
-   case 'clear-audit':ui.auditSearch='';ui.auditLimit=30;render({keepScroll:true});break;
+   case 'clear-activity':ui.activitySearch='';ui.activityAgentSearch='';ui.activityUser='';ui.activityChannel='';ui.activityStatus='all';ui.activityLimit=30;render({keepScroll:true});break;
+   case 'clear-audit':ui.auditSearch='';ui.auditFilters={};ui.auditLimit=30;render({keepScroll:true});break;
    case 'approval-confirm':if(allowApproval())openOverlay('modal',{kind:'approval',id:element.dataset.id,decision:element.dataset.value});break;
    case 'confirm-approval':{
     if(!allowApproval())break;
-    const ok=decideApproval(state,element.dataset.id,element.dataset.value);
+    const ok=decideApproval(state,element.dataset.id,element.dataset.value,state.reviewPerson||'Elena Kim',document.getElementById('approval-comment')?.value||'');
     if(ok){ui.modal=null;persist();showToast(element.dataset.value==='approved'?'Action approved':'Action rejected')}
     else showToast('This action could not be reviewed');break;
    }
    case 'edit-budget':if(allowEdit())openOverlay('modal',{kind:'budget',id:element.dataset.id});break;
    case 'toggle-connection':{
     if(!allowEdit())break;
-    if(!toggleConnection(state,element.dataset.agent,element.dataset.id))break;
-    const agent=agentById(state,element.dataset.agent);
-    const name=CONNECTIONS.find(c=>c.id===element.dataset.id)?.name||'Connection';
-    persist();showToast(`${name} ${agent?.connections.includes(element.dataset.id)?'connected':'disconnected'}`);break;
+    if(!['B','C'].includes(element.dataset.id)||!agentById(state,element.dataset.agent))break;
+    openOverlay('modal',{kind:'connection-change',id:element.dataset.agent,connection:element.dataset.id});break;
+   }
+   case 'confirm-connection':{
+    if(!allowEdit()||ui.modal?.kind!=='connection-change')break;
+    const a=agentById(state,ui.modal.id);if(!a||ui.modal.connection!==element.dataset.id)break;
+    const before=[...a.connections];if(!toggleConnection(state,a.id,ui.modal.connection))break;
+    changeRecord(state,'Connection change',a.id,CONNECTIONS.find(c=>c.id===ui.modal.connection)?.name||'Connection',before,[...a.connections]);
+    const name=CONNECTIONS.find(c=>c.id===ui.modal.connection)?.name||'Connection';
+    ui.modal=null;persist();showToast(`${name} preview updated`);break;
    }
    case 'copy-connection':copyText(integrationInstructions[element.dataset.id]?.snippet||'');break;
    case 'copy-trace':copyText(element.dataset.value||'');break;
@@ -140,7 +156,7 @@ function setupEvents(){
    case 'appearance':state.appearance=element.dataset.value;persist();render({keepScroll:true,focusOverlay:true});announce(`${state.appearance} appearance`);break;
    case 'reset-request':openOverlay('modal',{kind:'reset'});break;
    case 'confirm-reset':{
-    const prefs={theme:state.theme,appearance:state.appearance,role:state.role};state={...cleanState(),...prefs};ui.drawer=null;ui.modal=null;ui.policyPreview=null;ui.activityPaused=false;ui.pausedIds=null;ui.catalogSearch='';ui.connectionSearch='';ui.rulesSearch='';ui.activitySearch='';ui.activityAgentSearch='';ui.activityStatus='all';ui.auditSearch='';ui.approvalsSearch='';ui.approvalsView='pending';ui.spendingSearch='';ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;ui.connectionLimit=24;ui.rulesLimit=24;ui.activityLimit=30;ui.auditLimit=30;ui.approvalsLimit=20;ui.spendingLimit=24;ui.personLimit=24;persist();go('home');showToast('Workspace reset');break;
+    const prefs={theme:state.theme,appearance:state.appearance,role:state.role};state={...cleanState(),...prefs};ui.drawer=null;ui.modal=null;ui.policyPreview=null;ui.activityUser='';ui.activityChannel='';ui.auditFilters={};ui.auditFiltersOpen=false;ui.auditMode='events';ui.activityPaused=false;ui.pausedIds=null;ui.catalogSearch='';ui.connectionSearch='';ui.rulesSearch='';ui.activitySearch='';ui.activityAgentSearch='';ui.activityStatus='all';ui.auditSearch='';ui.approvalsSearch='';ui.approvalsView='pending';ui.spendingSearch='';ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;ui.connectionLimit=24;ui.rulesLimit=24;ui.activityLimit=30;ui.auditLimit=30;ui.approvalsLimit=20;ui.spendingLimit=24;ui.personLimit=24;persist();go('home');showToast('Workspace reset');break;
    }
    case 'tour-start':state.tour=0;persist();go(TOUR[0].route);break;
    case 'tour-next':{
@@ -155,14 +171,19 @@ function setupEvents(){
  });
  document.addEventListener('change',event=>{
   const id=event.target.id;const value=event.target.value;
-  if(id==='role-select'){
+  if(id==='op-reviewer-person'){state.reviewPerson=value;persist();render({keepScroll:true});}
+  else if(id==='activity-channel'){ui.activityChannel=value;render({keepScroll:true});}
+  else if(['audit-model','audit-channel','audit-connection','audit-status'].includes(id)){ui.auditFilters[id.replace('audit-','')]=value;render({keepScroll:true});}
+  else if(id==='role-select'){
     state.role=value;persist();showToast(`View role: ${value}`);
   } else if(id==='request-user'){ui.requestUser=value;render({keepScroll:true});}
   else if(id==='activity-status'){ui.activityStatus=value;ui.activityLimit=30;render({keepScroll:true});}
  });
  document.addEventListener('input',event=>{
-  const id=event.target.id;if(!['catalog-search','connection-search','rules-search','activity-search','activity-agent-search','audit-search','approvals-search','spending-search'].includes(id))return;
-  if(id==='catalog-search'){ui.catalogSearch=event.target.value;ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;}
+  const id=event.target.id;if(!['activity-user','audit-agent','audit-user','audit-tool','audit-date-from','audit-date-to','catalog-search','connection-search','rules-search','activity-search','activity-agent-search','audit-search','approvals-search','spending-search'].includes(id))return;
+  if(id==='activity-user'){ui.activityUser=event.target.value;ui.activityLimit=30;}
+  else if(['audit-agent','audit-user','audit-tool','audit-date-from','audit-date-to'].includes(id)){ui.auditFilters[id.replace('audit-','')]=event.target.value;ui.auditLimit=30;}
+  else if(id==='catalog-search'){ui.catalogSearch=event.target.value;ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;}
   else if(id==='connection-search'){ui.connectionSearch=event.target.value;ui.connectionLimit=24;}
   else if(id==='rules-search'){ui.rulesSearch=event.target.value;ui.rulesLimit=24;}
   else if(id==='activity-search'){ui.activitySearch=event.target.value;ui.activityLimit=30;}
@@ -173,6 +194,12 @@ function setupEvents(){
   render({keepScroll:true,focusId:id});
  });
  document.addEventListener('submit',event=>{
+  if(event.target.getAttribute('id')?.startsWith('op-')){
+    event.preventDefault();const r=handleOpsSubmit(state,ui,event.target);
+    if(!r.handled)return;if(r.changed)persist();
+    if(r.message)showToast(r.message);else render({keepScroll:true,focusOverlay:Boolean(ui.modal||ui.drawer)});
+    return;
+  }
   if(event.target.getAttribute('id')==='new-agent-form'){
     event.preventDefault();if(!allowEdit())return;
     const fd=new FormData(event.target);const name=String(fd.get('name')||'').trim();const owner=String(fd.get('owner')||'').trim();if(!name||!owner)return;
@@ -183,7 +210,7 @@ function setupEvents(){
     event.preventDefault();if(!allowEdit())return;
     const fd=new FormData(event.target);const agent=agentById(state,fd.get('id'));const num=Number(fd.get('budget'));
     if(!agent||!Number.isFinite(num)||num<1||num>100000){showToast('Enter a budget from 1 to 100,000');return;}
-    agent.budget=num;persist();ui.modal=null;showToast('Daily budget updated');
+    changeRecord(state,'Daily budget',agent.id,agent.name,agent.budget,num);agent.budget=num;persist();ui.modal=null;showToast('Daily budget updated');
   }
  });
  document.addEventListener('keydown',event=>{
