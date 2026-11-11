@@ -23,7 +23,7 @@ for(const [name,keys] of configurations){
   assert.equal(local.status,'outside','even A+B+C cannot stop a local tool');
   assert.equal(local.evidence,false);
   assert.match(pageAgent(s,ui(),'atlas','connections'),/Tool execution/);
-  assert.match(pageRules(s,ui()),/With this policy/);
+  assert.match(pageRules(s,ui(),'atlas'),/With this policy/);
  });
 }
 test('B is partial and counted by registered tools rather than number of connection switches',()=>{
@@ -76,25 +76,25 @@ test('switching B or C updates approval availability, navigation count and pendi
  assert.equal(openApprovals(s).length,0);
  assert.match(approvalBlocker(s,s.approvals[0]),/Identify users/);
 });
-test('spending only shows per-person detail with an active C connection, not just historical names',()=>{
+test('spending retains identity in historical cost records after C disconnects',()=>{
  const s=make(['A']);
- assert.match(pageSpending(s),/No user attribution/);
- assert.doesNotMatch(pageSpending(s),/Maya Chen/);
+ assert.match(pageSpending(s),/Maya Chen/);
  toggleConnection(s,'atlas','C');
  assert.match(pageSpending(s),/Maya Chen/);
  toggleConnection(s,'atlas','C');
- assert.doesNotMatch(pageSpending(s),/Maya Chen/);
+ assert.match(pageSpending(s),/Maya Chen/);
+ assert.match(pageSpending(s),/Historical attribution is preserved/);
 });
 test('policy 2 shows missing dependency warnings without turning B or C into prerequisites for A',()=>{
  const s=make(['A']);
  assert.deepEqual(policyGaps(agentById(s,'atlas')).length,2);
- assert.match(pageRules(s,ui()),/Writes require user identity/);
- assert.match(pageRules(s,ui()),/Critical execution requires routed tool calls/);
+ assert.match(pageRules(s,ui(),'atlas'),/Writes require user identity/);
+ assert.match(pageRules(s,ui(),'atlas'),/Critical execution requires routed tool calls/);
  toggleConnection(s,'atlas','C');
  assert.deepEqual(policyGaps(agentById(s,'atlas')).length,1);
  toggleConnection(s,'atlas','B');
  assert.deepEqual(policyGaps(agentById(s,'atlas')).length,0);
- assert.match(pageRules(s,ui()),/Can request a second-person approval/);
+ assert.match(pageRules(s,ui(),'atlas'),/Can request a second-person approval/);
 });
 test('view for a single agent shows a path combination, not a false governance score',()=>{
  const s=make(['A','B']);

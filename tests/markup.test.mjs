@@ -23,8 +23,8 @@ test('Auditor never receives write or approval actions in markup',()=>{
  const audit=structuredClone(state);audit.role='auditor';
  const catalog=renderPage(audit,ui,'catalog');
  assert.doesNotMatch(catalog,/data-action="add-agent"/);
- assert.doesNotMatch(renderPage(audit,ui,'rules'),/data-action="choose-preset"[^>]*aria-pressed[^>]*\bdisabled/); // separately ensure all rule buttons are disabled
- const buttons=renderPage(audit,ui,'rules').match(/data-action="choose-preset"[^>]*>/g)||[];
+ assert.doesNotMatch(renderPage(audit,ui,'rules'),/id="rules-agent"/);
+ const buttons=renderPage(audit,ui,'agent','atlas','rules').match(/data-action="choose-preset"[^>]*>/g)||[];
  assert.equal(buttons.length,3);
  buttons.forEach(b=>assert.match(b,/\bdisabled\b/));
  assert.match(renderPage(audit,ui,'approvals'),/data-action="approval-confirm"[^>]*disabled/);
