@@ -64,3 +64,7 @@ The Connections section lists agents with the same searchable card pattern as Ca
 - **CON-05:** Approvals separates pending and reviewed decisions, supports search, and renders 20 results initially. Reviewer authorization, expiration, and conflicts require a backend.
 - **CON-06 / FIN-01 / FIN-03:** Spending provides agent-scoped budgets and a bounded historical per-person view, but its fixture totals do not validate real billing or cost attribution.
 - **EVD-05 / EVD-06:** The fixture has trace IDs but no workflow/session/parent relationship. An audit trail across hundreds of multi-step flows requires additional event correlation fields and a dedicated drill-down. See [`scale-ux-audit.md`](scale-ux-audit.md).
+
+## End-to-end user journeys audit · 2026-11-11
+
+The [full journey audit](user-journey-audit.md), [93-case matrix](journey-matrix.md), and [executed browser cases](../qa/journeys.json) trace the console workflows and alternative paths to the governing requirements. The audit records a completed browser interaction separately from backend enforcement; 56 sample-UI paths are functional, 6 are partial, and 31 have no completion path. A known gap must not be interpreted as a passing acceptance test simply because its absence is asserted. A budget form submission bug discovered during the walkthrough is corrected in this branch.

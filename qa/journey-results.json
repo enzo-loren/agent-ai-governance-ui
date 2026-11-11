@@ -1,0 +1,1171 @@
+{
+  "method": "Actual browser DOM interactions from #/home, one step per click, field fill, or select change. No typing-character, scrolling, or menu opening double counts.",
+  "source": "UI source files on current branch; browser inlined only to remove network dependence.",
+  "summary": {
+    "cases": 93,
+    "observedWorking": 56,
+    "knownGapsConfirmed": 37,
+    "unexpectedFailures": 0
+  },
+  "results": [
+    {
+      "id": "C-01",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click a[href=\"#/agent/atlas\"].btn"
+      ]
+    },
+    {
+      "id": "C-02",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. fill #catalog-search"
+      ]
+    },
+    {
+      "id": "C-03",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. fill #catalog-search"
+      ]
+    },
+    {
+      "id": "C-04",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 5,
+      "stepsToCompletion": 5,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click [data-action=\"add-agent\"]",
+        "3. fill #new-agent-name",
+        "4. fill #new-agent-owner",
+        "5. click #new-agent-form button[type=\"submit\"]"
+      ]
+    },
+    {
+      "id": "C-05",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click [data-action=\"add-agent\"]",
+        "3. click .modal-card [data-action=\"close-overlay\"]"
+      ]
+    },
+    {
+      "id": "C-06",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]"
+      ]
+    },
+    {
+      "id": "C-07",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]"
+      ]
+    },
+    {
+      "id": "C-08",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]"
+      ]
+    },
+    {
+      "id": "C-09",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]"
+      ]
+    },
+    {
+      "id": "C-10",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"tools\"]",
+        "3. click [data-action=\"catalog-tool-filter\"][data-value=\"attention\"]"
+      ]
+    },
+    {
+      "id": "C-11",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+      ]
+    },
+    {
+      "id": "C-12",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 3,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"tools\"]",
+        "3. click [data-action=\"catalog-tool-filter\"][data-value=\"attention\"]"
+      ]
+    },
+    {
+      "id": "C-13",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 3,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"tools\"]",
+        "3. click [data-action=\"catalog-tool-filter\"][data-value=\"attention\"]"
+      ]
+    },
+    {
+      "id": "C-14",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 3,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"tools\"]",
+        "3. click [data-action=\"catalog-tool-filter\"][data-value=\"attention\"]"
+      ]
+    },
+    {
+      "id": "C-15",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+      ]
+    },
+    {
+      "id": "C-16",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"tools\"]",
+        "3. click [data-action=\"catalog-tool-filter\"][data-value=\"outside\"]"
+      ]
+    },
+    {
+      "id": "C-17",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+      ]
+    },
+    {
+      "id": "C-18",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+      ]
+    },
+    {
+      "id": "C-19",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"identities\"]"
+      ]
+    },
+    {
+      "id": "C-20",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click button[data-action=\"catalog-tab\"][data-value=\"models\"]"
+      ]
+    },
+    {
+      "id": "C-21",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]"
+      ]
+    },
+    {
+      "id": "I-01",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/connections\"]",
+        "2. fill #connection-search"
+      ]
+    },
+    {
+      "id": "I-02",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/connections\"]",
+        "2. click a[href=\"#/agent/atlas/connections\"].btn",
+        "3. click [data-action=\"open-connection\"][data-id=\"B\"]"
+      ]
+    },
+    {
+      "id": "I-03",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/connections\"]",
+        "2. click a[href=\"#/agent/invoice/connections\"].btn",
+        "3. click [data-action=\"toggle-connection\"][data-id=\"B\"][data-agent=\"invoice\"]"
+      ]
+    },
+    {
+      "id": "I-04",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/connections\"]",
+        "2. click a[href=\"#/agent/atlas/connections\"].btn",
+        "3. click [data-action=\"toggle-connection\"][data-id=\"C\"][data-agent=\"atlas\"]"
+      ]
+    },
+    {
+      "id": "I-05",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 3,
+      "steps": [
+        "1. click a.nav-link[href=\"#/connections\"]",
+        "2. click a[href=\"#/agent/atlas/connections\"].btn",
+        "3. click [data-action=\"open-connection\"][data-id=\"B\"]"
+      ]
+    },
+    {
+      "id": "I-06",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 3,
+      "steps": [
+        "1. click a.nav-link[href=\"#/connections\"]",
+        "2. click a[href=\"#/agent/atlas/connections\"].btn",
+        "3. click [data-action=\"open-connection\"][data-id=\"C\"]"
+      ]
+    },
+    {
+      "id": "I-07",
+      "status": "partial",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 3,
+      "steps": [
+        "1. click a.nav-link[href=\"#/connections\"]",
+        "2. click a[href=\"#/agent/atlas/connections\"].btn",
+        "3. click [data-action=\"open-connection\"][data-id=\"A\"]"
+      ]
+    },
+    {
+      "id": "A-01",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": 1,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]"
+      ]
+    },
+    {
+      "id": "A-02",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]",
+        "2. click [data-action=\"preview-enforce\"][data-id=\"atlas\"]",
+        "3. click [data-action=\"confirm-mode\"][data-id=\"atlas\"]"
+      ]
+    },
+    {
+      "id": "A-03",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]",
+        "2. click [data-action=\"preview-enforce\"][data-id=\"atlas\"]",
+        "3. click .modal-card [data-action=\"close-overlay\"]"
+      ]
+    },
+    {
+      "id": "A-04",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]",
+        "2. click [data-action=\"toggle-pause\"][data-id=\"atlas\"]",
+        "3. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]"
+      ]
+    },
+    {
+      "id": "A-05",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 5,
+      "stepsToCompletion": 5,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]",
+        "2. click [data-action=\"toggle-pause\"][data-id=\"atlas\"]",
+        "3. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]",
+        "4. click [data-action=\"toggle-pause\"][data-id=\"atlas\"]",
+        "5. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]"
+      ]
+    },
+    {
+      "id": "A-06",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]",
+        "2. click [data-action=\"simulate\"][data-channel=\"inference\"][data-id=\"atlas\"]"
+      ]
+    },
+    {
+      "id": "A-07",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]",
+        "2. click [data-action=\"simulate\"][data-channel=\"tool\"][data-tool=\"t5\"]"
+      ]
+    },
+    {
+      "id": "A-08",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]"
+      ]
+    },
+    {
+      "id": "R-01",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. fill #rules-search",
+        "3. click a[href=\"#/agent/atlas/rules\"].btn"
+      ]
+    },
+    {
+      "id": "R-02",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/atlas/rules\"].btn",
+        "3. click [data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
+      ]
+    },
+    {
+      "id": "R-03",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/atlas/rules\"].btn",
+        "3. click [data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]",
+        "4. click [data-action=\"cancel-policy-preview\"]"
+      ]
+    },
+    {
+      "id": "R-04",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 5,
+      "stepsToCompletion": 5,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/atlas/rules\"].btn",
+        "3. click [data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]",
+        "4. click [data-action=\"review-policy-change\"]",
+        "5. click [data-action=\"confirm-preset\"]"
+      ]
+    },
+    {
+      "id": "R-05",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 5,
+      "stepsToCompletion": 5,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/atlas/rules\"].btn",
+        "3. click [data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]",
+        "4. click [data-action=\"review-policy-change\"]",
+        "5. click .modal-card [data-action=\"close-overlay\"]"
+      ]
+    },
+    {
+      "id": "R-06",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/invoice/rules\"].btn",
+        "3. click [data-action=\"choose-preset\"][data-value=\"2\"][data-id=\"invoice\"]"
+      ]
+    },
+    {
+      "id": "R-07",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/rules\"]",
+        "3. click a[href=\"#/agent/atlas/rules\"].btn",
+        "4. click [data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
+      ]
+    },
+    {
+      "id": "R-08",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/atlas/rules\"].btn"
+      ]
+    },
+    {
+      "id": "R-09",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/atlas/rules\"].btn"
+      ]
+    },
+    {
+      "id": "R-10",
+      "status": "partial",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 3,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/atlas/rules\"].btn",
+        "3. click [data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
+      ]
+    },
+    {
+      "id": "R-11",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/atlas/rules\"].btn"
+      ]
+    },
+    {
+      "id": "V-01",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/activity\"]",
+        "2. fill #activity-agent-search"
+      ]
+    },
+    {
+      "id": "V-02",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/activity\"]",
+        "2. select #activity-status"
+      ]
+    },
+    {
+      "id": "V-03",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/activity\"]",
+        "2. click button.row-link[data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+      ]
+    },
+    {
+      "id": "V-04",
+      "status": "partial",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. click a.nav-link[href=\"#/activity\"]",
+        "2. click [data-action=\"activity-pause\"]"
+      ]
+    },
+    {
+      "id": "V-05",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.nav-link[href=\"#/activity\"]"
+      ]
+    },
+    {
+      "id": "V-06",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.nav-link[href=\"#/activity\"]"
+      ]
+    },
+    {
+      "id": "H-01",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/approvals\"]",
+        "3. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]",
+        "4. click [data-action=\"confirm-approval\"][data-id=\"APR-201\"]"
+      ]
+    },
+    {
+      "id": "H-02",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/approvals\"]",
+        "3. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"rejected\"]",
+        "4. click [data-action=\"confirm-approval\"][data-id=\"APR-201\"]"
+      ]
+    },
+    {
+      "id": "H-03",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/approvals\"]",
+        "3. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]",
+        "4. click .modal-card [data-action=\"close-overlay\"]"
+      ]
+    },
+    {
+      "id": "H-04",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": 1,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/approvals\"]"
+      ]
+    },
+    {
+      "id": "H-05",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/approvals\"]"
+      ]
+    },
+    {
+      "id": "H-06",
+      "status": "partial",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/approvals\"]"
+      ]
+    },
+    {
+      "id": "H-07",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 3,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/approvals\"]",
+        "3. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]"
+      ]
+    },
+    {
+      "id": "H-08",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/approvals\"]"
+      ]
+    },
+    {
+      "id": "H-09",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/approvals\"]",
+        "2. click [data-action=\"approvals-view\"][data-value=\"reviewed\"]"
+      ]
+    },
+    {
+      "id": "S-01",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. fill #spending-search"
+      ]
+    },
+    {
+      "id": "S-02",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click [data-action=\"edit-budget\"][data-id=\"atlas\"]",
+        "3. fill #budget-amount",
+        "4. click #budget-form button[type=\"submit\"]"
+      ]
+    },
+    {
+      "id": "S-03",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click [data-action=\"edit-budget\"][data-id=\"atlas\"]",
+        "3. fill #budget-amount",
+        "4. click .modal-card [data-action=\"close-overlay\"]"
+      ]
+    },
+    {
+      "id": "S-04",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/spending\"]"
+      ]
+    },
+    {
+      "id": "S-05",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]"
+      ]
+    },
+    {
+      "id": "S-06",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]"
+      ]
+    },
+    {
+      "id": "S-07",
+      "status": "partial",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]"
+      ]
+    },
+    {
+      "id": "S-08",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]"
+      ]
+    },
+    {
+      "id": "E-01",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/audit\"]",
+        "2. fill #audit-search",
+        "3. click button.row-link[data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+      ]
+    },
+    {
+      "id": "E-02",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/audit\"]",
+        "2. click button.row-link[data-action=\"open-event\"][data-id=\"TRC-1044\"]",
+        "3. click .drawer details summary"
+      ]
+    },
+    {
+      "id": "E-03",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.nav-link[href=\"#/audit\"]"
+      ]
+    },
+    {
+      "id": "E-04",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. click a.nav-link[href=\"#/audit\"]",
+        "2. click button.row-link[data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+      ]
+    },
+    {
+      "id": "E-05",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.nav-link[href=\"#/audit\"]"
+      ]
+    },
+    {
+      "id": "E-06",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 2,
+      "steps": [
+        "1. click a.nav-link[href=\"#/audit\"]",
+        "2. click button.row-link[data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+      ]
+    },
+    {
+      "id": "E-07",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/audit\"]",
+        "2. fill #audit-search"
+      ]
+    },
+    {
+      "id": "G-01",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click [data-action=\"open-settings\"]",
+        "2. click [data-action=\"theme\"][data-value=\"violet\"]"
+      ]
+    },
+    {
+      "id": "G-02",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click [data-action=\"open-settings\"]",
+        "2. click [data-action=\"reset-request\"]",
+        "3. click [data-action=\"confirm-reset\"]"
+      ]
+    },
+    {
+      "id": "G-03",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click [data-action=\"open-settings\"]",
+        "2. click [data-action=\"reset-request\"]",
+        "3. click .modal-card [data-action=\"close-overlay\"]"
+      ]
+    },
+    {
+      "id": "G-04",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click [data-action=\"tour-start\"]",
+        "2. click [data-action=\"tour-next\"]"
+      ]
+    },
+    {
+      "id": "G-05",
+      "status": "gap",
+      "result": "as_expected",
+      "actionsFromHome": 1,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 1,
+      "steps": [
+        "1. click a.nav-link[href=\"#/activity\"]"
+      ]
+    },
+    {
+      "id": "G-06",
+      "status": "partial",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": null,
+      "stepsToBlocker": 3,
+      "steps": [
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click a[href=\"#/agent/atlas\"].btn",
+        "3. click [data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+      ]
+    },
+    {
+      "id": "C-22",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/catalog\"]"
+      ]
+    },
+    {
+      "id": "I-08",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/connections\"]",
+        "3. click a[href=\"#/agent/atlas/connections\"].btn"
+      ]
+    },
+    {
+      "id": "I-09",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/connections\"]",
+        "2. click a[href=\"#/agent/atlas/connections\"].btn"
+      ]
+    },
+    {
+      "id": "I-10",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/connections\"]",
+        "2. click a[href=\"#/agent/atlas/connections\"].btn",
+        "3. click [data-action=\"toggle-connection\"][data-id=\"C\"][data-agent=\"atlas\"]"
+      ]
+    },
+    {
+      "id": "A-09",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]",
+        "2. select #request-user",
+        "3. click [data-action=\"simulate\"][data-channel=\"inference\"][data-id=\"atlas\"]"
+      ]
+    },
+    {
+      "id": "R-12",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 5,
+      "stepsToCompletion": 5,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/invoice/rules\"].btn",
+        "3. click [data-action=\"choose-preset\"][data-id=\"invoice\"][data-value=\"2\"]",
+        "4. click [data-action=\"review-policy-change\"]",
+        "5. click [data-action=\"confirm-preset\"]"
+      ]
+    },
+    {
+      "id": "V-07",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.agent-name[href=\"#/agent/atlas\"]",
+        "2. click a[href=\"#/activity/atlas\"]"
+      ]
+    },
+    {
+      "id": "H-10",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. select #role-select",
+        "2. click a.nav-link[href=\"#/approvals\"]"
+      ]
+    },
+    {
+      "id": "S-09",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click [data-action=\"edit-budget\"][data-id=\"atlas\"]",
+        "3. fill #budget-amount",
+        "4. click #budget-form button[type=\"submit\"]"
+      ]
+    },
+    {
+      "id": "E-08",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/audit\"]",
+        "2. fill #audit-search",
+        "3. click [data-action=\"clear-audit\"]"
+      ]
+    }
+  ]
+}

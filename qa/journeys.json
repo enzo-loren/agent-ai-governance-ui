@@ -1,0 +1,3013 @@
+{
+  "version": 1,
+  "method": "Actions: click/select/fill/press each count as one. Start at Home. Gaps have steps to blocker only; never finite completion. Browser checks assert visible behavior or absent required action, not backend guarantees.",
+  "journeys": [
+    {
+      "id": "C-01",
+      "area": "Catalog/agents",
+      "goal": "Find agent from Home",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-04"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas\"].btn"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/agent/atlas"
+        }
+      ]
+    },
+    {
+      "id": "C-02",
+      "area": "Catalog/agents",
+      "goal": "Search by owner among agents",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-04"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#catalog-search",
+          "value": "Alex Rivera"
+        }
+      ],
+      "checks": [
+        {
+          "type": "count",
+          "selector": ".agent-card",
+          "equals": 1
+        },
+        {
+          "type": "text",
+          "selector": ".agent-card",
+          "contains": "Invoice Assistant"
+        }
+      ]
+    },
+    {
+      "id": "C-03",
+      "area": "Catalog/agents",
+      "goal": "No-results state is explanatory",
+      "variant": "not found",
+      "role": "operator",
+      "requirements": [
+        "CON-04"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#catalog-search",
+          "value": "nonexistent-xx"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".empty-state",
+          "contains": "No matching agents"
+        }
+      ]
+    },
+    {
+      "id": "C-04",
+      "area": "Catalog/agents",
+      "goal": "Register sample agent and see one-time example key",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "REG-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"add-agent\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#new-agent-name",
+          "value": "Audit Agent"
+        },
+        {
+          "do": "fill",
+          "selector": "#new-agent-owner",
+          "value": "Ops Lead"
+        },
+        {
+          "do": "click",
+          "selector": "#new-agent-form button[type=\"submit\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": ".modal-card"
+        },
+        {
+          "type": "text",
+          "selector": ".modal-card",
+          "contains": "Example key"
+        },
+        {
+          "type": "state",
+          "path": "state.agents.3.name",
+          "equals": "Audit Agent"
+        }
+      ],
+      "note": "Only sample credential; no real issuance"
+    },
+    {
+      "id": "C-05",
+      "area": "Catalog/agents",
+      "goal": "Cancel new agent without changes",
+      "variant": "cancel",
+      "role": "operator",
+      "requirements": [
+        "REG-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"add-agent\"]"
+        },
+        {
+          "do": "click",
+          "selector": ".modal-card [data-action=\"close-overlay\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state-unchanged",
+          "key": "agents"
+        },
+        {
+          "type": "absent",
+          "selector": ".modal-card"
+        }
+      ]
+    },
+    {
+      "id": "C-06",
+      "area": "Catalog/agents",
+      "goal": "Edit required agent metadata",
+      "variant": "edit missing",
+      "role": "operator",
+      "requirements": [
+        "REG-02"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"edit-agent\"]"
+        }
+      ]
+    },
+    {
+      "id": "C-07",
+      "area": "Catalog/agents",
+      "goal": "Rotate agent credential with dual-active tokens",
+      "variant": "rotation missing",
+      "role": "operator",
+      "requirements": [
+        "REG-02"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"rotate-token\"]"
+        }
+      ]
+    },
+    {
+      "id": "C-08",
+      "area": "Catalog/agents",
+      "goal": "Revoke an active agent credential",
+      "variant": "revocation missing",
+      "role": "operator",
+      "requirements": [
+        "REG-02"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"revoke-token\"]"
+        }
+      ]
+    },
+    {
+      "id": "C-09",
+      "area": "Catalog/agents",
+      "goal": "Retire agent without erasing evidence",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "REG-02",
+        "REG-01"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"retire-agent\"]"
+        }
+      ]
+    },
+    {
+      "id": "C-10",
+      "area": "Catalog/tools",
+      "goal": "List tools and filter needs action",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-07",
+        "INF-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"catalog-tool-filter\"][data-value=\"attention\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": "table"
+        },
+        {
+          "type": "text",
+          "selector": "table",
+          "contains": "Delete customer record"
+        }
+      ]
+    },
+    {
+      "id": "C-11",
+      "area": "Catalog/tools",
+      "goal": "Inspect individual tool schema and suggested class",
+      "variant": "detail missing",
+      "role": "operator",
+      "requirements": [
+        "INF-02",
+        "CON-07"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"open-tool\"]"
+        },
+        {
+          "type": "absent",
+          "selector": "a[href*=\"/tool/\"]"
+        }
+      ]
+    },
+    {
+      "id": "C-12",
+      "area": "Catalog/tools",
+      "goal": "Confirm or correct tool class after discovery",
+      "variant": "no classification action",
+      "role": "operator",
+      "requirements": [
+        "INF-02",
+        "CON-07"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"catalog-tool-filter\"][data-value=\"attention\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"review-tool\"]"
+        },
+        {
+          "type": "absent",
+          "selector": "[data-action=\"classify-tool\"]"
+        }
+      ]
+    },
+    {
+      "id": "C-13",
+      "area": "Catalog/tools",
+      "goal": "Approve reviewed tool for use",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-07",
+        "INF-02"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"catalog-tool-filter\"][data-value=\"attention\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"approve-tool\"]"
+        }
+      ]
+    },
+    {
+      "id": "C-14",
+      "area": "Catalog/tools",
+      "goal": "Reject reviewed tool for use",
+      "variant": "rejection missing",
+      "role": "operator",
+      "requirements": [
+        "CON-07",
+        "INF-02"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"catalog-tool-filter\"][data-value=\"attention\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"reject-tool\"]"
+        }
+      ]
+    },
+    {
+      "id": "C-15",
+      "area": "Catalog/tools",
+      "goal": "Set supervision autonomous/notify/approval for a tool",
+      "variant": "supervision missing",
+      "role": "operator",
+      "requirements": [
+        "HITL-01",
+        "CON-07"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"edit-supervision\"]"
+        }
+      ]
+    },
+    {
+      "id": "C-16",
+      "area": "Catalog/tools",
+      "goal": "Locate tools outside execution gateway",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-07",
+        "MCP-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"catalog-tool-filter\"][data-value=\"outside\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": "table",
+          "contains": "Get order status"
+        }
+      ]
+    },
+    {
+      "id": "C-17",
+      "area": "Catalog/tools",
+      "goal": "Observe newly declared tool in catalog after real inference",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "INF-02"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"tool-discovery\"]"
+        }
+      ],
+      "note": "Fixture inventory immutable; no inference endpoint"
+    },
+    {
+      "id": "C-18",
+      "area": "Catalog/tools",
+      "goal": "Inspect schema change and re-review pending tool",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "INF-02"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"tools\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"tool-schema-history\"]"
+        }
+      ]
+    },
+    {
+      "id": "C-19",
+      "area": "Catalog/people",
+      "goal": "See actual named versus unassigned user requests",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "IDN-01",
+        "CON-04"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"identities\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": "table"
+        },
+        {
+          "type": "text",
+          "selector": "table",
+          "contains": "No user identity"
+        }
+      ],
+      "note": "Local fixture observations only"
+    },
+    {
+      "id": "C-20",
+      "area": "Catalog/models",
+      "goal": "Inspect observed models",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "INF-03",
+        "CON-04"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button[data-action=\"catalog-tab\"][data-value=\"models\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".grid-3",
+          "contains": "GPT-6"
+        }
+      ],
+      "note": "Fixed fixture, not live model catalog"
+    },
+    {
+      "id": "C-21",
+      "area": "Catalog/models",
+      "goal": "Edit models permitted for agent",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "INF-03"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"edit-allowed-models\"]"
+        }
+      ]
+    },
+    {
+      "id": "I-01",
+      "area": "Connections",
+      "goal": "Find agent in a shared searchable directory",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "OPS-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/connections\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#connection-search",
+          "value": "finance"
+        }
+      ],
+      "checks": [
+        {
+          "type": "count",
+          "selector": ".agent-card",
+          "equals": 1
+        }
+      ],
+      "note": "Search team by actual name: Finance"
+    },
+    {
+      "id": "I-02",
+      "area": "Connections",
+      "goal": "Open connection guide for tool execution",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "OPS-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/connections\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/connections\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"open-connection\"][data-id=\"B\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".drawer",
+          "contains": "Route tools through the gateway"
+        }
+      ]
+    },
+    {
+      "id": "I-03",
+      "area": "Connections",
+      "goal": "Switch on tool execution connection for an agent",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "OPS-01",
+        "MCP-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/connections\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/invoice/connections\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"toggle-connection\"][data-id=\"B\"][data-agent=\"invoice\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.1.connections",
+          "equals": [
+            "A",
+            "B"
+          ]
+        },
+        {
+          "type": "text",
+          "selector": ".integration-grid",
+          "contains": "0 routed"
+        }
+      ],
+      "note": "Front-end flag only; zero routed tools remains zero"
+    },
+    {
+      "id": "I-04",
+      "area": "Connections",
+      "goal": "Disconnect identity without changing historical trace",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "IDN-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/connections\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/connections\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"toggle-connection\"][data-id=\"C\"][data-agent=\"atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.0.connections",
+          "equals": [
+            "A",
+            "B"
+          ]
+        },
+        {
+          "type": "text",
+          "selector": ".integration-grid",
+          "contains": "Not connected"
+        }
+      ],
+      "note": "Trace records not retroactively rewritten"
+    },
+    {
+      "id": "I-05",
+      "area": "Connections",
+      "goal": "Register real MCP targets and verify tool-by-tool routing",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "MCP-01",
+        "OPS-01"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/connections\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/connections\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"open-connection\"][data-id=\"B\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"add-mcp-target\"]"
+        }
+      ],
+      "note": "Setup guide only, no MCP target registry"
+    },
+    {
+      "id": "I-06",
+      "area": "Connections",
+      "goal": "Configure OIDC trust, allowed clients and verify request token",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "IDN-01",
+        "OPS-01"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/connections\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/connections\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"open-connection\"][data-id=\"C\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"verify-oidc-client\"]"
+        }
+      ],
+      "note": "Guide only, no OIDC verification"
+    },
+    {
+      "id": "I-07",
+      "area": "Connections",
+      "goal": "Copy model gateway config safely from live credentials",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "REG-02",
+        "OPS-01"
+      ],
+      "status": "partial",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/connections\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/connections\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"open-connection\"][data-id=\"A\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": ".code-box"
+        },
+        {
+          "type": "text",
+          "selector": ".drawer",
+          "contains": "Example only"
+        },
+        {
+          "type": "absent",
+          "selector": "[data-action=\"issue-live-agent-token\"]"
+        }
+      ],
+      "note": "Only placeholder credentials, no live one-time token"
+    },
+    {
+      "id": "A-01",
+      "area": "Agent overview",
+      "goal": "Inspect model requests, tool routing and named identities",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-04"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".detail-summary",
+          "contains": "Tools routed"
+        },
+        {
+          "type": "text",
+          "selector": ".connection-grid",
+          "contains": "User identity"
+        }
+      ]
+    },
+    {
+      "id": "A-02",
+      "area": "Agent overview",
+      "goal": "Preview and confirm change to Observe",
+      "variant": "enforce to observe",
+      "role": "operator",
+      "requirements": [
+        "REG-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"preview-enforce\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"confirm-mode\"][data-id=\"atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.0.mode",
+          "equals": "observe"
+        }
+      ]
+    },
+    {
+      "id": "A-03",
+      "area": "Agent overview",
+      "goal": "Cancel mode change; no mutation",
+      "variant": "cancel",
+      "role": "operator",
+      "requirements": [
+        "REG-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"preview-enforce\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": ".modal-card [data-action=\"close-overlay\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.0.mode",
+          "equals": "enforce"
+        }
+      ]
+    },
+    {
+      "id": "A-04",
+      "area": "Agent overview",
+      "goal": "Pause agent with confirmation",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "REG-03"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"toggle-pause\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"confirm-pause\"][data-id=\"atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.0.mode",
+          "equals": "suspended"
+        }
+      ]
+    },
+    {
+      "id": "A-05",
+      "area": "Agent overview",
+      "goal": "Resume agent to previous Enforce mode",
+      "variant": "suspend/resume",
+      "role": "operator",
+      "requirements": [
+        "REG-03"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"toggle-pause\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"confirm-pause\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"toggle-pause\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"confirm-pause\"][data-id=\"atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.0.mode",
+          "equals": "enforce"
+        }
+      ]
+    },
+    {
+      "id": "A-06",
+      "area": "Agent overview",
+      "goal": "Model-request simulation opens an explanatory trace",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-02",
+        "POL-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"simulate\"][data-channel=\"inference\"][data-id=\"atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": ".drawer"
+        },
+        {
+          "type": "text",
+          "selector": ".drawer",
+          "contains": "What happened"
+        }
+      ],
+      "note": "Simulation only"
+    },
+    {
+      "id": "A-07",
+      "area": "Agent overview",
+      "goal": "Outside-gateway tool simulation cannot claim control",
+      "variant": "local tool",
+      "role": "operator",
+      "requirements": [
+        "CON-07",
+        "MCP-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"simulate\"][data-channel=\"tool\"][data-tool=\"t5\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": ".drawer"
+        },
+        {
+          "type": "text",
+          "selector": ".drawer",
+          "contains": "does not pass through the gateway"
+        }
+      ]
+    },
+    {
+      "id": "A-08",
+      "area": "Agent overview",
+      "goal": "Block enforcement when required owner is absent",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "REG-01"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"edit-agent-owner\"]"
+        }
+      ],
+      "note": "Current frontend has no server-side owner prerequisite"
+    },
+    {
+      "id": "R-01",
+      "area": "Rules",
+      "goal": "Locate agent by policy and open its rules",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-07"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#rules-search",
+          "value": "Role-based"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/agent/atlas/rules"
+        }
+      ]
+    },
+    {
+      "id": "R-02",
+      "area": "Rules",
+      "goal": "Preview alternate preset without mutating active policy",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-07",
+        "POL-05"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".policy-preview",
+          "contains": "No changes have been applied"
+        },
+        {
+          "type": "state",
+          "path": "state.agents.0.preset",
+          "equals": 2
+        }
+      ],
+      "note": "Preview shows textual consequences, not evidence-based re-evaluation of historic requests"
+    },
+    {
+      "id": "R-03",
+      "area": "Rules",
+      "goal": "Cancel candidate preset selection",
+      "variant": "cancel selection",
+      "role": "operator",
+      "requirements": [
+        "CON-07"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"cancel-policy-preview\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": ".policy-preview"
+        },
+        {
+          "type": "state",
+          "path": "state.agents.0.preset",
+          "equals": 2
+        }
+      ]
+    },
+    {
+      "id": "R-04",
+      "area": "Rules",
+      "goal": "Apply candidate preset with explicit final confirmation",
+      "variant": "commit",
+      "role": "operator",
+      "requirements": [
+        "CON-07"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"review-policy-change\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"confirm-preset\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.0.preset",
+          "equals": 3
+        }
+      ]
+    },
+    {
+      "id": "R-05",
+      "area": "Rules",
+      "goal": "Cancel policy confirmation; keep saved preset",
+      "variant": "cancel confirmation",
+      "role": "operator",
+      "requirements": [
+        "CON-07"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"review-policy-change\"]"
+        },
+        {
+          "do": "click",
+          "selector": ".modal-card [data-action=\"close-overlay\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.0.preset",
+          "equals": 2
+        }
+      ]
+    },
+    {
+      "id": "R-06",
+      "area": "Rules",
+      "goal": "Warn when selected preset requires absent identity and tool gateway",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-07"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/invoice/rules\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"choose-preset\"][data-value=\"2\"][data-id=\"invoice\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".banner",
+          "contains": "Writes require user identity"
+        },
+        {
+          "type": "text",
+          "selector": ".banner",
+          "contains": "Critical execution requires routed tool calls"
+        }
+      ]
+    },
+    {
+      "id": "R-07",
+      "area": "Rules",
+      "goal": "Auditor may preview but cannot apply preset",
+      "variant": "auditor",
+      "role": "auditor",
+      "requirements": [
+        "CON-01",
+        "CON-07"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "auditor"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "disabled",
+          "selector": "[data-action=\"review-policy-change\"]"
+        },
+        {
+          "type": "state",
+          "path": "state.agents.0.preset",
+          "equals": 2
+        }
+      ]
+    },
+    {
+      "id": "R-08",
+      "area": "Rules",
+      "goal": "Build parameterized visual rule and validate schema",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "POL-04"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"create-rule\"]"
+        }
+      ],
+      "note": "Cannot define p>10 or test p=8/25"
+    },
+    {
+      "id": "R-09",
+      "area": "Rules",
+      "goal": "Author and validate Cedar text and versioned rules",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "POL-04"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"open-cedar-editor\"]"
+        }
+      ]
+    },
+    {
+      "id": "R-10",
+      "area": "Rules",
+      "goal": "Simulate alternative policy on recorded contexts",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "POL-05"
+      ],
+      "status": "partial",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": ".policy-preview"
+        },
+        {
+          "type": "absent",
+          "selector": "[data-action=\"simulate-historical-policy\"]"
+        }
+      ],
+      "note": "Preview text is not historical re-evaluation required by POL-05"
+    },
+    {
+      "id": "R-11",
+      "area": "Rules",
+      "goal": "Inspect rule conflict and author history",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "EVD-04",
+        "POL-04"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"view-policy-history\"]"
+        }
+      ]
+    },
+    {
+      "id": "V-01",
+      "area": "Activity",
+      "goal": "Search by agent owner and inspect events",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-03"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/activity\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#activity-agent-search",
+          "value": "Maya Chen"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": "table"
+        },
+        {
+          "type": "text",
+          "selector": "table",
+          "contains": "Atlas Support"
+        }
+      ]
+    },
+    {
+      "id": "V-02",
+      "area": "Activity",
+      "goal": "Filter by decision state",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-03"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/activity\"]"
+        },
+        {
+          "do": "select",
+          "selector": "#activity-status",
+          "value": "blocked"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": "table"
+        },
+        {
+          "type": "text",
+          "selector": "table",
+          "contains": "Delete warehouse"
+        }
+      ]
+    },
+    {
+      "id": "V-03",
+      "area": "Activity",
+      "goal": "Open decision explanation in one additional action",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/activity\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button.row-link[data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".drawer",
+          "contains": "What happened"
+        }
+      ]
+    },
+    {
+      "id": "V-04",
+      "area": "Activity",
+      "goal": "Pause feed then resume retaining intervening events",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-03"
+      ],
+      "status": "partial",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/activity\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"activity-pause\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".banner",
+          "contains": "Feed paused"
+        },
+        {
+          "type": "absent",
+          "selector": "[data-action=\"replay-buffer\"]"
+        }
+      ],
+      "note": "Snapshot pause, not a verified transport buffer"
+    },
+    {
+      "id": "V-05",
+      "area": "Activity",
+      "goal": "Filter by user and channel independently",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-03"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/activity\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "#activity-user"
+        },
+        {
+          "type": "absent",
+          "selector": "#activity-channel"
+        }
+      ]
+    },
+    {
+      "id": "V-06",
+      "area": "Activity",
+      "goal": "See live gateway event under three seconds",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-03",
+        "NFR-03"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/activity\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-stream-status=\"connected\"]"
+        }
+      ],
+      "note": "No live stream or backend"
+    },
+    {
+      "id": "H-01",
+      "area": "Approvals",
+      "goal": "Approve pending execution as reviewer",
+      "variant": "",
+      "role": "approver",
+      "requirements": [
+        "CON-05",
+        "HITL-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "approver"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/approvals\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"confirm-approval\"][data-id=\"APR-201\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.approvals.0.status",
+          "equals": "approved"
+        }
+      ],
+      "note": "Synthetic client-only approval, not MCP execution"
+    },
+    {
+      "id": "H-02",
+      "area": "Approvals",
+      "goal": "Reject pending execution as reviewer",
+      "variant": "reject",
+      "role": "approver",
+      "requirements": [
+        "CON-05",
+        "HITL-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "approver"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/approvals\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"rejected\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"confirm-approval\"][data-id=\"APR-201\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.approvals.0.status",
+          "equals": "rejected"
+        }
+      ]
+    },
+    {
+      "id": "H-03",
+      "area": "Approvals",
+      "goal": "Cancel pending approval dialog",
+      "variant": "cancel",
+      "role": "approver",
+      "requirements": [
+        "CON-05"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "approver"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/approvals\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]"
+        },
+        {
+          "do": "click",
+          "selector": ".modal-card [data-action=\"close-overlay\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.approvals.0.status",
+          "equals": "pending"
+        }
+      ]
+    },
+    {
+      "id": "H-04",
+      "area": "Approvals",
+      "goal": "Operator cannot act as reviewer",
+      "variant": "operator denied",
+      "role": "operator",
+      "requirements": [
+        "CON-01",
+        "CON-05"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/approvals\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "disabled",
+          "selector": "[data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]"
+        }
+      ]
+    },
+    {
+      "id": "H-05",
+      "area": "Approvals",
+      "goal": "Separate requester and approver identities",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "HITL-03",
+        "CON-05"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "approver"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/approvals\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "#reviewer-identity"
+        }
+      ],
+      "note": "Role preview is not authenticated reviewer; fixed demo reviewer cannot verify separation"
+    },
+    {
+      "id": "H-06",
+      "area": "Approvals",
+      "goal": "See masked arguments, request trace and expiry clock",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-05",
+        "HITL-02"
+      ],
+      "status": "partial",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "approver"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/approvals\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".approval-card:first-of-type",
+          "contains": "remaining"
+        },
+        {
+          "type": "absent",
+          "selector": "[data-action=\"approval-details\"]"
+        }
+      ],
+      "note": "Static remaining text, no arguments or trace link"
+    },
+    {
+      "id": "H-07",
+      "area": "Approvals",
+      "goal": "Leave optional decision comment",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-05"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "approver"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/approvals\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "#approval-comment"
+        }
+      ]
+    },
+    {
+      "id": "H-08",
+      "area": "Approvals",
+      "goal": "Expire pending approval at deadline",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "HITL-02"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "approver"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/approvals\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-approval-expiry-time]"
+        }
+      ]
+    },
+    {
+      "id": "H-09",
+      "area": "Approvals",
+      "goal": "Filter reviewed requests",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-05"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/approvals\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"approvals-view\"][data-value=\"reviewed\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".empty-state",
+          "contains": "No matching approvals"
+        }
+      ]
+    },
+    {
+      "id": "S-01",
+      "area": "Spending",
+      "goal": "View agent spend by searching owner",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-06"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#spending-search",
+          "value": "Alex Rivera"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".budget-item",
+          "contains": "Invoice Assistant"
+        },
+        {
+          "type": "text",
+          "selector": ".stat-grid",
+          "contains": "$24.70"
+        }
+      ]
+    },
+    {
+      "id": "S-02",
+      "area": "Spending",
+      "goal": "Edit daily budget through form",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-06",
+        "FIN-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"edit-budget\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#budget-amount",
+          "value": "65"
+        },
+        {
+          "do": "click",
+          "selector": "#budget-form button[type=\"submit\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.0.budget",
+          "equals": 65
+        }
+      ]
+    },
+    {
+      "id": "S-03",
+      "area": "Spending",
+      "goal": "Cancel budget change",
+      "variant": "cancel",
+      "role": "operator",
+      "requirements": [
+        "CON-06"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"edit-budget\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#budget-amount",
+          "value": "65"
+        },
+        {
+          "do": "click",
+          "selector": ".modal-card [data-action=\"close-overlay\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.0.budget",
+          "equals": 40
+        }
+      ]
+    },
+    {
+      "id": "S-04",
+      "area": "Spending",
+      "goal": "Auditor cannot change limit",
+      "variant": "auditor",
+      "role": "auditor",
+      "requirements": [
+        "CON-01",
+        "CON-06"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "auditor"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"edit-budget\"]"
+        }
+      ]
+    },
+    {
+      "id": "S-05",
+      "area": "Spending",
+      "goal": "Configure rate/tokens/budget action alert/throttle/block",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "FIN-02",
+        "CON-06"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"edit-rate-limit\"]"
+        },
+        {
+          "type": "absent",
+          "selector": "[data-action=\"edit-budget-action\"]"
+        }
+      ]
+    },
+    {
+      "id": "S-06",
+      "area": "Spending",
+      "goal": "Edit model tariffs and breakdown by model",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "FIN-01",
+        "CON-06"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"edit-tariff\"]"
+        },
+        {
+          "type": "absent",
+          "selector": "[data-action=\"model-cost-breakdown\"]"
+        }
+      ]
+    },
+    {
+      "id": "S-07",
+      "area": "Spending",
+      "goal": "View attributed historical person spend",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "FIN-03"
+      ],
+      "status": "partial",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".grid-2 .card:nth-child(2)",
+          "contains": "By person"
+        },
+        {
+          "type": "absent",
+          "selector": "[data-action=\"edit-user-limit\"]"
+        }
+      ],
+      "note": "Historical aggregation in demo, no verified per-user limit"
+    },
+    {
+      "id": "S-08",
+      "area": "Spending",
+      "goal": "Inspect alerts at 50/80/100 thresholds",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "FIN-02",
+        "CON-06"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"view-spending-alerts\"]"
+        }
+      ]
+    },
+    {
+      "id": "E-01",
+      "area": "Audit",
+      "goal": "Find a trace ID and read its decision",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "EVD-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/audit\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#audit-search",
+          "value": "TRC-1044"
+        },
+        {
+          "do": "click",
+          "selector": "button.row-link[data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": ".drawer"
+        },
+        {
+          "type": "text",
+          "selector": ".drawer",
+          "contains": "What happened"
+        }
+      ],
+      "note": "Individual sample event, not full transaction"
+    },
+    {
+      "id": "E-02",
+      "area": "Audit",
+      "goal": "Inspect technical rule details",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-02",
+        "EVD-03"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/audit\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button.row-link[data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+        },
+        {
+          "do": "click",
+          "selector": ".drawer details summary"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": ".drawer details",
+          "contains": "Rule version"
+        }
+      ]
+    },
+    {
+      "id": "E-03",
+      "area": "Audit",
+      "goal": "Combine period, model, tool, channel and connection filters",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "EVD-02"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/audit\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "#audit-date-from"
+        },
+        {
+          "type": "absent",
+          "selector": "#audit-model"
+        },
+        {
+          "type": "absent",
+          "selector": "#audit-channel"
+        }
+      ]
+    },
+    {
+      "id": "E-04",
+      "area": "Audit",
+      "goal": "Reconstruct correlated multi-step transaction",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "EVD-05"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/audit\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button.row-link[data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"open-transaction\"]"
+        }
+      ],
+      "note": "No workflow_id/session_id/parent references in fixtures"
+    },
+    {
+      "id": "E-05",
+      "area": "Audit",
+      "goal": "Inspect administrative changes with old/new value",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "EVD-04"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/audit\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"admin-history\"]"
+        }
+      ]
+    },
+    {
+      "id": "E-06",
+      "area": "Audit",
+      "goal": "Prove Object Lock immutability with denied delete",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "EVD-06"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/audit\"]"
+        },
+        {
+          "do": "click",
+          "selector": "button.row-link[data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"test-immutability\"]"
+        }
+      ]
+    },
+    {
+      "id": "E-07",
+      "area": "Audit",
+      "goal": "Identify missing evidence explicitly",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "EVD-01",
+        "CON-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/audit\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#audit-search",
+          "value": "TRC-1035"
+        }
+      ],
+      "checks": [
+        {
+          "type": "text",
+          "selector": "table",
+          "contains": "No evidence"
+        }
+      ],
+      "note": "Badge is not actual Object Lock validation"
+    },
+    {
+      "id": "G-01",
+      "area": "Workspace",
+      "goal": "Open appearance drawer and switch theme",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "[data-action=\"open-settings\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"theme\"][data-value=\"violet\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.theme",
+          "equals": "violet"
+        }
+      ]
+    },
+    {
+      "id": "G-02",
+      "area": "Workspace",
+      "goal": "Reset workspace after confirmation",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "[data-action=\"open-settings\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"reset-request\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"confirm-reset\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/home"
+        },
+        {
+          "type": "state",
+          "path": "state.agents.0.budget",
+          "equals": 40
+        }
+      ]
+    },
+    {
+      "id": "G-03",
+      "area": "Workspace",
+      "goal": "Cancel reset without losing workspace",
+      "variant": "cancel reset",
+      "role": "operator",
+      "requirements": [
+        "CON-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "[data-action=\"open-settings\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"reset-request\"]"
+        },
+        {
+          "do": "click",
+          "selector": ".modal-card [data-action=\"close-overlay\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": ".modal-card"
+        },
+        {
+          "type": "absent",
+          "selector": ".drawer"
+        }
+      ]
+    },
+    {
+      "id": "G-04",
+      "area": "Workspace",
+      "goal": "Launch and progress guided tour",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-08"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "[data-action=\"tour-start\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"tour-next\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/catalog"
+        },
+        {
+          "type": "visible",
+          "selector": ".tour-bar"
+        }
+      ],
+      "note": "Guided tour is not presentation mode"
+    },
+    {
+      "id": "G-05",
+      "area": "Workspace",
+      "goal": "Enter actual presentation mode at 1080p",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "CON-08"
+      ],
+      "status": "gap",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/activity\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"presentation-mode\"]"
+        }
+      ]
+    },
+    {
+      "id": "G-06",
+      "area": "Workspace",
+      "goal": "Reach evidence from agent catalog in three clicks",
+      "variant": "",
+      "role": "operator",
+      "requirements": [
+        "EVD-05",
+        "CON-02"
+      ],
+      "status": "partial",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": ".drawer"
+        },
+        {
+          "type": "absent",
+          "selector": "[data-action=\"view-evidence-object\"]"
+        }
+      ],
+      "note": "Reaches a claim of evidence, not source immutable object"
+    },
+    {
+      "id": "C-22",
+      "area": "Catalog/agents",
+      "goal": "Auditor cannot create an agent",
+      "variant": "auditor role",
+      "role": "operator",
+      "requirements": [
+        "CON-01",
+        "REG-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "auditor"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/catalog\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"add-agent\"]"
+        }
+      ]
+    },
+    {
+      "id": "I-08",
+      "area": "Connections",
+      "goal": "Auditor cannot connect or disconnect a channel",
+      "variant": "auditor role",
+      "role": "operator",
+      "requirements": [
+        "CON-01",
+        "OPS-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "auditor"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/connections\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/connections\"].btn"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"toggle-connection\"]"
+        }
+      ]
+    },
+    {
+      "id": "I-09",
+      "area": "Connections",
+      "goal": "Required model connection cannot be disconnected",
+      "variant": "required channel",
+      "role": "operator",
+      "requirements": [
+        "OPS-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/connections\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/connections\"].btn"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"toggle-connection\"][data-id=\"A\"]"
+        }
+      ]
+    },
+    {
+      "id": "I-10",
+      "area": "Connections",
+      "goal": "Disabling identity preserves existing event attribution",
+      "variant": "historic identity",
+      "role": "operator",
+      "requirements": [
+        "IDN-01",
+        "EVD-04"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/connections\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/atlas/connections\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"toggle-connection\"][data-id=\"C\"][data-agent=\"atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.events.0.connections",
+          "equals": [
+            "A",
+            "C"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "A-09",
+      "area": "Agent overview",
+      "goal": "A request without end-user identity remains attributable to agent",
+      "variant": "solo_workload sample",
+      "role": "operator",
+      "requirements": [
+        "IDN-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "select",
+          "selector": "#request-user",
+          "value": "none"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"simulate\"][data-channel=\"inference\"][data-id=\"atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.events.0.actor",
+          "equals": "No user identity"
+        }
+      ]
+    },
+    {
+      "id": "R-12",
+      "area": "Rules",
+      "goal": "Confirm preset in Observe mode without enabling enforcement",
+      "variant": "Observe",
+      "role": "operator",
+      "requirements": [
+        "REG-01",
+        "CON-07"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/rules\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/agent/invoice/rules\"].btn"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"choose-preset\"][data-id=\"invoice\"][data-value=\"2\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"review-policy-change\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"confirm-preset\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.1.preset",
+          "equals": 2
+        },
+        {
+          "type": "state",
+          "path": "state.agents.1.mode",
+          "equals": "observe"
+        }
+      ]
+    },
+    {
+      "id": "V-07",
+      "area": "Activity",
+      "goal": "Agent deep link fixes scope and hides irrelevant agent picker",
+      "variant": "agent scope",
+      "role": "operator",
+      "requirements": [
+        "CON-03"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/activity/atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/activity/atlas"
+        },
+        {
+          "type": "absent",
+          "selector": "#activity-agent-search"
+        },
+        {
+          "type": "text",
+          "selector": ".scope-bar",
+          "contains": "Atlas Support"
+        }
+      ]
+    },
+    {
+      "id": "H-10",
+      "area": "Approvals",
+      "goal": "Pending request missing identity is not approvable",
+      "variant": "C absent",
+      "role": "operator",
+      "requirements": [
+        "HITL-03",
+        "CON-05"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "select",
+          "selector": "#role-select",
+          "value": "approver"
+        },
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/approvals\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "disabled",
+          "selector": "[data-action=\"approval-confirm\"][data-id=\"APR-202\"][data-value=\"approved\"]"
+        }
+      ]
+    },
+    {
+      "id": "S-09",
+      "area": "Spending",
+      "goal": "Invalid budget input is rejected without state mutation",
+      "variant": "invalid value",
+      "role": "operator",
+      "requirements": [
+        "CON-06",
+        "FIN-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"edit-budget\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#budget-amount",
+          "value": "-5"
+        },
+        {
+          "do": "click",
+          "selector": "#budget-form button[type=\"submit\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "state",
+          "path": "state.agents.0.budget",
+          "equals": 40
+        },
+        {
+          "type": "visible",
+          "selector": "#budget-amount:invalid"
+        }
+      ]
+    },
+    {
+      "id": "E-08",
+      "area": "Audit",
+      "goal": "Clear nonmatching trace search and restore results",
+      "variant": "clear filters",
+      "role": "operator",
+      "requirements": [
+        "EVD-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/audit\"]"
+        },
+        {
+          "do": "fill",
+          "selector": "#audit-search",
+          "value": "TRACE-DOES-NOT-EXIST"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"clear-audit\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": "table"
+        },
+        {
+          "type": "text",
+          "selector": "table",
+          "contains": "TRC-1044"
+        }
+      ]
+    }
+  ]
+}

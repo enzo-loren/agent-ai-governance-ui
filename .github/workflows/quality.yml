@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -15,3 +15,15 @@ jobs:
           node-version: '22'
       - name: Syntax, domain, and render tests
         run: npm run check && npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser test runtime
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Run real browser journeys and check report consistency
+        run: |
+          bash qa/run_all.sh
+          python qa/generate_matrix.py
+          git diff --exit-code -- qa/journey-results.json docs/journey-matrix.md

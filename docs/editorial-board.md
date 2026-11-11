@@ -56,3 +56,10 @@ Raw YAML/Cedar/JSON, AWS services, Object Lock modes and token propagation belon
 - Source constraints remain intact: role-restricted writes depend on verified identity, real tool execution checks apply only to routed tools, and exploratory policy preview is not backend enforcement. An Auditor can inspect the same policy explanations but cannot apply a change.
 - `Request as` remains a test-request identity selector; it is not authentication. Its label, native keyboard behavior, focus indicator, field width and dropdown icon now follow the form controls used elsewhere, including narrow screens and semantic themes.
 - Verification: 52 Node tests; local static build; rendered Chromium walkthrough of selection, cancellation, confirmation, auditor restrictions, Observe handling, and selector geometry at 320, 390, 670, 900, 1100 and 1440px. The test fixtures represent the frontend, not production authorization.
+
+## Task-based audit · 2026-11-11
+
+- **Source versus interpretation:** the canonical YAML and policy context specify administrative tool classification/approval and separate one-time MCP execution approvals. Proposed screens and action counts are design decisions rather than source-mandated steps.
+- **Validation labels:** “functional” means that a real browser can finish a simulated UI journey; “partial” means that a visible screen does not satisfy its requirement; “no path” means the interface stops before completion. Reports and test names do not imply verification of AWS/Cedar/Secrets Manager/real identities.
+- **Proof location:** `qa/journeys.json` defines actions, variants, roles and expected outcomes; Chromium records the actions from Home in `qa/journey-results.json`. Editorial rationale and limitations live in `docs/user-journey-audit.md`, not in UI banners.
+- **Discovered defect:** a form field named `id` shadows `HTMLFormElement.id`, so the budget submit branch did not run. Read the DOM `id` attribute explicitly. This is a corrected frontend bug with a browser regression; it is not evidence that real budgets are enforced.
