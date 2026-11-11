@@ -173,13 +173,13 @@ function setupEvents(){
   render({keepScroll:true,focusId:id});
  });
  document.addEventListener('submit',event=>{
-  if(event.target.id==='new-agent-form'){
+  if(event.target.getAttribute('id')==='new-agent-form'){
     event.preventDefault();if(!allowEdit())return;
     const fd=new FormData(event.target);const name=String(fd.get('name')||'').trim();const owner=String(fd.get('owner')||'').trim();if(!name||!owner)return;
     let id=safeId(name)||'agent';if(state.agents.some(a=>a.id===id))id+=`-${state.agents.length+1}`;
     state.agents.push({id,name:name.slice(0,54),owner:owner.slice(0,54),initials:name.split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase(),team:'New agent',mode:'observe',connections:['A'],preset:1,budget:25,spent:0,requests:0,tools:0,accent:'mint',active:true});
     state.selectedAgent=id;persist();ui.modal={kind:'new-agent-key',id};render({focusOverlay:true,keepScroll:true});announce('Agent created');
-  } else if(event.target.id==='budget-form'){
+  } else if(event.target.getAttribute('id')==='budget-form'){
     event.preventDefault();if(!allowEdit())return;
     const fd=new FormData(event.target);const agent=agentById(state,fd.get('id'));const num=Number(fd.get('budget'));
     if(!agent||!Number.isFinite(num)||num<1||num>100000){showToast('Enter a budget from 1 to 100,000');return;}
