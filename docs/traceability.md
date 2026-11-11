@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | S0 agent registration | Catalog → Add agent; Agent detail | REG-02, CON-01: per-agent credential display is one-time *only in simulation* |
 | S0 live flow | Activity | CON-03, CON-02: event status, reason, filters, pause (simulated, not under-3-second backend latency) |
-| S1 governance coverage | Catalog → Agent detail, Integrations | CON-04, POL-03: A/B/C coverage and absent controls, with clear gaps |
+| S1 agent governance | Catalog → Agent detail, Integrations | CON-04, POL-03: tool-by-tool routing, observed identities and connection gaps. **The CON-04 coverage index is intentionally not shown in this UI** (see deviation below). |
 | S1 tool inventory | Catalog → Tools | INF-02, CON-07: class and approval state (sample metadata) |
 | S1 shadow evaluation | Activity → Would block; Rules | POL-01, REG-01: Observe previews denials; do not claim active enforcement |
 | S2 agent mode and suspension | Agent detail, Rules | REG-01, REG-03, INF-05: confirm Enforce, pause and restore, with B-boundary caveat |
@@ -37,3 +37,16 @@
 **Working simulated interactions:** catalog search, create demo agent, once-visible example key, agent view, A/B/C toggles (except A), simulate inference vs actual tool, Observe/Enforce preview, simulated pause/resume, synthetic traces and status filter, pause synthetic activity feed, preset selection with confirmation, budget update, approval and reviewer role preview, audit search and explanation drawer, guided tour, appearance and reset.
 
 **Not delivered:** actual AWS infrastructure, OpenAI-compatible proxy, secrets issuance, JWT verification, Cedar engine, MCP routing or live tool discovery, immutable S3 evidence, CloudWatch/OpenTelemetry, under-3-second live visibility, production RBAC, per-person cost attribution, parameter-level visual policy editor, a full integrated agent demo, real finops metering. They are architectural requirements, not features validated by this repository.
+
+## Product decision: operational catalog instead of a coverage index (2026-11-11)
+
+This product direction **does not implement the numerical governance coverage index** required in `CON-04` and `insumo/contexto/01-modelo-de-conexion.md`. That requirement remains in the governing source. It must not be silently interpreted as satisfied merely because the catalog now displays individual tools and identities. If this becomes the production UI, the requirement owner must approve a replacement criterion or provide the mandated index in an appropriate, secondary diagnostic surface.
+
+The proposed first-level catalog answers operational questions without a composite score:
+
+- **Agents:** current mode; tools `checked`, `observed`, `need review`, `need identity`, `need a second reviewer`, or `outside gateway`; presence of named users in recent requests.
+- **Tools:** each entry retains its class and approval separately from its execution route and policy mode. `B connected` does **not** mean every declared tool is routed: registered MCP tools and locally executed tools are distinguished one by one.
+- **People:** display names actually present in recorded requests with C at event time, plus unnamed requests. No fake identity directory is implied. If C is disconnected now, the catalog stops presenting prior named records as current configuration; the historical trace remains available in Audit.
+- **Integrations:** A/B/C remains visible, with practical consequences; a toggle affects subsequent requests and current operational status, not historical events.
+
+No tool should be presented as globally "safe" simply because it is approved or routed. Those facts are necessary but insufficient to establish policy outcome, effective role, configured guardrails, or external bypass prevention.
