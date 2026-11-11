@@ -1,0 +1,32 @@
+# Editorial board — rationale kept outside product copy
+
+This is the process-only decision log required by *Scientific Writing Editor*. It belongs in the repository, not inside the user-facing product. Claims are separated by what the source mandates, what the interface proposes, and what still needs evidence.
+
+| Claim / decision | Basis | Editorial / UX action | Confidence / remaining check |
+| --- | --- | --- | --- |
+| The audience should recognize the product without cloud infrastructure expertise | Meeting Nov 10 + `04-ux.md` §§1–4 | Familiar tasks as navigation; move platform internals to optional detail | Design proposal; field test with novices pending |
+| The product must show “what would block” before enforcing | `requisitos.yaml` REG-01, POL-01 and preset state | “Observe” and “Would block”, confirmation with impact count | Source-defined semantics; simulation only |
+| A and B protect different channels | `requisitos.yaml` connections and CTRL-12–18 | Separate “Model request” from “Tool execution”; explicitly mark outside B | Strongly supported; backend verification pending |
+| C has an actual identity propagation dependency | `requisitos.yaml` and `01-modelo-de-conexion.md` | Explain “Identify users”, not just “Choose a role”; role picker labeled preview | Supported, implementation not present |
+| Operator/Approver/Auditor have different permissions | CON-01 | Simulate disabled/missing actions by role with explanatory descriptions | Source-defined roles; frontend is not security |
+| Evidence cannot be inferred from an attractive badge | EVD-01, CON-02, `04-ux.md` GV-6 | Explicit “sample record”, “no evidence”, never real immutable certification | Strongly supported limitation |
+| Public documentation remains the deep explainer | Meeting Nov 10 | Link guide, avoid re-explaining 7 slices on every page | Requested direction; information architecture proposed |
+| Brand palette should be adjustable without hardcoding | User request, semantic design-system practice | One token file with 3 palettes; semantic status colors independent of brand | Implemented; contrast review after any new palette |
+| Short UI strings avoid overload | NN/g progressive disclosure; user request | Action verbs, short summaries, drawer for technical reason | Design intention; user testing pending |
+| Agent spend is distinct from arbitrary LLM spend | Meeting Nov 10 | Spending by agent only; per-person attribution is explicitly unavailable without C | Grounded; backend accounting not verified |
+| Multi-account and very granular budgets should not block demo | Meeting Nov 10 | Keep deferred from first-level UI | Scope direction, not a formal permanent exclusion |
+
+## Copy rules for contributors
+
+1. **One decision, one consequence.** `Blocked · Delete warehouse was denied by the selected rule` is better than internal telemetry jargon.
+2. **Show status + cause.** “Denied” alone is not sufficient.
+3. **Never label a preview as enforcement.** “Would block” describes a counterfactual.
+4. **Never imply unconnected tools were blocked.** Explicitly state “Not covered” for local tool execution without B.
+5. **No demo data looks real.** Keep the “Interactive demo” banner and fictional examples on each destination.
+6. **Keep explanation under a click.** Show `Technical details` only when a person requests it.
+7. **A source-derived requirement is not an implemented feature.** If an implementation is absent, state so rather than weakening the requirement or inventing results.
+8. **Preserve operational caveats in the content**, but keep reasons for *word choice or organization* in this editorial board.
+
+## Audit of exclusions
+
+Raw YAML/Cedar/JSON, AWS services, Object Lock modes and token propagation belong to documentation and optional detail—not home KPIs. No unsupported “platform is safe” percentages. No comparison of Cloudscape “quality”; only observation that it resembles AWS and was flagged during review. No invented timing, security guarantees, test coverage of backend or return-on-investment figures.
