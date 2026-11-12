@@ -26,9 +26,17 @@ test('Morris branding is accessible in the workspace, test studio and favicon',(
   const tokens=file('src/styles/tokens.css').toString();
   assert.ok(views.includes('class="brand-wordmark" src="./assets/branding/morris-wordmark.png" alt="Morris & Opazo"'));
   assert.ok(views.includes('brand-product-name">Agent Governance'));
-  assert.ok(studio.includes('src="./assets/branding/morris-mark.png" alt="Morris & Opazo"'));
-  assert.ok(css.includes('background:var(--brand-logo-surface)'));
-  assert.ok(tokens.includes('--brand-logo-surface:'));
+  assert.ok(studio.includes('class="studio-wordmark" src="./assets/branding/morris-wordmark.png" alt="Morris & Opazo"'));
+  assert.ok(views.includes('class="mobile-brand"'));
+  assert.ok(!views.includes('class="brand-logo-plate"'));
+  assert.ok(!studio.includes('class="studio-mark"'));
+  assert.ok(css.includes('.brand-wordmark{'));
+  assert.ok(css.includes('filter:var(--brand-wordmark-filter)'));
+  assert.ok(!css.includes('.brand-logo-plate{'));
+  assert.ok(tokens.includes('--brand-wordmark-filter: brightness(0)'));
+  assert.ok(tokens.includes('--brand-wordmark-filter: none'));
+  assert.ok(!tokens.includes('--brand-logo-surface'));
+
   for(const html of ['index.html','test-console.html']){
     assert.ok(file(html).toString().includes('<link rel="icon" href="./assets/branding/morris-mark.png" type="image/png" />'));
   }

@@ -1,6 +1,6 @@
 # Agent Governance
 
-The workspace uses the original [Morris & Opazo brand assets](https://github.com/christophernavarro/Governance-AI/commit/506ae122032c0f98d250287b5d25374dde07dab2) vendored in `assets/branding/`: `morris-wordmark.png` in the workspace sidebar and `morris-mark.png` in Request Studio and the favicon. Both retain their original Git blob SHA-1 IDs. The white wordmark is displayed on a fixed dark surface to preserve contrast in light/dark themes and across palettes.
+The workspace uses original [Morris & Opazo brand assets](https://github.com/christophernavarro/Governance-AI/commit/506ae122032c0f98d250287b5d25374dde07dab2) vendored in `assets/branding/`, including the [official site wordmark](https://www.morrisopazo.com/wp-content/uploads/2026/07/logo-morrisopazo.png). The official wordmark has exactly the same Git blob hash as the already vendored `morris-wordmark.png` (`e3d96b14...`), so no duplicate binary is kept. The transparent white logo is rendered dark with a CSS filter on light backgrounds and unmodified white in dark mode. This avoids a forced dark container and works with all user-selectable palettes. The blue `morris-mark.png` is retained for the favicon and narrow-screen header. Request Studio uses the same wordmark and product lockup.
 
 A console for managing AI agents, tool access, connection settings, policies, approvals, spending and request decisions.
 

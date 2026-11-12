@@ -23,7 +23,16 @@ def run():
                 assert logo.count()==1
                 assert logo.evaluate('(el)=>el.complete && el.naturalWidth===531 && el.naturalHeight===77'),width
                 assert logo.evaluate('(el)=>el.getBoundingClientRect().width<=el.parentElement.getBoundingClientRect().width'),width
-                page.evaluate("state.role='auditor';render()")
+                assert page.locator('.brand-logo-plate').count()==0
+                assert page.locator('.mobile-brand img').count()==1
+                assert page.locator('.mobile-brand img').evaluate('(el)=>el.complete && el.naturalWidth===269'),width
+                assert page.locator('.mobile-brand').is_visible()==(width<=840),width
+                for palette in ('forest','violet','ocean'):
+                    for mode,expected_filter in (('light','brightness(0)'),('dark','none')):
+                        page.evaluate('([palette,mode])=>{state.theme=palette;state.appearance=mode;render()}',[palette,mode])
+                        actual=page.locator('.brand-wordmark').evaluate('(el)=>getComputedStyle(el).filter')
+                        assert actual==expected_filter,(width,palette,mode,actual)
+                page.evaluate("state.theme='forest';state.appearance='light';state.role='auditor';render()")
                 page.evaluate('location.hash="#/approvals"')
                 page.wait_for_timeout(100)
                 assert page.locator('.role-indicator').inner_text()=='Auditor'
