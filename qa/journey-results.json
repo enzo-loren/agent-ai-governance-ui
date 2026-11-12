@@ -356,17 +356,18 @@
       "id": "I-06",
       "status": "partial",
       "result": "as_expected",
-      "actionsFromHome": 7,
+      "actionsFromHome": 8,
       "stepsToCompletion": null,
-      "stepsToBlocker": 7,
+      "stepsToBlocker": 8,
       "steps": [
         "1. click a.nav-link[href=\"#/connections\"]",
         "2. click a[href=\"#/agent/atlas/connections\"].btn",
         "3. click [data-action=\"open-connection\"][data-id=\"C\"]",
         "4. click .drawer [data-action=\"close-overlay\"] >> nth=-1",
         "5. click [data-action=\"op-identity\"]",
-        "6. fill #op-identity-form [name=\"audience\"]",
-        "7. click #op-identity-form button[type=\"submit\"]"
+        "6. fill #op-identity-form [name=\"issuer\"]",
+        "7. fill #op-identity-form [name=\"audience\"]",
+        "8. click #op-identity-form button[type=\"submit\"]"
       ]
     },
     {

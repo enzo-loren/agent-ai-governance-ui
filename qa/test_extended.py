@@ -68,7 +68,8 @@ def conn(p):
  sel(p,'#op-mcp-form button[type=submit]').click()
  assert p.evaluate('window.__uiAudit().state.tools.find(x=>x.id==="t1").control')=='A'
  sel(p,'[data-action="op-identity"]').click()
- sel(p,'#op-identity-form [name=audience]').fill('production-sample')
+ sel(p,'#op-identity-form [name=issuer]').fill('https://login.customer.test')
+ sel(p,'#op-identity-form [name=audience]').fill('customer-audience')
  sel(p,'#op-identity-form button[type=submit]').click()
  assert p.evaluate('window.__uiAudit().state.identityConfig.atlas.verified')==False
 

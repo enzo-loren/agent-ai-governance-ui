@@ -58,7 +58,7 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `I-03` | Switch on tool execution connection for an agent | OPS-01, MCP-01 | Funcional (simulado) | 4 |
 | `I-04` | Disconnect identity without changing historical trace | IDN-01 | Funcional (simulado) | 4 |
 | `I-05` | Register real MCP targets and verify tool-by-tool routing | MCP-01, OPS-01 | Parcial | 7 hasta bloqueo |
-| `I-06` | Configure OIDC trust, allowed clients and verify request token | IDN-01, OPS-01 | Parcial | 7 hasta bloqueo |
+| `I-06` | Configure OIDC trust, allowed clients and verify request token | IDN-01, OPS-01 | Parcial | 8 hasta bloqueo |
 | `I-07` | Copy model gateway config safely from live credentials | REG-02, OPS-01 | Parcial | 3 hasta bloqueo |
 | `I-08` | Auditor cannot connect or disconnect a channel (*auditor role*) | CON-01, OPS-01 | Funcional (simulado) | 2 |
 | `I-09` | Required model connection cannot be disconnected (*required channel*) | OPS-01 | Funcional (simulado) | 2 |

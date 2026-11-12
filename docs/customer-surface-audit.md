@@ -21,6 +21,7 @@ A customer should encounter agent administration, tool review, policy configurat
 | Approvals | **Review as** impersonation picker and manual **Expire request** | Read-only reviewer label; expiration test moved | Review a specific held operation |
 | Appearance | Reset all fixture data | Removed from customer settings, moved to Request Studio | Customize personal display preferences |
 | Audit / Evidence | Event reason said 'demonstration' and a previous fake S3 response | Neutral recorded-status copy; `Not verified` retained when no proof exists | Inspect evidence without invented guarantees |
+| Identity settings | Prefilled `identity.example.test` and `sample-client` values resembled configured customer integration | Issuer and audience are initially empty with format-only placeholders | Require deliberate configuration instead of suggesting a trust relationship already exists |
 
 **Not removed:** `Previewing` a policy, `Would block`, `Outside gateway`, `Not verified`, and unissued/unknown connection state. These describe genuine operational distinctions required to interpret an action. Their presence is not a marketing disclaimer.
 
@@ -50,7 +51,7 @@ The previous **124 Home-origin journeys** included 13 actions that existed solel
 
 After the split the **111 customer journeys** were rerun: 92 complete in the sample UI, 19 remain partial because they require real backend behavior, and zero fail their browser oracles. Roles needed to test customer permissions are established in test setup, not counted as a user action. The steps in [`journey-matrix.md`](journey-matrix.md) were regenerated accordingly. This is a task-based UX audit, not security coverage.
 
-Additional evidence: 94 Node tests, Request Studio Chromium walkthrough at 1100 px and 390 px, and a compiled-site smoke across seven widths. GitHub Actions repeats these checks; see the PR for the final CI conclusion.
+Additional evidence: 96 Node tests, Request Studio Chromium walkthrough at 1100 px and 390 px, and a compiled-site smoke across seven widths. GitHub Actions repeats these checks; see the PR for the final CI conclusion.
 
 ## Remaining platform dependencies
 

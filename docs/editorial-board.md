@@ -94,3 +94,10 @@ Raw YAML/Cedar/JSON, AWS services, Object Lock modes and token propagation belon
 - A separate `test-console.html` composes POST-like JSON requests via `src/mock/test-api.js`, preserving the same state repository while keeping QA tools out of ordinary workflows. This is an in-browser test transport, not a network service.
 - Policy Preview, Would block, Outside gateway, Draft and Not verified are meaningful domain states, not disclaimers; removing them would misrepresent the modeled decisions.
 - The previous journey count is split transparently: 13 test-only cases archived, 111 customer-facing cases remain and are remeasured from Home. Decisions concerning the location of controls are process-only and live here; UI copy does not justify its own existence.
+
+## Final customer-surface review · 2026-11-12
+
+- Test injection, role impersonation, mock reset and fake schema changes belong to Request Studio, not customer navigation. A customer should encounter operations and investigation, not controls that fabricate their own evidence.
+- Empty issuer and audience fields are preferable to prefilled example domains that imply an OIDC connection was established. Placeholder format examples do not constitute configuration.
+- The Request timeline entry remains an operational Audit feature; a browser regression caught its accidental removal during cleanup and it was restored. Keep the causality limitation visible.
+- The separate test page uses POST-shaped synchronous local handlers, not real network endpoints; do not label the behavior as gateway traffic or claim API authentication.

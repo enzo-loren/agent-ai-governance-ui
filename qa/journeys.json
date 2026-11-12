@@ -1013,6 +1013,11 @@
         },
         {
           "do": "fill",
+          "selector": "#op-identity-form [name=\"issuer\"]",
+          "value": "https://login.customer.test"
+        },
+        {
+          "do": "fill",
           "selector": "#op-identity-form [name=\"audience\"]",
           "value": "demo-audience"
         },
