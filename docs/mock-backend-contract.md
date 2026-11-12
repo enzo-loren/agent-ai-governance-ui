@@ -23,7 +23,7 @@ let {state, revision} = backend.read();
 ({state, revision} = backend.save(state, revision));
 ```
 
-`read` clona los datos; `save` valida relaciones básicas, clona de nuevo, incrementa versión y rechaza `expectedRevision` anticuado. `MemoryStorage` permite tests y sesiones sin almacenamiento disponible. Una sesión previa con `agent-governance-preview-v2` conserva cambios y repara únicamente vínculos conocidos de fixtures; el nuevo formato se almacena en `agent-governance-mock-v3`.
+`read` clona los datos; `save` valida relaciones básicas, clona de nuevo, incrementa versión y rechaza `expectedRevision` anticuado cuando detecta un guardado previo. Esta comprobación es de mejor esfuerzo: la secuencia lectura-escritura sobre `localStorage` no es atómica y **no garantiza aislamiento de transacciones** si dos pestañas escriben simultáneamente. `MemoryStorage` permite tests y sesiones sin almacenamiento disponible. Una sesión previa con `agent-governance-preview-v2` conserva cambios y repara únicamente vínculos conocidos de fixtures; el nuevo formato se almacena en `agent-governance-mock-v3`.
 
 Esto **no** equivale a transacciones servidoras seguras: la lógica de simulación y la autorización de roles siguen en el navegador y un usuario puede manipular sus datos locales. El módulo es deliberadamente sustituible, no una demostración de seguridad del backend de la plataforma.
 

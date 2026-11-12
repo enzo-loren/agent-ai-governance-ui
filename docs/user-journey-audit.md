@@ -13,7 +13,7 @@
 
 Se mide una acción por clic, selección, escritura en un campo o envío. **Todos los casos empiezan en Inicio**. No se suman caracteres ni desplazamientos. Un caso parcial informa las acciones hasta la vista disponible, **no** un costo de finalización del requisito real. El desglose íntegro está en [la matriz](journey-matrix.md), con acciones en [`qa/journeys.json`](../qa/journeys.json) y resultados de Chromium en [`qa/journey-results.json`](../qa/journey-results.json).
 
-Los resultados no equivalen a 115 requisitos implementados ni a cobertura de seguridad. El repositorio es un frontend sin backend.
+Los resultados no equivalen a 124 requisitos implementados ni a cobertura de seguridad. El repositorio utiliza un adaptador de datos en el navegador, sin servicios de producción.
 
 ## Recorridos operativos implementados
 
@@ -68,7 +68,7 @@ La matriz conserva **20 recorridos parciales** porque requieren garantías que e
 - **Aprobación humana** (`HITL-02/03`, `CON-05`): el solicitante y el revisor son ejemplos seleccionables. No hay sesión autenticada, bloqueo 403 de API, expiración de backend ni liberación real de una llamada MCP.
 - **Actividad** (`CON-03`, `NFR-03`): el flujo, la pausa y la reanudación corresponden a eventos en memoria; no se miden latencias de publicación ni streaming de la puerta.
 - **Consumo e identidad** (`FIN-03`): los límites por persona se configuran como ejemplo; no se aplican a tráfico real ni se verifican contra tokens OIDC.
-- **Auditoría** (`EVD-01/02/04/05/06`): el historial administrativo y las agrupaciones de solicitudes son locales; faltan correlación causal del backend, registro durable y prueba real de S3 Object Lock. La respuesta `403 AccessDenied` mostrada en «Retention test · example» está identificada como **ilustrativa**, no como ejecución de S3.
+- **Auditoría** (`EVD-01/02/04/05/06`): el historial administrativo y las agrupaciones de solicitudes son locales; faltan correlación causal del backend, registro durable y prueba real de S3 Object Lock. La UI ya no muestra un rechazo S3 ficticio: indica «Not verified» y «Unavailable» mientras no exista una verificación real.
 
 Estos pendientes corresponden al proyecto de plataforma, no a una promesa de seguridad de esta UI. El índice numérico exigido por `CON-04` sigue siendo una desviación de diseño explícita: el catálogo muestra hechos operativos sin puntuación global, según la decisión de producto, pero el YAML todavía no cambió.
 
