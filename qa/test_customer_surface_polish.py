@@ -19,6 +19,10 @@ def run():
                 errors=[]
                 page.on('pageerror',lambda e:errors.append(str(e)))
                 page.set_content(inline_document(),wait_until='load')
+                logo=page.locator('.brand-wordmark')
+                assert logo.count()==1
+                assert logo.evaluate('(el)=>el.complete && el.naturalWidth===531 && el.naturalHeight===77'),width
+                assert logo.evaluate('(el)=>el.getBoundingClientRect().width<=el.parentElement.getBoundingClientRect().width'),width
                 page.evaluate("state.role='auditor';render()")
                 page.evaluate('location.hash="#/approvals"')
                 page.wait_for_timeout(100)

@@ -47,6 +47,9 @@ def exercise(browser,width):
         context.route(origin,lambda route: route.fulfill(status=200,content_type='text/html',body=inline_studio()))
         page.goto(origin,wait_until='load')
         assert page.evaluate('window.isSecureContext')
+        mark=page.locator('.studio-mark img')
+        assert mark.count()==1
+        assert mark.evaluate('(el)=>el.complete && el.naturalWidth===269 && el.naturalHeight===269')
         page.locator('#send-request').wait_for()
         assert '/v1/model-requests' in page.locator('#endpoint').input_value()
         assert page.locator('#agent-token').count()==1
