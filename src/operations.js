@@ -117,6 +117,12 @@ export function renderOpsDrawer(state,ui){
   if(!a)return null;const log=state.changes.filter(x=>x.agent===a.id);
   return drawer(`${a.name} · changes`,log.length?log.map(c=>`<section class="op-history-entry"><strong>${e(c.kind)} · ${e(c.resource)}</strong><p class="micro muted">${e(c.actor)} · ${e(c.time)}</p><details><summary class="text-link">See changes</summary><pre class="op-pre">Before: ${e(pretty(c.from))}\nAfter: ${e(pretty(c.to))}</pre></details></section>`).join(''):info('No changes have been made in this browser yet.'));
  }
+ if(d.kind==='op-transaction'){
+  const ev=state.events.find(x=>x.id===d.id);if(!ev)return null;
+  const related=state.events.filter(x=>x.agent===ev.agent&&x.action===ev.action);
+  const approvals=state.approvals.filter(x=>x.trace===ev.id||x.action.startsWith(ev.action));
+  return drawer(`Request timeline · ${ev.id}`,`<p class="drawer-lead">${e(ev.action)}</p><p class="micro muted">Related records are grouped by agent and action; a transaction ID is needed to establish causality.</p><div class="step-list">${related.map((x,i)=>`<div class="step"><span class="step-number">${i+1}</span><div class="step-main"><strong>${e(x.kind==='tool'?'Tool execution':'Model request')} · ${e(x.status)}</strong><p>${e(x.id)} · ${e(x.rule)} · ${e(x.version)}</p><p>${e(x.reason)}</p></div></div>`).join('')}${approvals.map(x=>`<div class="step"><span class="step-number">${I('clock',14)}</span><div class="step-main"><strong>Approval · ${e(x.status)}</strong><p>${e(x.id)} · ${e(x.requestedBy)}</p></div></div>`).join('')}</div><h3>Evidence</h3>${ev.evidence?info('Event record present · retention not verified'):info('No evidence is available for this event.')}${small('Retention status','op-immutability',`data-id="${e(ev.id)}"`)}`);
+ }
  if(d.kind==='op-policy-impact'){
   if(!a)return null;const changed=state.events.filter(ev=>ev.agent===a.id&&ev.status==='allowed');
   return drawer(`${a.name} · policy comparison`, `<p class="drawer-lead">Potential decision changes</p><p>${changed.length} recorded allow events would be candidates for a decision change under the default-deny Strict preset. Actual results require re-evaluating saved contexts with Cedar.</p>${changed.slice(0,5).map(ev=>`<p class="micro">${e(ev.id)} · ${e(ev.action)} · ${e(ev.status)}</p>`).join('')}`);
