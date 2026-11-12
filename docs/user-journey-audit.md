@@ -86,3 +86,8 @@ python qa/test_distribution.py
 ```
 
 El pipeline comprueba que cada escenario ejecutado conserva su clasificación, sus pasos y sus oráculos. Las pruebas positivas verifican resultados visibles y cambios de estado; las negativas verifican ausencia de mutación ante cancelación, permisos o datos inválidos. Los casos parciales registran su límite explícitamente y no se promocionan automáticamente a requisito satisfecho.
+
+
+## Reevaluación tras la separación del mock · 2026-11-11
+
+Se ejecutó de nuevo la matriz de 124 recorridos después de separar fixtures, almacenamiento y rutas. El detalle de defectos confirmados y pendientes está en [`deep-ux-data-audit.md`](deep-ux-data-audit.md). Las 20 rutas parciales siguen siendo parciales por dependencias externas; las pantallas nuevas no convierten ausencia de backend en un requisito cumplido. Se agregaron tests sobre integridad de datos, snapshots, edición concurrente, borradores Cedar y URLs de investigación.
