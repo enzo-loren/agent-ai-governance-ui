@@ -15,6 +15,13 @@ export async function mintLocalCredential(){
  const sha256=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
  return {token,record:{id:`key_${hex.slice(0,8)}`,sha256,createdAt:new Date().toISOString(),revokedAt:null}};
 }
+/** Match a presented token against active hash records for Request Studio. */
+export async function matchesActiveCredential(credentials,token){
+ if(typeof token!=='string'||!/^gov_test_[a-f0-9]{48}$/.test(token)||!globalThis.crypto?.subtle)return false;
+ const digest=await globalThis.crypto.subtle.digest('SHA-256',new TextEncoder().encode(token));
+ const hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+ return Array.isArray(credentials?.active)&&credentials.active.some(c=>c.sha256===hash&&!c.revokedAt);
+}
 export function credentialRecord(credentials,agentId){
  const c=credentials?.[agentId];
  if(!c)return {version:1,revoked:0,issuedTotal:1,active:[{id:`imported_${agentId}`,sha256:null,createdAt:'Unknown',revokedAt:null,imported:true}]};

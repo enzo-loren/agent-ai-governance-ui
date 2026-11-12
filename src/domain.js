@@ -39,6 +39,14 @@ export function agentName(state,id){return agentById(state,id)?.name||'Unknown a
 export function canEdit(state){return state.role==='operator';}
 export function canApprove(state){return state.role==='approver';}
 export function hasConnection(agent,id){return !!agent?.connections.includes(id);}
+/** A path can be configured before an authenticated request has been observed. */
+export function agentConnectionStatus(agent,state){
+ if(!agent||!hasConnection(agent,'A'))return 'not_configured';
+ if(agent.connectionCheck?.status==='verified')return 'verified';
+ if(agent.connectionCheck?.status==='pending')return 'pending';
+ if(state?.credentials?.[agent.id]?.issuedTotal>0)return 'pending';
+ return 'verified';
+}
 // Connection presence is not the coverage index. B is tool-by-tool; C is per request.
 export function connectionProfile(agent,state){
   const declared=toolsForAgent(agent?.id,state);
