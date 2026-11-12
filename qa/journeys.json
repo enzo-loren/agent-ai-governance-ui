@@ -134,7 +134,7 @@
         {
           "type": "text",
           "selector": ".modal-card",
-          "contains": "Example key"
+          "contains": "Test credential"
         },
         {
           "type": "state",
@@ -986,7 +986,7 @@
         {
           "type": "text",
           "selector": ".integration-grid",
-          "contains": "Not connected"
+          "contains": "Not configured"
         }
       ],
       "note": "Trace records not retroactively rewritten"
@@ -1766,12 +1766,17 @@
       "checks": [
         {
           "type": "state",
-          "path": "state.rules.0.effect",
-          "equals": "deny"
+          "path": "state.cedarDrafts.0.status",
+          "equals": "draft"
+        },
+        {
+          "type": "state",
+          "path": "state.rules.length",
+          "equals": 0
         }
       ],
-      "note": "Editor saves an example version after basic syntax checking; it does not validate Cedar against generated schema",
-      "limitation": "Editor saves an example version after basic syntax checking; it does not validate Cedar against generated schema"
+      "note": "Cedar source can be stored as a draft, but is not parsed or activated by the demonstration.",
+      "limitation": "No Cedar parser, schema validator, publishing or enforcement backend; draft remains inactive."
     },
     {
       "id": "R-10",
@@ -1805,7 +1810,7 @@
         {
           "type": "text",
           "selector": ".drawer",
-          "contains": "Sample comparison only"
+          "contains": "Potential decision changes"
         }
       ],
       "note": "Sample approximate counterfactual; no replay of full stored contexts through Cedar",
@@ -1853,7 +1858,7 @@
         {
           "type": "text",
           "selector": ".drawer",
-          "contains": "Operator (preview)"
+          "contains": "Operator"
         }
       ]
     },
@@ -2057,7 +2062,7 @@
         {
           "type": "text",
           "selector": "main",
-          "contains": "Sample feed"
+          "contains": "Generate request"
         }
       ],
       "note": "Generates only a local sample event; no real gateway stream or p95 timing",
@@ -2267,7 +2272,7 @@
         {
           "type": "text",
           "selector": ".drawer",
-          "contains": "Sample masked arguments"
+          "contains": "Arguments shown with sensitive values masked"
         },
         {
           "type": "visible",
@@ -2839,7 +2844,7 @@
         {
           "type": "text",
           "selector": ".drawer",
-          "contains": "cannot establish a complete causal chain"
+          "contains": "transaction ID is needed to establish causality"
         }
       ],
       "note": "Only matching example events grouped; no verified transaction correlation IDs",
@@ -2923,15 +2928,15 @@
         {
           "type": "text",
           "selector": ".modal",
-          "contains": "not verified"
+          "contains": "Not verified"
         },
         {
           "type": "text",
           "selector": ".modal",
-          "contains": "AccessDenied"
+          "contains": "Unavailable"
         }
       ],
-      "note": "Illustrative 403 response only; does not call S3 or prove immutable retention",
+      "note": "The UI records retention status as unavailable; a real Object Lock proof remains backend-dependent.",
       "limitation": "Illustrative 403 response only; does not call S3 or prove immutable retention"
     },
     {
@@ -4399,15 +4404,15 @@
         {
           "type": "text",
           "selector": ".modal",
-          "contains": "illustrative"
+          "contains": "Not verified"
         },
         {
           "type": "text",
           "selector": ".modal",
-          "contains": "not verified"
+          "contains": "Not verified"
         }
       ],
-      "note": "Demonstrates the planned proof UI, not a real S3 deletion attempt",
+      "note": "No fabricated 403 success; display Not verified and Unavailable as the operational evidence status.",
       "limitation": "Demonstrates the planned proof UI, not a real S3 deletion attempt"
     },
     {
@@ -4558,7 +4563,7 @@
       "checks": [
         {
           "type": "url",
-          "value": "#/activity/atlas"
+          "value": "#/activity/atlas?channel=inference"
         },
         {
           "type": "state",
@@ -4595,7 +4600,7 @@
       "checks": [
         {
           "type": "url",
-          "value": "#/activity/atlas"
+          "value": "#/activity/atlas?channel=inference&person=Maya+Chen"
         },
         {
           "type": "visible",
@@ -4632,7 +4637,7 @@
       "checks": [
         {
           "type": "url",
-          "value": "#/activity"
+          "value": "#/activity?channel=inference&model=GPT-6"
         },
         {
           "type": "state",
@@ -4674,7 +4679,7 @@
       "checks": [
         {
           "type": "url",
-          "value": "#/audit/atlas"
+          "value": "#/audit/atlas?trace=TRC-1044"
         },
         {
           "type": "visible",

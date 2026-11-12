@@ -43,7 +43,7 @@ def rules(p):
  sel(p,'#op-rule-form button[type=submit]').click()
  assert p.evaluate('window.__uiAudit().state.rules.length')==1
  sel(p,'[data-action="op-rule-test"]').click()
- assert 'Sample amount = 25' in sel(p,'.drawer').inner_text()
+ assert 'amount = 25' in sel(p,'.drawer').inner_text()
 
 def agent(p):
  sel(p,'a.agent-name[href="#/agent/atlas"]').click()
@@ -112,16 +112,17 @@ def audit(p):
  sel(p,'[data-action="op-transaction"]').click()
  assert 'Request timeline' in sel(p,'.drawer').inner_text()
  sel(p,'[data-action="op-immutability"]').click()
- assert 'not verified' in sel(p,'.modal').inner_text()
+ assert 'Not verified' in sel(p,'.modal').inner_text()
 
 def activity(p):
  sel(p,'a.nav-link[href="#/activity"]').click()
  sel(p,'#activity-user').fill('Maya')
  sel(p,'#activity-channel').select_option('inference')
  sel(p,'[data-action="activity-pause"]').click()
+ original=p.evaluate('window.__uiAudit().state.events.length')
  sel(p,'[data-action="op-add-sample-event"]').click()
  sel(p,'[data-action="op-replay-buffer"]').click()
- assert p.evaluate('window.__uiAudit().state.events.length')==11
+ assert p.evaluate('window.__uiAudit().state.events.length')==original+1
 
 def presentation(p):
  sel(p,'[data-action="op-presentation"]').click()

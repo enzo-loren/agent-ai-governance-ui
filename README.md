@@ -1,8 +1,8 @@
 # Agent Governance UI
 
-A static, interactive reference interface for reviewing agents, their tools, policies, requests and operational decisions. The application uses local sample data; changes remain in the browser.
+An interactive governance console for reviewing agents, tool access, policies, model requests, spending and decisions. Its hosted demo uses an in-browser data service with deterministic fixtures.
 
-**Status:** frontend prototype. It does not authenticate users, issue credentials, route inference or MCP requests, execute Cedar, or validate S3 evidence. The role and identity selectors illustrate expected product behavior rather than enforce authorization.
+**Environment:** browser-hosted demonstration. The data adapter keeps sample configurations and requests separate from the UI. Production authorization, routing and immutable evidence are not provided by this repository.
 
 ## Product areas
 
@@ -30,17 +30,23 @@ bash qa/run_all.sh
 python qa/generate_matrix.py
 python qa/test_extended.py
 python qa/test_distribution.py
+python qa/test_mock_boundary.py
 ```
+
+The [deep UX and data audit](docs/deep-ux-data-audit.md) records corrected data contradictions, requirements still depending on platform services, and evidence limits. The [mock data contract](docs/mock-backend-contract.md) describes the in-browser adapter.
 
 The [journey matrix](docs/journey-matrix.md) records every tested task and alternative, its steps from Home and its outcome. The [audit](docs/user-journey-audit.md) separates working simulated UI paths from capabilities that still require backend integration. CI checks JavaScript behavior, browser interactions and the generated static distribution.
 
 ## Structure
 
-- `src/data.js`: sample agents, tools, requests and policy presets.
+- `src/mock/fixtures.js`: deterministic agents, tools, users, events and scenarios.
+- `src/mock/backend.js`: versioned in-browser workspace repository (replaceable by HTTP).
+- `src/data.js`: policy and navigation definitions.
 - `src/domain.js`: simulation state and decision rules.
 - `src/views.js`: primary navigation and screens.
 - `src/operations.js`: tool review and other task workflows.
-- `src/app.js`: routing, browser state and event handling.
+- `src/router.js`: shareable cross-view filter URLs.
+- `src/app.js`: event handling, local UI state and coordination with the adapter.
 - `src/styles/tokens.css`: palette and semantic design tokens.
 - `qa/`: browser journeys and measurable outcomes.
 - `docs/`: requirement mapping, audits and editorial decisions.

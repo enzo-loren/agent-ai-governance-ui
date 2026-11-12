@@ -79,3 +79,11 @@ Raw YAML/Cedar/JSON, AWS services, Object Lock modes and token propagation belon
 - Decisión de UX: transformar el gasto agregado en **escala de detalle**: global → agente → eventos de modelo → decisión/auditoría, con vías paralelas por persona, modelo y alerta. Usar rutas de agente explícitas y conservar filtros de origen; poner la navegación de retorno en el alcance del agente.
 - Protección epistémica: la muestra de eventos no reconcilia las métricas `agent.spent`; se rotulan los registros como parciales y no se inventa atribución. Personas sin identidad verificada siguen contabilizadas en el agente. La UI no presenta un importe como evidencia de facturación de un proveedor.
 - Verificación: 9 recorridos de Chromium nuevos desde Inicio (`S-10`–`S-18`) y pruebas de ida y vuelta/errores de atribución a 1100 y 390 px. El conjunto total queda en 124 casos (104 UI simulada, 20 parciales por backend); la acción de clic cuenta como paso, no el desplazamiento o apertura del menú móvil.
+
+## Separación de datos y copy · 2026-11-11
+
+- La UI deja de repetir «sample / example / preview» en cada tarea. Mantiene **un único distintivo Demo** y estados operativos verificables dentro del contexto (configurado, no verificado, sin ejecución en gateway, borrador sin publicar). Eliminar estas condiciones induciría una interpretación errónea, por lo que no se eliminaron.
+- Los datos y personas sintéticos se trasladan a `src/mock/fixtures.js`; se agrega `src/mock/backend.js` como repositorio versionado para GitHub Pages, documentado como adaptador local, **no** como backend seguro de producción.
+- Un rechazo S3 ficticio era demasiado parecido a una prueba. Se sustituyó por «Not verified / Unavailable». Un borrador Cedar tampoco puede tener consecuencias de ejecución antes de validarse y publicarse.
+- La coherencia de importes se exige para nuevos eventos de inferencia y sus agregados, pero no se inventa un ledger que explique los importes históricos.
+- Auditoría con hallazgos por severidad y estado en [`deep-ux-data-audit.md`](deep-ux-data-audit.md). Las razones editoriales permanecen aquí, no en las páginas del producto.

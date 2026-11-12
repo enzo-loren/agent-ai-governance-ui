@@ -18,7 +18,7 @@ test('spending offers explicit agent-specific investigations, not just numbers',
   assert.match(detail,/href="#\/audit\/atlas"/);
   assert.match(detail,/href="#\/agent\/atlas\/rules"/);
   assert.match(detail,/data-action="spending-trace" data-id="TRC-1044" data-agent="atlas"/);
-  assert.match(detail,/not a reconciliation of the daily total/);
+  assert.match(detail,/partial history/);
 });
 
 test('model breakdown leads to model-filtered Activity instead of a read-only sum',()=>{

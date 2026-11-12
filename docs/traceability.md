@@ -35,3 +35,8 @@ La [auditoría de recorridos](user-journey-audit.md) y su [matriz de pasos](jour
 ## Continuidad de tareas de gasto
 
 `Spending → agente → solicitud por persona/modelo → Activity` y `Spending → agente → trace_id → Audit → Spending del agente` se prueban como recorridos de trabajo, no como mera presencia de enlaces. Los IDs `S-10` a `S-18` en [`journey-matrix.md`](journey-matrix.md) y las verificaciones de navegador en `qa/test_spending_navigation.py` miden esa continuidad. No se afirma conciliación entre totales diarios y registros parciales de muestra.
+
+
+## Revisión de integridad de datos y lenguaje · 2026-11-11
+
+Se incorporó la auditoría [`deep-ux-data-audit.md`](deep-ux-data-audit.md) y el contrato [`mock-backend-contract.md`](mock-backend-contract.md). La UI usa fixtures y un repositorio local versionado, y no muestra repetidamente advertencias por formulario. Ninguno de estos cambios implementa controles HTTP 403/429 de producción, OIDC, Cedar real, MCP o inmutabilidad S3. Se corrigió especialmente que un borrador Cedar no se ejecute como una regla genérica. `CON-04` mantiene su desviación normativa previa.
