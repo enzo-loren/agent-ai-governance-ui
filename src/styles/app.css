@@ -272,10 +272,26 @@ hr{border:0;height:1px;background:var(--border);margin:22px 0}.muted{color:var(-
 .modal-card:has(.onboarding-receipt) .modal-actions .btn{margin-left:auto}
 @media(max-width:470px){.agent-setting-row{gap:10px}.agent-setting-row .btn{min-width:65px}.agent-settings-danger{padding:14px}.credential-copy-field .field-input{font-size:11px!important}}
 
-/* Morris & Opazo: the authentic white wordmark requires a dark contrast plate. */
-.sidebar-brand{display:flex;flex-direction:column;align-items:stretch;gap:11px;padding:27px 22px 30px}
-.brand-logo-plate{display:flex;align-items:center;justify-content:center;min-height:49px;padding:11px 12px;border-radius:var(--radius-sm);background:var(--brand-logo-surface);width:100%}
-.brand-wordmark{display:block;width:100%;max-width:188px;height:auto;object-fit:contain}
-.brand-product-name{font-size:12px;line-height:1.35;font-weight:750;letter-spacing:.015em;color:var(--text);margin-left:3px}
-@media(max-width:1080px){.sidebar-brand{padding:24px 18px 26px}.brand-logo-plate{padding:10px 10px}}
-@media(max-width:840px){.sidebar-brand{padding-top:27px}}
+/* Brand lockup: flat, calm and independent of the palette.
+   The source asset is white/transparent: a monochrome filter makes it dark on light
+   surfaces and preserves its original white pixels in dark appearance. */
+.sidebar-brand{
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center;
+  gap:0; padding:30px 25px 27px; min-width:0; margin-bottom:19px;
+  border-bottom:1px solid var(--border); text-decoration:none;
+}
+.brand-wordmark{
+  display:block; width:100%; max-width:175px; height:auto; object-fit:contain;
+  filter:var(--brand-wordmark-filter); transition:filter .16s ease;
+}
+.brand-product-name{
+  margin-top:12px; font-size:10px; line-height:1.4; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--text-muted); font-weight:750;
+}
+.sidebar-brand:hover .brand-product-name{color:var(--text)}
+.sidebar-brand:focus-visible,.mobile-brand:focus-visible{outline:2px solid var(--focus);outline-offset:-4px;border-radius:var(--radius-xs)}
+.mobile-brand{display:none;flex:none;align-items:center;justify-content:center;width:34px;height:34px;text-decoration:none}
+.mobile-brand img{display:block;width:29px;height:29px;object-fit:contain}
+@media(max-width:1080px){.sidebar-brand{padding:27px 19px 25px}.brand-wordmark{max-width:173px}}
+@media(max-width:840px){.mobile-brand{display:inline-flex}.sidebar-brand{padding:29px 24px 26px}}
+@media(max-width:420px){.mobile-brand{margin-right:auto}}
