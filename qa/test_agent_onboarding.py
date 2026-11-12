@@ -87,6 +87,18 @@ def main():
                 updated=page.evaluate("()=>state.agents.find(a=>a.id==='research-assistant')")
                 assert updated['invalidUserToken']=='reject'
                 assert updated['acceptedClients']==['web-portal','mobile']
+                # Availability is managed in the settings drawer, never through a top-level danger button.
+                page.locator('[data-action="op-agent-manage"]').click()
+                assert page.locator('.agent-settings-panel [data-action="toggle-pause"]').inner_text()=='Pause agent'
+                page.locator('.agent-settings-panel [data-action="toggle-pause"]').click()
+                assert 'Pause this agent?' in page.locator('.modal').inner_text()
+                page.locator('[data-action="confirm-pause"]').click()
+                assert page.evaluate("state.agents.find(a=>a.id==='research-assistant').mode")=='suspended'
+                page.locator('[data-action="op-agent-manage"]').click()
+                assert page.locator('.agent-settings-panel [data-action="toggle-pause"]').inner_text()=='Resume agent'
+                page.locator('.agent-settings-panel [data-action="toggle-pause"]').click()
+                page.locator('[data-action="confirm-pause"]').click()
+                assert page.evaluate("state.agents.find(a=>a.id==='research-assistant').mode")=='observe'
                 page.evaluate("state.role='auditor';render()")
                 assert page.locator('[data-action="op-agent-manage"]').count()==0
                 assert page.locator('[data-action="op-rotate-token"]').count()==0
