@@ -16,7 +16,7 @@ def inline_studio():
     for name in ('mock/fixtures','data','domain','mock/backend','mock/credentials','mock/test-api','mock/test-fixtures','test-console'):
         source=(ROOT/'src'/f'{name}.js').read_text()
         source=re.sub(r'^import\s+\{[^\n]+\}\s+from\s+[^\n]+;\s*','',source,flags=re.M)
-        source=re.sub(r'\bexport\s+(?=(?:const|function|class)\b)','',source)
+        source=re.sub(r'\bexport\s+(?=(?:const|function|class|async)\b)','',source)
         source=re.sub(r'^export\s*\{[^\n]+\}\s*from\s*[^\n]+;','',source,flags=re.M)
         source=re.sub(r'^export\s*\{[^\n]+\};','',source,flags=re.M)
         modules.append(source)
