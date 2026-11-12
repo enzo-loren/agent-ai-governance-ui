@@ -34,12 +34,12 @@ def visit_agent(page):
     assert page.evaluate('location.hash')=='#/spending/atlas'
     page.locator('.spending-next h2',has_text='Investigate Atlas Support').wait_for()
     assert page.locator('.spending-record').count()>0
-    assert 'not a reconciliation' in page.locator('[aria-label="Recorded cost events"]').inner_text()
+    assert 'partial history' in page.locator('[aria-label="Recorded cost events"]').inner_text()
 
 def visit_activity(page):
     visit_agent(page)
     page.locator('.spending-next [data-action="spending-requests"]').click()
-    assert page.evaluate('location.hash')=='#/activity/atlas'
+    assert page.evaluate('location.hash')=='#/activity/atlas?channel=inference'
     assert _selected(page,'#activity-channel')=='inference'
     assert page.locator('table tbody tr').count()>0
     assert all(x=='Model' for x in page.locator('tbody tr td:nth-child(4)').all_text_contents())
@@ -48,7 +48,7 @@ def visit_activity(page):
 
 def visit_person(page):
     page.locator('[data-action="spending-person-requests"][data-person="Maya Chen"]').first.click()
-    assert page.evaluate('location.hash')=='#/activity/atlas'
+    assert page.evaluate('location.hash')=='#/activity/atlas?channel=inference&person=Maya+Chen'
     assert _selected(page,'#activity-channel')=='inference'
     assert _selected(page,'#activity-user')=='Maya Chen'
     assert page.locator('tbody tr').count()>0
@@ -60,14 +60,14 @@ def visit_person(page):
 def visit_model(page):
     visit_agent(page)
     page.locator('[data-action="spending-model-requests"][data-model="GPT-6"]').first.click()
-    assert page.evaluate('location.hash')=='#/activity/atlas'
+    assert page.evaluate('location.hash')=='#/activity/atlas?channel=inference&model=GPT-6'
     assert _selected(page,'#activity-model')=='GPT-6'
     assert _selected(page,'#activity-channel')=='inference'
 
 def visit_trace(page):
     visit_agent(page)
     page.locator('.spending-record [data-action="spending-trace"]').first.click()
-    assert page.evaluate('location.hash')=='#/audit/atlas'
+    assert page.evaluate('location.hash').startswith('#/audit/atlas?trace=')
     assert page.locator('#audit-search').input_value()!=''
     trace=page.locator('#audit-search').input_value()
     assert page.locator('tbody tr').count()==1

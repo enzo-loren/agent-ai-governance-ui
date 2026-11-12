@@ -22,10 +22,11 @@ SPEC=ROOT/'qa'/'journeys.json'
 
 def inline_document(root=ROOT):
     modules=[]
-    for name in ('data','domain','icons','operations','views','app'):
+    for name in ('mock/fixtures','data','domain','mock/backend','router','icons','operations','views','app'):
         text=(root/'src'/f'{name}.js').read_text()
         text=re.sub(r'^import\s+\{[^\n]+\}\s+from\s+[^\n]+;\s*','',text,flags=re.M)
-        text=re.sub(r'\bexport\s+(?=(?:const|function)\b)','',text)
+        text=re.sub(r'\bexport\s+(?=(?:const|function|class)\b)','',text)
+        text=re.sub(r'^export\s*\{[^\n]+\}\s*from\s*[^\n]+;','',text,flags=re.M)
         text=re.sub(r'^export\s*\{[^\n]+\};','',text,flags=re.M)
         if name=='operations':text='const e=escapeHTML;\n'+text
         if name=='views':text='const esc=escapeHTML; const I=icon;\n'+text
