@@ -27,5 +27,6 @@ jobs:
           bash qa/run_all.sh
           python -u qa/test_extended.py
           python -u qa/test_distribution.py
+          python -u qa/test_spending_navigation.py
           python qa/generate_matrix.py
           git diff --exit-code -- qa/journey-results.json docs/journey-matrix.md

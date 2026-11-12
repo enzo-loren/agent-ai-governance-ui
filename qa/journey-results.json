@@ -2,8 +2,8 @@
   "method": "Actual browser DOM interactions from #/home, one step per click, field fill, or select change. No typing-character, scrolling, or menu opening double counts.",
   "source": "UI source files on current branch; browser inlined only to remove network dependence.",
   "summary": {
-    "cases": 115,
-    "observedWorking": 95,
+    "cases": 124,
+    "observedWorking": 104,
     "partialPreview": 20,
     "unreachable": 0,
     "unexpectedFailures": 0
@@ -1581,6 +1581,120 @@
         "3. click [data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]",
         "4. click [data-action=\"review-policy-change\"]",
         "5. press body"
+      ]
+    },
+    {
+      "id": "S-10",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click a[href=\"#/spending/atlas\"].agent-name"
+      ]
+    },
+    {
+      "id": "S-11",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click a[href=\"#/spending/atlas\"].agent-name",
+        "3. click .spending-next [data-action=\"spending-requests\"]"
+      ]
+    },
+    {
+      "id": "S-12",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click [data-action=\"spending-person-requests\"][data-person=\"Maya Chen\"]"
+      ]
+    },
+    {
+      "id": "S-13",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click [data-action=\"spending-model-requests\"][data-model=\"GPT-6\"]"
+      ]
+    },
+    {
+      "id": "S-14",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click a[href=\"#/spending/atlas\"].agent-name",
+        "3. click .spending-record [data-action=\"spending-trace\"][data-id=\"TRC-1044\"]"
+      ]
+    },
+    {
+      "id": "S-15",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click [data-action=\"op-spending-alerts\"]",
+        "3. click .drawer a[href=\"#/spending/invoice\"]"
+      ]
+    },
+    {
+      "id": "S-16",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click a[href=\"#/spending/atlas\"].agent-name",
+        "3. click .spending-record [data-action=\"spending-trace\"][data-id=\"TRC-1044\"]",
+        "4. click .scope-bar a[href=\"#/spending/atlas\"]"
+      ]
+    },
+    {
+      "id": "S-17",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click a[href=\"#/spending/atlas\"].agent-name",
+        "3. click .spending-record [data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+      ]
+    },
+    {
+      "id": "S-18",
+      "status": "ui-working",
+      "result": "as_expected",
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
+      "stepsToBlocker": null,
+      "steps": [
+        "1. click a.nav-link[href=\"#/spending\"]",
+        "2. click a[href=\"#/spending/atlas\"].agent-name"
       ]
     }
   ]

@@ -12,7 +12,7 @@
 | Políticas y reglas | POL-01/03/04/05, CON-07 | Rules → previsualizar, confirmar, constructor y editor de muestra; comparación de parámetros | El editor no interpreta Cedar completo y la estimación histórica no reevalúa evidencia |
 | Actividad y decisiones | CON-02/03, INF-04 | Activity → filtros, muestra, pausa, explicación | Sin flujo real ni métricas de latencia/correlación |
 | Supervisión de ejecuciones | CON-05, HITL-01/02/03 | Approvals → contexto de ejemplo, comentario, decisión, vencimiento ilustrativo | No hay identidad autenticada, timeout de servidor ni ejecución retenida |
-| Consumo y límites | FIN-01/02/03, CON-06 | Spending → límites, alertas, tarifas, gasto por agente/modelo/persona | Sin facturación ni aplicación real de límites |
+| Consumo y límites | FIN-01/02/03, CON-06 | Spending → detalle por agente, rutas a Activity/Audit, límites, alertas, tarifas y gasto por modelo/persona | Sin facturación ni aplicación real de límites |
 | Auditoría y evidencia | EVD-01/02/03/04/05/06 | Audit → filtros combinados, historial administrativo, detalle y línea de tiempo de ejemplo | No hay evidencia inmutable ni prueba S3 real |
 | Roles, apariencia y presentación | CON-01/02/08 | Roles de vista, paletas, navegación responsive y presentación | Los roles visuales no son autorización de API |
 
@@ -31,3 +31,7 @@ La fuente normativa exige un índice numérico ponderado de cobertura y la guía
 ## Evidencia reproducible de la interfaz
 
 La [auditoría de recorridos](user-journey-audit.md) y su [matriz de pasos](journey-matrix.md) distinguen recorridos completados en el navegador de los **20 casos parciales que siguen requiriendo backend**. Los oráculos se ejecutan en Chromium sobre la UI de muestra. No se extrapolan a AWS, OIDC, MCP, Cedar, OTLP ni S3.
+
+## Continuidad de tareas de gasto
+
+`Spending → agente → solicitud por persona/modelo → Activity` y `Spending → agente → trace_id → Audit → Spending del agente` se prueban como recorridos de trabajo, no como mera presencia de enlaces. Los IDs `S-10` a `S-18` en [`journey-matrix.md`](journey-matrix.md) y las verificaciones de navegador en `qa/test_spending_navigation.py` miden esa continuidad. No se afirma conciliación entre totales diarios y registros parciales de muestra.

@@ -14,7 +14,7 @@ A static, interactive reference interface for reviewing agents, their tools, pol
 | Rules | Compare presets without applying them, confirm a change, create example parameter rules and inspect history |
 | Activity | Filter recorded events, pause the sample feed, add an example request and inspect the decision |
 | Approvals | Inspect a pending execution, review masked example arguments, approve/reject with a comment, simulate expiry |
-| Spending | Review costs and sample alerts; configure budget, request/token limits, person limits and tariffs |
+| Spending | Investigate an agent, follow model/person costs into filtered requests and audit traces, inspect alerts, and edit example limits or tariffs |
 | Audit | Filter decisions, inspect a sample request timeline and view administrative changes |
 
 **Tool catalog review and approval of a pending execution are separate operations.** Reviewing a tool changes its catalog status; approving an execution authorizes one specific pending request. A tool approved for the catalog is not automatically protected at execution if it remains outside the gateway.
