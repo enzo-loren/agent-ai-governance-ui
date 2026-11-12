@@ -101,3 +101,10 @@ Raw YAML/Cedar/JSON, AWS services, Object Lock modes and token propagation belon
 - Empty issuer and audience fields are preferable to prefilled example domains that imply an OIDC connection was established. Placeholder format examples do not constitute configuration.
 - The Request timeline entry remains an operational Audit feature; a browser regression caught its accidental removal during cleanup and it was restored. Keep the causality limitation visible.
 - The separate test page uses POST-shaped synchronous local handlers, not real network endpoints; do not label the behavior as gateway traffic or claim API authentication.
+
+## 2026-11-12 · Customer copy and action placement follow-up
+
+- **Observed defect (Approvals):** “Select that role above” referenced an impersonation control no longer present in the customer console. Preserve the permission boundary and describe the current role rather than asking the customer to manipulate a testing affordance. Do not enable a decision button for an Auditor merely to reduce copy.
+- **Observed defect (Connections):** Four detached route buttons appeared immediately after the “Spending by person” row. Their visual grouping falsely implied an association with that row and duplicated the global navigation. Replace with one scoped, task-specific link per capability, keeping the agent id in the destination; the contextual link is navigation, not a new authorization guarantee.
+- **Observed copy (Help):** “The target backend will…” and “The real backend…” belonged to engineering design documentation. Replace them with operational descriptions of Observe/Enforce and unavailable immutable-retention evidence. Keep `Not verified` as a meaningful state, not an apologetic disclaimer.
+- **Evidence:** Node contract tests, explicit browser viewport/URL assertions and captured desktop/mobile screenshots. No change to the normative requirement baseline, server authorization or Object Lock verification.
