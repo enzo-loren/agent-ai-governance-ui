@@ -3565,6 +3565,11 @@
           "value": "http://identity.example.test"
         },
         {
+          "do": "fill",
+          "selector": "#op-identity-form [name=\"audience\"]",
+          "value": "customer-client"
+        },
+        {
           "do": "click",
           "selector": "#op-identity-form button[type=\"submit\"]"
         }

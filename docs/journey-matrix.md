@@ -64,7 +64,7 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `I-09` | Required model connection cannot be disconnected (*required channel*) | OPS-01 | Funcional (simulado) | 2 |
 | `I-10` | Disabling identity preserves existing event attribution (*historic identity*) | IDN-01, EVD-04 | Funcional (simulado) | 4 |
 | `X-10` | Cancel disconnection without changing active path | OPS-01 | Funcional (simulado) | 4 |
-| `X-13` | OIDC issuer must use HTTPS | IDN-01 | Funcional (simulado) | 5 |
+| `X-13` | OIDC issuer must use HTTPS | IDN-01 | Funcional (simulado) | 6 |
 
 ## Agent overview
 
