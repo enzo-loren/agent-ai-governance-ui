@@ -89,7 +89,7 @@ def render() -> None:
             share.screenshot(path=str(OUT), type='png', animations='disabled')
             share.close()
             data = OUT.read_bytes()
-            assert data[:8] == b'\\x89PNG\\r\\n\\x1a\\n'
+            assert data[:8] == bytes.fromhex('89504e470d0a1a0a')
             assert int.from_bytes(data[16:20], 'big') == 1200
             assert int.from_bytes(data[20:24], 'big') == 630
             print(f'Generated {OUT.relative_to(ROOT)} ({len(data):,} bytes)')
