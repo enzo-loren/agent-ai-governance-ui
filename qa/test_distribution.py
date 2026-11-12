@@ -11,7 +11,7 @@ from run_journeys import inline_document
 from playwright.sync_api import sync_playwright
 ROOT=Path(__file__).resolve().parents[1]
 DIST=ROOT/'dist'
-for module in ('assets/branding/morris-mark.png','assets/branding/morris-wordmark.png','src/operations.js','src/mock/fixtures.js','src/mock/backend.js','src/mock/test-api.js','src/mock/test-fixtures.js','src/test-console.js','src/styles/test-console.css','test-console.html'):
+for module in ('assets/social/overview-og.png','assets/branding/morris-mark.png','assets/branding/morris-wordmark.png','src/operations.js','src/mock/fixtures.js','src/mock/backend.js','src/mock/test-api.js','src/mock/test-fixtures.js','src/test-console.js','src/styles/test-console.css','test-console.html'):
  assert (DIST/module).is_file(),f'Missing deployed module {module}'
 OUTPUT=os.environ.get('QA_SCREENSHOTS')
 if OUTPUT:Path(OUTPUT).mkdir(parents=True,exist_ok=True)
