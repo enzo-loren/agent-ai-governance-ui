@@ -3,7 +3,6 @@ import {POLICY_PRESETS, CONNECTIONS} from './data.js';
 import {escapeHTML as e, agentById, agentName, canEdit, canApprove, toolById, toolsForAgent, hasConnection, toolOperationalStatus, formatUSD, sampleModels, changeRecord, reviseTool, addRule, saveCedarDraft, appendScenario, filterAuditEvents, DEMO_REVIEWER} from './domain.js';
 import {icon as I} from './icons.js';
 import {MODEL_CATALOG,REVIEWERS} from './mock/fixtures.js';
-import {credentialRecord} from './mock/credentials.js';
 const button=(text,action,data='',kind='')=>`<button type="button" class="btn ${kind}" data-action="${action}" ${data}>${e(text)}</button>`;
 const small=(text,action,data='')=>button(text,action,data,'tiny');
 const field=(label,name,value='',type='text',extra='')=>`<label class="field-group"><span class="field-label">${e(label)}</span><input class="field-input" name="${name}" type="${type}" value="${e(value)}" ${extra}></label>`;
@@ -20,15 +19,14 @@ const formModal=(title,form)=>modal(title,form,'');
 export function renderAgentOperations(state,a){
  if(!canEdit(state))return '';
  if(a.mode==='retired')return `<section class="card card-pad op-section"><h2 class="card-title">Retired agent</h2><p class="card-subtitle">Operations are disabled. Recorded changes can still be inspected.</p>${small('View history','op-history',`data-id="${e(a.id)}"`)}</section>`;
- const cred=credentialRecord(state.credentials,a.id);
- const active=cred.active.filter(x=>!x.revokedAt).length;
+ const cred=state.credentials?.[a.id]||{version:1,revoked:0};
  return `<section class="card card-pad op-section"><div class="card-title-row"><div><h2 class="card-title">Agent setup</h2><p class="card-subtitle">Details and access settings</p></div></div><div class="op-action-grid">
  ${small('Edit details','op-edit-agent',`data-id="${e(a.id)}"`)}
- ${small('Allowed models','op-models',`data-id="${e(a.id)}"`)}${small('Request handling','op-agent-settings',`data-id="${e(a.id)}"`)}
+ ${small('Allowed models','op-models',`data-id="${e(a.id)}"`)}
  ${small('Rotate credential','op-rotate-token',`data-id="${e(a.id)}"`)}
  ${small('Revoke credential','op-revoke-token',`data-id="${e(a.id)}"`)}
  ${small('Retire agent','op-retire-agent',`data-id="${e(a.id)}"`)}${small('Change history','op-history',`data-id="${e(a.id)}"`)}
- </div><div class="credential-summary"><span class="micro muted">${active} active · ${cred.revoked} revoked · Version ${cred.version}</span><details><summary class="text-link">Credential records</summary><div class="op-compact-list">${cred.active.map(k=>`<div class="op-list-row"><div><strong>${e(k.id)}</strong><p>${k.revokedAt?'Revoked':'Active'} · ${e(k.createdAt?.slice(0,10)||'Date unavailable')}</p></div></div>`).join('')}</div></details></div></section>`;
+ </div><p class="micro muted mt-4">Credential version ${cred.version} · ${cred.revoked} revoked</p></section>`;
 }
 export function renderRulesOperations(state,ui,a){
  const rules=state.rules.filter(r=>r.agent===a.id);
@@ -144,22 +142,10 @@ export function renderOpsModal(state,ui){
   return modal('Apply tool review?',`<p>Tool: <strong>${e(tool.name)}</strong> · ${e(agentName(state,tool.agent))}</p><p>Class: ${e(d.type)} · Decision: ${e(d.decision)} · Supervision: ${e(d.supervision)}</p><p class="micro muted">Local tools remain outside the execution gateway.</p>`,`${button('Back','op-back-tool')}${button('Confirm review','op-confirm-tool','', 'primary')}`);
  }
  if(m.kind==='op-agent-edit'&&a){return formModal('Edit agent details',`<form id="op-agent-form" data-id="${e(a.id)}">${field('Name','name',a.name,'text','required maxlength="54"')}${field('Owner','owner',a.owner,'text','required maxlength="54"')}${field('Team','team',a.team,'text','required maxlength="54"')}${field('Description','description',a.description||'')}${field('Version','version',a.version||'1.0.0')}${ui.opError?`<p class="op-error" role="alert">${e(ui.opError)}</p>`:''}${formActions('Save details')}</form>`);}
- if(m.kind==='op-agent-settings'&&a){
-  return formModal(`${a.name} · request handling`,`<form id="op-agent-settings-form" data-id="${e(a.id)}">
-    ${select('Blocked action response','blockStyle',[['message','Model message'],['error_http','HTTP error']],a.blockStyle||'message')}
-    ${select('Guardrail in Observe mode','guardrailDiscovery',[['block','Block harmful content'],['shadow','Observe only']],a.guardrailDiscovery||'block')}
-    ${select('Invalid user token','invalidUserToken',[['auto','Use mode default'],['reject','Reject request'],['degrade','Continue as agent']],a.invalidUserToken||'auto')}
-    ${field('Accepted OIDC client IDs','acceptedClients',(a.acceptedClients||[]).join(', '),'text','placeholder="Comma-separated client IDs"')}
-    <label class="op-check"><input type="checkbox" name="hasHumanUsers" ${a.hasHumanUsers!==false?'checked':''}><span>This agent serves human users</span></label>
-    <p class="micro muted">Identity verification requires the configured issuer and a valid user token. Changes here do not verify a connection.</p>
-    ${ui.opError?`<p class="op-error" role="alert">${e(ui.opError)}</p>`:''}${formActions('Save handling settings')}</form>`);
- }
  if(m.kind==='op-models'&&a){return formModal(`${a.name} · allowed models`,`<form id="op-models-form" data-id="${e(a.id)}"><p>Only selected models would be permitted when rules are enforced.</p>${sampleModels.map(model=>`<label class="op-check"><input type="checkbox" name="model" value="${e(model.name)}" ${(a.allowedModels||sampleModels.map(x=>x.name)).includes(model.name)?'checked':''}><span>${e(model.name)}</span></label>`).join('')}${ui.opError?`<p class="op-error" role="alert">${e(ui.opError)}</p>`:''}${formActions('Save allowed models')}</form>`);}
  if(m.kind==='op-confirm-agent'&&a){
   const kind=m.action;const title=kind==='rotate'?'Rotate credential?':kind==='revoke'?'Revoke credential?':'Retire this agent?';
-  const credentials=credentialRecord(state.credentials,a.id);const active=credentials.active.filter(c=>!c.revokedAt);
-  const revokePicker=kind==='revoke'?`<label class="field-group"><span class="field-label">Credential to revoke</span><select id="credential-to-revoke" class="field-select" ${active.length?'':'disabled'}>${active.map(c=>`<option value="${e(c.id)}">${e(c.id)} · ${c.imported?'Imported':`Created ${e(c.createdAt.slice(0,10))}`}</option>`).join('')}</select></label>`:'';
-  return modal(title,`<p><strong>${e(a.name)}</strong></p><p>${kind==='rotate'?'A new key will be shown once. Existing keys stay active until explicitly revoked.':kind==='revoke'?'Select which active key to revoke.':'The agent will be removed from active operations. Existing decision records remain.'}</p>${revokePicker}`,`${button('Cancel','close-overlay')}${kind==='revoke'&&!active.length?'':button('Confirm','op-confirm-agent-action','',kind==='retire'?'danger':'primary')}`);
+  return modal(title,`<p><strong>${e(a.name)}</strong></p><p>${kind==='rotate'?'The previous credential version remains in the active list until revoked.':kind==='revoke'?'The current credential version will be marked revoked.': 'The agent will be removed from active operations. Existing decision records remain.'}</p>`,`${button('Cancel','close-overlay')}${button('Confirm','op-confirm-agent-action','',kind==='retire'?'danger':'primary')}`);
  }
  if(m.kind==='op-create-rule'&&a){const tools=toolsForAgent(a.id,state);return formModal('Create a custom rule',`<form id="op-rule-form" data-id="${e(a.id)}">${select('Effect','effect',[['deny','Deny'],['allow','Allow']],'deny')}${select('Tool class','type',[['Any','Any'],['Read','Read'],['Write','Write'],['Critical','Critical'],['Unclassified','Unclassified']],'Any')}${select('Specific tool (for parameter checks)','toolId',[['','Any tool'],...tools.map(t=>[t.id,t.name])],'')}${field('Parameter (optional)','parameter','','text','placeholder="e.g. amount"')}${select('Comparison','comparator',[['>','Greater than'],['<','Less than'],['=','Equals']],'>')}${field('Value','value','10')}<p class="micro muted">Parameters must belong to the selected tool schema.</p>${ui.opError?`<p class="op-error" role="alert">${e(ui.opError)}</p>`:''}${formActions('Save rule')}</form>`);}
  if(m.kind==='op-cedar-editor'&&a){return formModal('Cedar draft editor',`<form id="op-cedar-form" data-id="${e(a.id)}"><label class="field-group"><span class="field-label">Cedar policy text</span><textarea class="field-input op-textarea" name="cedar" id="op-cedar-text" rows="7" required>${e(ui.cedarDraft||'forbid (principal, action, resource) when { context.amount > 10 };')}</textarea></label><p class="micro muted">A draft is not an active rule. Publishing requires schema validation.</p>${ui.opError?`<p class="op-error" role="alert">${e(ui.opError)}</p>`:''}${formActions('Save draft')}</form>`);}
@@ -177,7 +163,7 @@ export function handleOpsClick(state,ui,element){
  const action=element.dataset.action;if(!action?.startsWith('op-'))return {handled:false};
  const id=element.dataset.id;
  const a=agentById(state,id),tool=toolById(state,id);
- const sensitive=new Set(['op-edit-agent','op-models','op-agent-settings','op-rotate-token','op-revoke-token','op-retire-agent','op-confirm-agent-action','op-create-rule','op-cedar-editor','op-mcp','op-identity','op-limits','op-user-limits','op-tariffs','op-confirm-tool','op-expire-approval']);
+ const sensitive=new Set(['op-edit-agent','op-models','op-rotate-token','op-revoke-token','op-retire-agent','op-confirm-agent-action','op-create-rule','op-cedar-editor','op-mcp','op-identity','op-limits','op-user-limits','op-tariffs','op-confirm-tool','op-expire-approval']);
  if(sensitive.has(action)&&!canEdit(state) && !['op-expire-approval'].includes(action))return handled(false,'Operator permission required');
  const open=(slot,kind,details={})=>{ui[slot]={kind,...details};ui.opError='';return handled()};
  switch(action){
@@ -191,7 +177,6 @@ export function handleOpsClick(state,ui,element){
 
  case 'op-edit-agent':if(a)return open('modal','op-agent-edit',{id});return handled();
  case 'op-models':if(a)return open('modal','op-models',{id});return handled();
- case 'op-agent-settings':if(a)return open('modal','op-agent-settings',{id});return handled();
  case 'op-rotate-token':case 'op-revoke-token':case 'op-retire-agent':if(a)return open('modal','op-confirm-agent',{id,action:action.split('-')[1]});return handled();
  case 'op-confirm-agent-action':{
    if(ui.modal?.kind!=='op-confirm-agent')return handled();const target=agentById(state,ui.modal.id),kind=ui.modal.action;
@@ -242,13 +227,6 @@ export function handleOpsSubmit(state,ui,form){
    const before={name:a.name,owner:a.owner,team:a.team,description:a.description||'',version:a.version||'1.0.0'};
    Object.assign(a,{name:data.name.trim().slice(0,54),owner:data.owner.trim().slice(0,54),team:data.team.trim().slice(0,54),description:data.description?.trim().slice(0,200),version:data.version?.trim().slice(0,30)});
    changeRecord(state,'Agent details',a.id,a.name,before,{name:a.name,owner:a.owner,team:a.team,description:a.description,version:a.version});return close('Agent details saved');
- }
- case 'op-agent-settings-form':{
-   if(!a)return fail('Agent not found');
-   if(!['message','error_http'].includes(data.blockStyle)||!['block','shadow'].includes(data.guardrailDiscovery)||!['auto','reject','degrade'].includes(data.invalidUserToken))return fail('Choose valid request handling settings');
-   const before={blockStyle:a.blockStyle||'message',guardrailDiscovery:a.guardrailDiscovery||'block',invalidUserToken:a.invalidUserToken||'auto',acceptedClients:a.acceptedClients||[],hasHumanUsers:a.hasHumanUsers!==false};
-   const next={blockStyle:data.blockStyle,guardrailDiscovery:data.guardrailDiscovery,invalidUserToken:data.invalidUserToken,acceptedClients:String(data.acceptedClients||'').split(',').map(x=>x.trim()).filter(Boolean).slice(0,30),hasHumanUsers:fd.has('hasHumanUsers')};
-   Object.assign(a,next);changeRecord(state,'Request handling',a.id,a.name,before,next);return close('Request handling settings saved');
  }
  case 'op-models-form':{
    if(!a)return fail('Agent not found');const chosen=fd.getAll('model').filter(m=>sampleModels.some(x=>x.name===m));if(!chosen.length)return fail('Select at least one model');
