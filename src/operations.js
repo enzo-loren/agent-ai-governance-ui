@@ -31,9 +31,9 @@ export function renderAgentOperations(state,a){
 export function renderRulesOperations(state,ui,a){
  const rules=state.rules.filter(r=>r.agent===a.id);
  const drafts=(state.cedarDrafts||[]).filter(d=>d.agent===a.id);
- return `<section class="card card-pad op-section mt-6"><div class="card-title-row"><div><h2 class="card-title">Custom rules</h2><p class="card-subtitle">Rules beyond the policy preset</p></div><div class="button-row">${canEdit(state)?`${small('Create rule','op-create-rule',`data-id="${e(a.id)}"`)}${small('Cedar editor','op-cedar-editor',`data-id="${e(a.id)}"`)}`:''}${small('Rule history','op-history',`data-id="${e(a.id)}"`)}${small('Try policy on history','op-simulate-historical-policy',`data-id="${e(a.id)}"`)}</div></div>
+ return `<section class="card card-pad op-section mt-6"><div class="card-title-row"><div><h2 class="card-title">Custom rules</h2><p class="card-subtitle">Rules beyond the policy preset</p></div><div class="button-row">${canEdit(state)?`${small('Create rule','op-create-rule',`data-id="${e(a.id)}"`)}${small('Cedar editor','op-cedar-editor',`data-id="${e(a.id)}"`)}`:''}${small('Rule history','op-history',`data-id="${e(a.id)}"`)}${small('Compare history','op-simulate-historical-policy',`data-id="${e(a.id)}"`)}</div></div>
  ${drafts.length?`<div class="op-compact-list">${drafts.map(d=>`<div class="op-list-row"><div><strong>${e(d.id)} · Cedar draft</strong><p>Saved · not active</p></div></div>`).join('')}</div>`:''}
- ${rules.length?`<div class="op-compact-list">${rules.map(r=>`<div class="op-list-row"><div><strong>${e(r.id)} · ${e(r.effect)} ${e(r.type)}</strong><p>${r.toolId?e(toolById(state,r.toolId)?.name||'Tool'):'Any tool'} ${r.parameter?`· ${e(r.parameter)} ${e(r.comparator)} ${e(r.value)}`:''} · Version ${r.version}</p></div>${small('Try values','op-rule-test',`data-id="${e(r.id)}"`)}</div>`).join('')}</div>`:info('No custom rules yet. Preset policies are still in effect.')}
+ ${rules.length?`<div class="op-compact-list">${rules.map(r=>`<div class="op-list-row"><div><strong>${e(r.id)} · ${e(r.effect)} ${e(r.type)}</strong><p>${r.toolId?e(toolById(state,r.toolId)?.name||'Tool'):'Any tool'} ${r.parameter?`· ${e(r.parameter)} ${e(r.comparator)} ${e(r.value)}`:''} · Version ${r.version}</p></div></div>`).join('')}</div>`:info('No custom rules yet. Preset policies are still in effect.')}
  <div class="section-head"><h2>Agent tools</h2></div>
  <div class="op-compact-list">${toolsForAgent(a.id,state).slice(0,8).map(t=>`<div class="op-list-row"><div><strong>${e(t.name)}</strong><p>${e(t.type)} · ${t.approved?'Approved':'Needs review'} · ${e(toolOperationalStatus(a,t).label)}</p></div>${small('View tool','op-open-tool',`data-id="${e(t.id)}"`)}</div>`).join('')}</div>
  ${toolsForAgent(a.id,state).length>8?small('All tools','op-show-agent-tools',`data-id="${e(a.id)}"`):''}
@@ -51,13 +51,12 @@ export function renderActivityOperations(state,ui){
  return `<div class="op-compact-tools"><label>Person <input class="field-input" id="activity-user" placeholder="Search person" value="${e(ui.activityUser||'')}"></label>
  <label>Channel <select class="field-select" id="activity-channel">${[['','All channels'],['inference','Model'],['tool','Tool']].map(x=>opt(x[0],x[1],ui.activityChannel||'')).join('')}</select></label>
  <label>Model <select class="field-select" id="activity-model">${[['','All models'],...Array.from(new Set(state.events.map(ev=>ev.model).filter(Boolean))).map(name=>[name,name])].map(x=>opt(x[0],x[1],ui.activityModel||'')).join('')}</select></label>
- ${button('Generate request','op-add-sample-event','','tiny')}${ui.activityPaused?small('Replay buffered','op-replay-buffer'):''}
+ 
 </div>`;
 }
-export function renderApprovalsOperations(state,ui){
+export function renderApprovalsOperations(state){
  if(!canApprove(state))return '';
- const reviewer=state.reviewPerson||DEMO_REVIEWER;
- return `<div class="op-reviewer"><label for="op-reviewer-person">Review as</label><select class="field-select" id="op-reviewer-person" aria-label="Reviewing person">${REVIEWERS.map(x=>opt(x.id,x.label,reviewer)).join('')}</select></div>`;
+ return `<div class="op-reviewer"><span class="muted">Reviewer</span><strong>${e(state.reviewPerson||DEMO_REVIEWER)}</strong></div>`;
 }
 export function renderSpendingOperations(state,ui,id=''){
  const agents=id?state.agents.filter(a=>a.id===id):state.agents;
@@ -106,28 +105,17 @@ export function renderOpsDrawer(state,ui){
   ${canEdit(state)&&agent.mode!=='retired'?`<h3>Review tool</h3>${review}`:info('Auditors can inspect, but cannot change tools.')}
   <h3>Change history</h3>${state.changes.filter(c=>c.agent===t.agent&&c.resource===t.name).slice(0,5).map(c=>`<p class="micro">${e(c.kind)} · ${e(c.actor)} · ${e(c.time)}</p>`).join('')||info('No changes recorded yet.')}
   <h3>Recent use</h3>${state.events.filter(ev=>ev.agent===t.agent&&ev.action===t.name).slice(0,3).map(ev=>`<p class="micro">${e(ev.id)} · ${e(ev.status)}</p>`).join('')||info('No requests recorded yet.')}
-  ${canEdit(state)&&agent.mode!=='retired'?small('Update schema','op-schema-change',`data-id="${e(t.id)}"`):''}
+
   `;
   return drawer(t.name,content);
  }
  if(d.kind==='op-approval-details'){
   const item=state.approvals.find(x=>x.id===d.id);if(!item)return null;
-  return drawer(`Execution request ${item.id}`,`<h3>${e(item.action)}</h3><p>${e(item.reason)}</p><dl class="drawer-dl"><dt>Agent</dt><dd>${e(agentName(state,item.agent))}</dd><dt>Requester</dt><dd>${e(item.requestedBy)}</dd><dt>Trace</dt><dd>${e(item.trace||'Not recorded')}</dd><dt>Status</dt><dd>${e(item.status)}</dd><dt>Deadline</dt><dd data-approval-expiry-time>${e(item.expires)}</dd></dl><h3>Arguments</h3><pre class="op-pre">${e(pretty(item.arguments||{amount:'***',target:'***'}))}</pre><p class="micro muted">Arguments shown with sensitive values masked.</p>${item.status==='pending'?small('Expire request','op-expire-approval',`data-id="${e(item.id)}"`):''}${item.trace?`<p class="mt-4"><a class="text-link" href="#/audit/${encodeURIComponent(item.agent)}">See audit for this agent</a></p>`:''}`);
+  return drawer(`Execution request ${item.id}`,`<h3>${e(item.action)}</h3><p>${e(item.reason)}</p><dl class="drawer-dl"><dt>Agent</dt><dd>${e(agentName(state,item.agent))}</dd><dt>Requester</dt><dd>${e(item.requestedBy)}</dd><dt>Trace</dt><dd>${e(item.trace||'Not recorded')}</dd><dt>Status</dt><dd>${e(item.status)}</dd><dt>Deadline</dt><dd data-approval-expiry-time>${e(item.expires)}</dd></dl><h3>Arguments</h3><pre class="op-pre">${e(pretty(item.arguments||{amount:'***',target:'***'}))}</pre><p class="micro muted">Arguments shown with sensitive values masked.</p>${item.trace?`<p class="mt-4"><a class="text-link" href="#/audit/${encodeURIComponent(item.agent)}">See audit for this agent</a></p>`:''}`);
  }
  if(d.kind==='op-history'){
   if(!a)return null;const log=state.changes.filter(x=>x.agent===a.id);
   return drawer(`${a.name} · changes`,log.length?log.map(c=>`<section class="op-history-entry"><strong>${e(c.kind)} · ${e(c.resource)}</strong><p class="micro muted">${e(c.actor)} · ${e(c.time)}</p><details><summary class="text-link">See changes</summary><pre class="op-pre">Before: ${e(pretty(c.from))}\nAfter: ${e(pretty(c.to))}</pre></details></section>`).join(''):info('No changes have been made in this browser yet.'));
- }
- if(d.kind==='op-rule-test'){
-  const rule=state.rules.find(r=>r.id===d.id);if(!rule)return null;
-  const numeric=rule.parameter?rule.comparator||'>':'(no parameter)';
-  return drawer(`Try ${rule.id}`,`<p>Rule ${e(rule.effect)} on ${e(rule.type)} · ${e(rule.parameter||'all parameters')} ${e(numeric)} ${e(rule.value||'')}</p>${rule.parameter?`${[8,25].map(n=>{const limit=Number(rule.value);const matched=rule.comparator==='>'?n>limit:rule.comparator==='<'?n<limit:rule.comparator==='='?n===limit:false;return `<div class="op-attribute"><span>${e(rule.parameter)} = ${n}</span><strong>${matched?e(rule.effect.toUpperCase()):'No rule match'}</strong>${button('Test request','op-simulate-rule',`data-id="${e(rule.id)}" data-value="${n}"`,'tiny')}</div>`}).join('')}`:''}`);
- }
- if(d.kind==='op-transaction'){
-  const ev=state.events.find(x=>x.id===d.id);if(!ev)return null;
-  const related=state.events.filter(x=>x.agent===ev.agent&&x.action===ev.action);
-  const approvals=state.approvals.filter(x=>x.trace===ev.id||x.action.startsWith(ev.action));
-  return drawer(`Request timeline · ${ev.id}`,`<p class="drawer-lead">${e(ev.action)}</p><p class="micro muted">Related records are grouped by agent and action; a transaction ID is needed to establish causality.</p><div class="step-list">${related.map((x,i)=>`<div class="step"><span class="step-number">${i+1}</span><div class="step-main"><strong>${e(x.kind==='tool'?'Tool execution':'Model request')} · ${e(x.status)}</strong><p>${e(x.id)} · ${e(x.rule)} · ${e(x.version)}</p><p>${e(x.reason)}</p></div></div>`).join('')}${approvals.map(x=>`<div class="step"><span class="step-number">${I('clock',14)}</span><div class="step-main"><strong>Approval · ${e(x.status)}</strong><p>${e(x.id)} · ${e(x.requestedBy)}</p></div></div>`).join('')}</div><h3>Evidence</h3>${ev.evidence?info('Event record present · retention not verified'):info('No evidence is available for this event.')}${small('Retention status','op-immutability',`data-id="${e(ev.id)}"`)}`);
  }
  if(d.kind==='op-policy-impact'){
   if(!a)return null;const changed=state.events.filter(ev=>ev.agent===a.id&&ev.status==='allowed');
@@ -169,7 +157,7 @@ export function handleOpsClick(state,ui,element){
  const action=element.dataset.action;if(!action?.startsWith('op-'))return {handled:false};
  const id=element.dataset.id;
  const a=agentById(state,id),tool=toolById(state,id);
- const sensitive=new Set(['op-edit-agent','op-models','op-rotate-token','op-revoke-token','op-retire-agent','op-confirm-agent-action','op-create-rule','op-cedar-editor','op-mcp','op-identity','op-limits','op-user-limits','op-tariffs','op-schema-change','op-confirm-tool','op-add-sample-event','op-expire-approval']);
+ const sensitive=new Set(['op-edit-agent','op-models','op-rotate-token','op-revoke-token','op-retire-agent','op-confirm-agent-action','op-create-rule','op-cedar-editor','op-mcp','op-identity','op-limits','op-user-limits','op-tariffs','op-confirm-tool','op-expire-approval']);
  if(sensitive.has(action)&&!canEdit(state) && !['op-expire-approval'].includes(action))return handled(false,'Operator permission required');
  const open=(slot,kind,details={})=>{ui[slot]={kind,...details};ui.opError='';return handled()};
  switch(action){
@@ -178,12 +166,9 @@ export function handleOpsClick(state,ui,element){
  case 'op-confirm-tool':{
    const d=ui.toolDraft;const target=toolById(state,d?.id);if(!d||!target||ui.modal?.kind!=='op-tool-confirm'||ui.modal.id!==d.id)return handled();
    if(!reviseTool(state,d.id,d)){ui.modal=null;return handled(false,'Tool changed or review cannot be applied. Reopen its latest version.');}
-   ui.drawer=null;ui.modal=null;ui.toolDraft=null;return handled(true,'Tool review saved in preview');
+   ui.drawer=null;ui.modal=null;ui.toolDraft=null;return handled(true,'Tool review saved');
  }
- case 'op-schema-change':{
-   if(!tool)return handled();const before={version:tool.schemaVersion,schema:tool.schema};tool.schemaVersion=(tool.schemaVersion||1)+1;tool.schema={...tool.schema,confirmation_code:'string'};tool.classification='suggested';tool.reviewStatus='pending';tool.approved=false;
-   changeRecord(state,'Schema update example',tool.agent,tool.name,before,{version:tool.schemaVersion,schema:tool.schema});ui.drawer={kind:'op-tool',id};return handled(true,'New example schema requires review');
- }
+
  case 'op-edit-agent':if(a)return open('modal','op-agent-edit',{id});return handled();
  case 'op-models':if(a)return open('modal','op-models',{id});return handled();
  case 'op-rotate-token':case 'op-revoke-token':case 'op-retire-agent':if(a)return open('modal','op-confirm-agent',{id,action:action.split('-')[1]});return handled();
@@ -192,25 +177,15 @@ export function handleOpsClick(state,ui,element){
    if(!target)return handled();const before=kind==='retire'?{mode:target.mode,active:target.active}:{...(state.credentials[target.id]||{version:1,revoked:0})};
    if(kind==='retire'){target.mode='retired';target.active=false;}
    else{const cred=state.credentials[target.id]||{version:1,revoked:0};if(kind==='rotate'){cred.version++;cred.oldActive=true;}else{cred.revoked++;cred.oldActive=false;}state.credentials[target.id]=cred;}
-   changeRecord(state,`Agent ${kind}`,target.id,target.name,before,kind==='retire'?{mode:target.mode,active:target.active}:state.credentials[target.id]);ui.modal=null;return handled(true,`Example agent ${kind} saved`);
+   changeRecord(state,`Agent ${kind}`,target.id,target.name,before,kind==='retire'?{mode:target.mode,active:target.active}:state.credentials[target.id]);ui.modal=null;return handled(true,`Agent ${kind} recorded`);
  }
  case 'op-create-rule':if(a)return open('modal','op-create-rule',{id});return handled();
  case 'op-cedar-editor':if(a)return open('modal','op-cedar-editor',{id});return handled();
  case 'op-simulate-historical-policy':if(a)return open('drawer','op-policy-impact',{id});return handled();
  case 'op-show-agent-tools':if(a){ui.catalogTab='tools';ui.catalogSearch=a.name;ui.catalogToolFilter='all';return handled(false,'Open Catalog → Tools for this agent');}return handled();
- case 'op-tool-discovery':{
-  if(!canEdit(state))return handled(false,'Operator permission required');
-  const id=`demo-tool-${state.tools.length+1}`;state.tools.push({id,name:`New tool ${state.tools.length+1}`,agent:'atlas',type:'Unclassified',approved:false,reviewStatus:'pending',classification:'suggested',control:'A',supervision:'autonomous',schemaVersion:1,schema:{input:'string'}});
-  changeRecord(state,'Example tool discovery','atlas',id,null,{name:id,class:'Unclassified'});return handled(true,'Tool discovered · review required');
- }
+
  case 'op-history':if(a)return open('drawer','op-history',{id});return handled();
- case 'op-rule-test':return open('drawer','op-rule-test',{id});
- case 'op-simulate-rule':{
-   const r=state.rules.find(rule=>rule.id===id);if(!r)return handled();
-   const tool=r.toolId?toolById(state,r.toolId):toolsForAgent(r.agent,state)[0];if(!tool)return handled(false,'No tool available');
-   const event=appendScenario(state,{agentId:r.agent,action:tool.name,channel:'tool',toolId:tool.id,userRole:'operator',parameters:{[r.parameter]:Number(element.dataset.value)}});
-   if(!event)return handled(false,'Could not create sample request');ui.drawer={kind:'event',id:event.id};return handled(true,`Sample decision: ${event.status}`);
- }
+
  case 'op-user-limits':if(a)return open('modal','op-user-limits',{id});return handled();
  case 'op-mcp':if(a)return open('modal','op-mcp',{id});return handled();
  case 'op-identity':if(a)return open('modal','op-identity',{id});return handled();
@@ -221,20 +196,11 @@ export function handleOpsClick(state,ui,element){
  case 'op-audit-mode':ui.auditMode=element.dataset.value==='changes'?'changes':'events';return handled();
  case 'op-approval-details':return open('drawer','op-approval-details',{id});
  case 'op-view-tool-reviews':ui.catalogTab='tools';ui.catalogToolFilter='attention';ui.catalogSearch='';return handled();
- case 'op-expire-approval':{
-   if(!canApprove(state))return handled(false,'Approver role required to simulate expiry');
-   const item=state.approvals.find(x=>x.id===id);if(!item||item.status!=='pending')return handled(false,'Request is no longer pending');
-   item.status='expired';item.expires='Expired (sample)';changeRecord(state,'Approval expiry example',item.agent,item.id,'pending','expired');ui.drawer=null;return handled(true,'Request expired; tool was not run');
- }
+
  case 'op-transaction':return open('drawer','op-transaction',{id});
  case 'op-immutability':return open('modal','op-immutability',{id});
- case 'op-add-sample-event':{
-   const a=agentById(state,'atlas');if(!a)return handled();
-   const tool=toolsForAgent(a.id,state).find(t=>t.type==='Read');appendScenario(state,{agentId:a.id,action:tool.name,channel:'inference',toolId:tool.id,userRole:'operator'});
-   return handled(true,ui.activityPaused?'Request added to buffer':'Request added');
- }
+
  case 'op-replay-buffer':ui.activityPaused=false;ui.pausedIds=null;return handled(false,'Feed resumed');
- case 'op-presentation':state.presentation=!state.presentation;return handled(true,state.presentation?'Presentation view on':'Presentation view off');
  default:return {handled:false};
  }
 }
@@ -266,20 +232,20 @@ export function handleOpsSubmit(state,ui,form){
  }
  case 'op-cedar-form':{
    const raw=String(data.cedar||'').trim();ui.cedarDraft=raw;
-   if(!/\b(permit|forbid)\s*\(/.test(raw)||!raw.includes('{')||!raw.includes('}')||!raw.endsWith(';'))return fail('Example syntax check failed: expected permit/forbid, a condition and a semicolon');
+   if(!/\b(permit|forbid)\s*\(/.test(raw)||!raw.includes('{')||!raw.includes('}')||!raw.endsWith(';'))return fail('Invalid policy format: expected permit/forbid, a condition and a semicolon');
    const result=saveCedarDraft(state,agentId,raw);
    if(result.error)return fail(result.error);return close('Cedar draft saved; not active');
  }
  case 'op-mcp-form':{
    if(!a)return fail('Agent unavailable');const tool=toolById(state,data.toolId);if(!tool||tool.agent!==a.id||!['B','A'].includes(data.control))return fail('Choose a valid tool');
    const before={control:tool.control,destination:tool.destination};tool.control=data.control;tool.destination=String(data.destination||'').trim().slice(0,80);tool.classification='suggested';tool.reviewStatus='pending';tool.approved=false;
-   changeRecord(state,'Tool destination example',a.id,tool.name,before,{control:tool.control,destination:tool.destination});return close('Destination saved; review tool classification');
+   changeRecord(state,'Tool destination updated',a.id,tool.name,before,{control:tool.control,destination:tool.destination});return close('Destination saved; review tool classification');
  }
  case 'op-identity-form':{
    if(!a)return fail('Agent unavailable');let url;try{url=new URL(data.issuer)}catch{return fail('Enter a valid issuer URL')}
    if(url.protocol!=='https:'||!data.audience?.trim())return fail('Use an HTTPS issuer and a client identifier');
    const before=state.identityConfig[a.id]||null;state.identityConfig[a.id]={issuer:url.href,audience:data.audience.trim(),missing:data.missing,verified:false};
-   changeRecord(state,'Identity settings example',a.id,a.name,before,state.identityConfig[a.id]);return close('Identity settings saved · verification pending');
+   changeRecord(state,'Identity settings updated',a.id,a.name,before,state.identityConfig[a.id]);return close('Identity settings saved · verification pending');
  }
  case 'op-user-limits-form':{
    if(!a||!data.person?.trim()||!Number.isInteger(Number(data.rpm))||Number(data.rpm)<1)return fail('Enter a person and a positive rate limit');
