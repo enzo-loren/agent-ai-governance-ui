@@ -218,3 +218,8 @@ hr{border:0;height:1px;background:var(--border);margin:22px 0}.muted{color:var(-
 .modal-card:has(#new-agent-form),.modal-card:has(.onboarding-receipt){width:min(610px,100%);max-height:calc(100dvh - 35px);overflow:auto;overscroll-behavior:contain}
 .agent-connection-summary .drawer-dl{grid-template-columns:minmax(90px,160px) minmax(0,1fr)}.agent-connection-summary dd{overflow-wrap:anywhere}.agent-connection-summary .mono{font-size:12px}
 @media(max-width:670px){.modal-card:has(#new-agent-form),.modal-card:has(.onboarding-receipt){padding:20px}.agent-connection-summary .drawer-dl{grid-template-columns:1fr}.agent-connection-summary .card-title-row{align-items:flex-start;flex-wrap:wrap}}
+.onboarding-fields>.field-group{display:flex;flex-direction:column;align-items:stretch;gap:6px;margin-bottom:19px}
+.onboarding-fields>.field-group .field-label{margin-bottom:0}
+.onboarding-fields>.field-group .field-input,.onboarding-fields>.field-group .field-select{width:100%}
+.onboarding-fields>.onboarding-models{margin:18px 0 20px}
+.onboarding-fields>.onboarding-models legend{padding:0 6px}
