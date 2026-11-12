@@ -223,3 +223,15 @@ hr{border:0;height:1px;background:var(--border);margin:22px 0}.muted{color:var(-
 .onboarding-fields>.field-group .field-input,.onboarding-fields>.field-group .field-select{width:100%}
 .onboarding-fields>.onboarding-models{margin:18px 0 20px}
 .onboarding-fields>.onboarding-models legend{padding:0 6px}
+
+/* Connection verification is independent from Observe / Enforce mode. */
+.path-tag.awaiting{background:var(--info-bg);color:var(--info-text);border-color:var(--border)}
+.connection-awaiting{background:var(--info-bg);color:var(--info-text);border:1px solid var(--border);display:inline-flex;align-items:center;gap:5px}
+.connection-verified{background:var(--accent-soft);color:var(--accent-ink);border:1px solid var(--border);display:inline-flex;align-items:center;gap:5px}
+.connection-next{margin-top:16px;padding:15px 17px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2)}
+.connection-next strong{font-size:13px;display:flex;align-items:center;gap:7px}.connection-next p{color:var(--text-muted);font-size:12px;margin:6px 0 12px}
+.connection-next.verified p{margin-bottom:0}.connection-next .btn{white-space:normal;text-align:center}
+.agent-card-head{gap:7px;flex-wrap:wrap}.agent-card-head .pill{margin-left:0}
+.detail-head .connection-awaiting{margin-top:8px}
+.modal-card:has(.onboarding-receipt) .modal-actions{flex-wrap:wrap;gap:7px}
+@media(max-width:480px){.modal-card:has(.onboarding-receipt) .modal-actions .btn{flex:1 1 135px;white-space:normal}.connection-next{padding:13px}}

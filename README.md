@@ -16,7 +16,7 @@ The navigation is organized around operator tasks:
 | Spending | Investigate agent costs and reach related requests and audit records |
 | Audit | Search decisions, administrative changes and evidence status |
 
-Agent registration exposes a model `BASE_URL` and a one-time agent credential. In this static workspace, issuance is local and does not authenticate a deployed gateway; credential hashes and metadata are persisted, never the raw value. Live keys, gateway authentication, and revocation guarantees require the platform API.
+Agent registration exposes a model `BASE_URL` and a one-time agent credential. Newly registered agents appear as **Awaiting connection** until their first authenticated inference request is submitted from [Request Studio](test-console.html) and recorded with a trace ID. Open the studio from the receipt or agent details, paste the key in the separate credential field, and send the preselected request. The catalog and agent details update from the shared workspace event. In this static workspace, issuance is local and does not authenticate a deployed gateway; credential hashes and metadata are persisted, never the raw value. Live keys, gateway authentication, and revocation guarantees require the platform API.
 
 The tool catalog review workflow and an approval for one specific tool execution remain separate. Tool approval does not imply that local execution is routed through the gateway.
 
