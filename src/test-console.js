@@ -26,7 +26,7 @@ function render() {
 
   const current=templates[selectedTemplate]||templates[0];
   root.innerHTML=`<div class="studio-shell">
-    <header class="studio-topbar"><div class="studio-brand"><span class="studio-mark" aria-hidden="true">◈</span><span><strong>Agent Governance</strong><small>Request Studio</small></span></div><a class="studio-back" href="${workspaceUrl()}">Open workspace <span aria-hidden="true">↗</span></a></header>
+    <header class="studio-topbar"><div class="studio-brand"><span class="studio-mark"><img src="./assets/branding/morris-mark.png" alt="Morris & Opazo" width="31" height="31" /></span><span><strong>Agent Governance</strong><small>Request Studio</small></span></div><a class="studio-back" href="${workspaceUrl()}">Open workspace <span aria-hidden="true">↗</span></a></header>
     <main class="studio-main"><div class="studio-heading"><span class="studio-overline">TEST ENVIRONMENT</span><h1>Send a request</h1><p>Compose a request against the local data handler. Its response is reflected in the workspace, including Activity, Spending and Audit.</p></div>
     <div class="studio-grid"><section class="studio-card" aria-labelledby="composer-title"><div class="studio-card-header"><div><h2 id="composer-title">Request composer</h2><p>Choose a scenario or edit the JSON directly.</p></div><span class="studio-label">Local transport</span></div>
       <label class="studio-field" for="scenario"><span>Scenario</span><select id="scenario">${caseOptions()}</select></label>

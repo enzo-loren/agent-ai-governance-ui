@@ -5,7 +5,7 @@ Inline scripts are required because navigation to local domains is blocked in th
 execution environment; CI also verifies that all modules are bundled to dist.
 """
 from pathlib import Path
-import os,re,shutil,json
+import os,re,shutil,json,base64
 from playwright.sync_api import sync_playwright
 from run_journeys import inline_document
 
@@ -24,7 +24,11 @@ def inline_studio():
     html=re.sub(r'<link rel="stylesheet"[^>]*>','',html)
     html=re.sub(r'<script type="module"[^>]*></script>','',html)
     css='\n'.join((ROOT/'src/styles'/name).read_text() for name in ('tokens.css','test-console.css'))
-    return html.replace('</head>','<style>'+css+'</style></head>').replace('</body>','<script>'+'\n'.join(modules)+'</script></body>')
+    markup=html.replace('</head>','<style>'+css+'</style></head>').replace('</body>','<script>'+'\n'.join(modules)+'</script></body>')
+    for asset in ('morris-wordmark.png','morris-mark.png'):
+        data=base64.b64encode((ROOT/'assets'/'branding'/asset).read_bytes()).decode('ascii')
+        markup=markup.replace('./assets/branding/'+asset,'data:image/png;base64,'+data)
+    return markup
 
 def customer_from_snapshot(context,snapshot):
     page=context.new_page()
@@ -43,6 +47,9 @@ def exercise(browser,width):
         context.route(origin,lambda route: route.fulfill(status=200,content_type='text/html',body=inline_studio()))
         page.goto(origin,wait_until='load')
         assert page.evaluate('window.isSecureContext')
+        mark=page.locator('.studio-mark img')
+        assert mark.count()==1
+        assert mark.evaluate('(el)=>el.complete && el.naturalWidth===269 && el.naturalHeight===269')
         page.locator('#send-request').wait_for()
         assert '/v1/model-requests' in page.locator('#endpoint').input_value()
         assert page.locator('#agent-token').count()==1

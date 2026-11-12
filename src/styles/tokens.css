@@ -23,6 +23,7 @@
   --avatar-blue-bg:#e1f0ff; --avatar-blue-ink:#37648c;
   --avatar-mint-bg:#def6f0; --avatar-mint-ink:#2e7665;
   --progress-warning:#c58b43;
+  --brand-logo-surface:#142d36; /* Fixed plate retains contrast for the white logo across themes. */
   --code-bg:#132724; --code-ink:#dbf7e9; --code-button-bg:#23483f; --code-button-border:#3d6259;
   --success-text: #176748; --success-bg: #eaf7ef; --success-outline: #bee6cd;
   --danger-text: #b33236; --danger-bg: #fff0f0; --danger-outline: #f4c9cb;

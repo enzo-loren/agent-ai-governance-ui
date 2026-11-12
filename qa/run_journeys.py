@@ -8,6 +8,7 @@ never counts as a successfully implemented product flow.
 """
 from __future__ import annotations
 import json
+import base64
 from pathlib import Path
 import re
 import sys
@@ -35,7 +36,12 @@ def inline_document(root=ROOT):
     # Supply a deterministic digest shim ONLY inside this QA HTML document. Unit tests
     # exercise the native Web Crypto SHA-256 implementation separately.
     secure_context_shim="""if(!crypto.subtle){Object.defineProperty(crypto,'subtle',{configurable:true,value:{digest:async(_algorithm,data)=>{const bytes=new Uint8Array(data);const out=new Uint8Array(32);for(let i=0;i<bytes.length;i++)out[i%32]=(out[i%32]+bytes[i]+i)%256;return out.buffer;}}});}"""
-    code=secure_context_shim+'\n'+'\n'.join(modules)+'\nwindow.__uiAudit=()=>({state,ui,hash:location.hash});' 
+    code=secure_context_shim+'\n'+'\n'.join(modules)+'\nwindow.__uiAudit=()=>({state,ui,hash:location.hash});'
+    # The about:blank test harness needs images inlined so screenshots retain branding.
+    for asset in ('morris-wordmark.png','morris-mark.png'):
+        data=base64.b64encode((root/'assets'/'branding'/asset).read_bytes()).decode('ascii')
+        code=code.replace('./assets/branding/'+asset,'data:image/png;base64,'+data)
+
     styles='\n'.join((root/'src/styles'/p).read_text() for p in ('tokens.css','app.css'))
     return f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>{styles}</style></head><body><a class="skip-link" href="#main">Skip to content</a><div id="app"></div><div id="announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div><script>{code}</script></body></html>'
 

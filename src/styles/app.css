@@ -271,3 +271,11 @@ hr{border:0;height:1px;background:var(--border);margin:22px 0}.muted{color:var(-
 .credential-receipt-agent{margin-bottom:17px!important}
 .modal-card:has(.onboarding-receipt) .modal-actions .btn{margin-left:auto}
 @media(max-width:470px){.agent-setting-row{gap:10px}.agent-setting-row .btn{min-width:65px}.agent-settings-danger{padding:14px}.credential-copy-field .field-input{font-size:11px!important}}
+
+/* Morris & Opazo: the authentic white wordmark requires a dark contrast plate. */
+.sidebar-brand{display:flex;flex-direction:column;align-items:stretch;gap:11px;padding:27px 22px 30px}
+.brand-logo-plate{display:flex;align-items:center;justify-content:center;min-height:49px;padding:11px 12px;border-radius:var(--radius-sm);background:var(--brand-logo-surface);width:100%}
+.brand-wordmark{display:block;width:100%;max-width:188px;height:auto;object-fit:contain}
+.brand-product-name{font-size:12px;line-height:1.35;font-weight:750;letter-spacing:.015em;color:var(--text);margin-left:3px}
+@media(max-width:1080px){.sidebar-brand{padding:24px 18px 26px}.brand-logo-plate{padding:10px 10px}}
+@media(max-width:840px){.sidebar-brand{padding-top:27px}}
