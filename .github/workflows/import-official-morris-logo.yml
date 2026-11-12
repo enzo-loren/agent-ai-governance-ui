@@ -1,0 +1,25 @@
+name: Import supplied Morris Opazo official logo (temporary)
+on:
+  push:
+    branches: [fix/morris-logo-dist-assets]
+permissions:
+  contents: write
+jobs:
+  fetch-logo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Download official Morris Opazo identity
+        run: |
+          set -euo pipefail
+          mkdir -p assets/branding
+          curl --fail --location --retry 3 --connect-timeout 10 --max-time 45             -H "User-Agent: Mozilla/5.0 (compatible; BrandingIntegration/1.0)"             "https://www.morrisopazo.com/wp-content/uploads/2026/07/logo-morrisopazo.png"             -o assets/branding/morris-official.png
+          file assets/branding/morris-official.png
+          test "$(head -c 8 assets/branding/morris-official.png | od -An -tx1 | tr -d ' \n')" = "89504e470d0a1a0a"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/branding/morris-official.png
+          git commit -m "assets(branding): vendor official Morris Opazo website logo"
+          git push origin HEAD:fix/morris-logo-dist-assets
