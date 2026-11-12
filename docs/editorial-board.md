@@ -72,3 +72,10 @@ Raw YAML/Cedar/JSON, AWS services, Object Lock modes and token propagation belon
 - En Audit, los filtros técnicos están bajo un control desplegable para mantener el primer nivel legible. En móvil, Tools usa tarjetas con revisión visible; en escritorio mantiene tabla para densidad. El toggle de presentación altera realmente la escala y el chrome, no solo el título.
 - La desviación CON-04 sigue abierta. Un estado operativo en el catálogo no se equipara al índice exigido por el documento vigente.
 - La documentación de desarrollo se separó del README de producto; se eliminaron instrucciones personales para crear otro repositorio o desplegar Pages, obsoletas para este repositorio existente.
+
+## Spending como punto de investigación · 2026-11-11
+
+- Hallazgo observado: la primera matriz verificaba importes, filtros y modificaciones en Spending, pero no la posibilidad de investigar el origen del gasto; un nombre llevaba a Overview y los totales de persona/modelo no ofrecían continuación. La etiqueta «funcional» era válida solo para esas acciones aisladas, no para la tarea completa del cliente.
+- Decisión de UX: transformar el gasto agregado en **escala de detalle**: global → agente → eventos de modelo → decisión/auditoría, con vías paralelas por persona, modelo y alerta. Usar rutas de agente explícitas y conservar filtros de origen; poner la navegación de retorno en el alcance del agente.
+- Protección epistémica: la muestra de eventos no reconcilia las métricas `agent.spent`; se rotulan los registros como parciales y no se inventa atribución. Personas sin identidad verificada siguen contabilizadas en el agente. La UI no presenta un importe como evidencia de facturación de un proveedor.
+- Verificación: 9 recorridos de Chromium nuevos desde Inicio (`S-10`–`S-18`) y pruebas de ida y vuelta/errores de atribución a 1100 y 390 px. El conjunto total queda en 124 casos (104 UI simulada, 20 parciales por backend); la acción de clic cuenta como paso, no el desplazamiento o apertura del menú móvil.

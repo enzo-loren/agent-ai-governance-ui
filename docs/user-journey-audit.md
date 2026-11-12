@@ -6,10 +6,10 @@
 
 | Estado de los recorridos de UI | Casos | Significado |
 | --- | ---: | --- |
-| Funcionales en el prototipo | **95** | La tarea produce una respuesta o un cambio verificable en el navegador, sobre datos sintéticos |
+| Funcionales en el prototipo | **104** | La tarea produce una respuesta o un cambio verificable en el navegador, sobre datos sintéticos |
 | Parciales | **20** | Existe un recorrido visible, pero falta una garantía central que depende de servicios o evidencia externa |
 | Sin recorrido | **0** | No quedan objetivos de la matriz anterior sin una entrada de UI |
-| **Total** | **115** | Recorridos principales, variantes, errores y pruebas a escala |
+| **Total** | **124** | Recorridos principales, variantes, errores y pruebas a escala |
 
 Se mide una acción por clic, selección, escritura en un campo o envío. **Todos los casos empiezan en Inicio**. No se suman caracteres ni desplazamientos. Un caso parcial informa las acciones hasta la vista disponible, **no** un costo de finalización del requisito real. El desglose íntegro está en [la matriz](journey-matrix.md), con acciones en [`qa/journeys.json`](../qa/journeys.json) y resultados de Chromium en [`qa/journey-results.json`](../qa/journey-results.json).
 
@@ -25,7 +25,7 @@ Los resultados no equivalen a 115 requisitos implementados ni a cobertura de seg
 | **Rules** | Elegir agente → previsualizar preset → aplicar y confirmar; crear regla por parámetro o texto Cedar de ejemplo | Cancelación; auditor solo lectura; parámetro inexistente; `amount=8` frente a `amount=25`; historial | POL-01/04/05, CON-07 |
 | **Activity** | Consultar eventos → filtrar por persona, agente, decisión y canal → pausar, generar un ejemplo y reanudar | Sin resultados; enlace al agente; ejecución local fuera del gateway | CON-02/03 |
 | **Approvals** | Revisar una solicitud pendiente con detalles → autorizar o rechazar con comentario; simular vencimiento | Autoaprobación impedida; cancelar; rol insuficiente; vencimiento ilustrativo | CON-05, HITL-02/03 |
-| **Spending** | Consultar gastos → editar presupuesto, límites de tokens/RPM y acciones; gestionar tarifas y límites por persona | Auditor sin edición; valores inválidos; alertas calculadas; sin identidad | CON-06, FIN-01/02/03 |
+| **Spending** | Consultar gastos → abrir agente → rastrear solicitudes de modelo, persona o traza → seguir al Audit filtrado → volver al mismo agente; gestionar límites y tarifas | Auditor sin edición; valores inválidos; alertas con ruta a agente; sin identidad | CON-06, FIN-01/02/03, EVD-02 |
 | **Audit** | Buscar y combinar filtros → abrir decisión y línea de tiempo de muestra; ver cambios administrativos | Sin evidencia; limpiar búsqueda; filtros combinados; prueba de retención ilustrativa | EVD-02/03/04/05/06 |
 | **Workspace** | Cambiar apariencia, usar presentación, recorrer tour y restablecer | Cancelar restablecimiento; teclado; siete anchos de pantalla | CON-01/02/08 |
 
@@ -34,6 +34,25 @@ Los resultados no equivalen a 115 requisitos implementados ni a cobertura de seg
 La ficha de una herramienta ofrece el esquema de argumentos, su versión, el agente, la ruta de ejecución, la clase sugerida o confirmada, el estado del catálogo, la supervisión y el uso observado. El operador puede conservar, corregir o rechazar la clasificación; el resultado se aplica **después de confirmar**. La decisión y sus valores anterior/nuevo quedan en el historial de **esta demostración**. Si el esquema se modifica en el ejemplo, vuelve a requerir revisión.
 
 **Separación obligatoria:** aprobar la herramienta en el catálogo no ejecuta operaciones. Una invocación crítica requiere otra aprobación cuando la política y el canal MCP lo permiten. Si la ejecución de la herramienta es local, su ficha sigue indicando *Outside gateway* incluso después de aprobarla. La interfaz no debe convertir una intención visible en una ejecución supuestamente controlada.
+
+### Navegación de Spending · segunda revisión de recorridos
+
+La auditoría inicial verificaba si se podían **editar presupuestos y filtrar listados**, pero no exigía que el cliente pudiera continuar desde un importe hacia una solicitud, su decisión y el control relacionado. Por eso la pantalla aparecía funcional en la matriz, aunque sus totales eran prácticamente terminales. Se corrigió esa insuficiencia del contrato de pruebas, en lugar de considerarla una preferencia superficial.
+
+| Pregunta operativa | Recorrido desde Inicio | Acciones verificadas | Caso |
+| --- | --- | ---: | --- |
+| ¿Qué agente explica el gasto? | Spending → Atlas Support → ficha de uso | 2 | `S-10` |
+| ¿Qué solicitudes de modelo lo originaron? | Spending → agente → Model requests (canal modelo prefiltrado) | 3 | `S-11` |
+| ¿Qué solicitudes se atribuyeron a una persona? | Spending → Maya Chen → Activity filtrada por actor, agente y canal | 2 | `S-12` |
+| ¿Qué modelo aparece en los registros? | Spending → desglose por modelo → Activity filtrada | 2 | `S-13` |
+| ¿Por qué aparece una solicitud concreta? | Spending → agente → Audit trace (mismo agente y trace_id) | 3 | `S-14` |
+| ¿De quién es una alerta? | Spending → alerts → ficha de gasto del agente | 3 | `S-15` |
+| ¿Cómo se vuelve sin perder el agente? | Spending → traza en Audit → Spending del mismo agente | 4 | `S-16` |
+| ¿Puedo leer la explicación sin abandonar Spending? | Spending → agente → detalle del evento | 3 | `S-17` |
+
+Se añadieron filtros de **modelo** en Activity y el enlace inverso a Spending en vistas de agente; también se mantuvo el comportamiento de borrado de filtros. Los eventos sin token de usuario **no** reciben un enlace falso a una identidad. En dispositivos móviles, el camino se recorrió abriendo la navegación compacta; los contenedores se verificaron a 390 px.
+
+**Límite del dato:** los totales diarios `agent.spent` y los eventos `state.events` proceden de distintas porciones de la muestra. El desglose por modelo y las trazas visibles son ejemplos de registros individuales, **no** una conciliación contable ni evidencia de facturación completa. Las vistas lo explican donde aparecen los eventos; la integración real deberá correlacionar coste, `trace_id`, agente, usuario verificado y ventana temporal antes de atribuir causalmente gasto.
 
 ### Escala y navegación
 

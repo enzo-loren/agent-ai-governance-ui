@@ -7,7 +7,7 @@ const STORE = 'agent-governance-preview-v2';
 const app = document.getElementById('app');
 function loadStoredState(){try{return localStorage.getItem(STORE)}catch{return null}}
 let state = safeReadState(loadStoredState());
-let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogToolLimit:30, catalogPeopleLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, rulesSearch:'', rulesLimit:24, activitySearch:'', activityAgentSearch:'', activityLimit:30, activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', auditLimit:30, approvalsSearch:'', approvalsView:'pending', approvalsLimit:20, spendingSearch:'', spendingLimit:24, personLimit:24, requestUser:'operator', policyPreview:null, activityUser:'', activityChannel:'', auditFilters:{}, auditFiltersOpen:false, auditMode:'events', toolDraft:null, opError:'' };
+let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogToolLimit:30, catalogPeopleLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, rulesSearch:'', rulesLimit:24, activitySearch:'', activityAgentSearch:'', activityLimit:30, activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', auditLimit:30, approvalsSearch:'', approvalsView:'pending', approvalsLimit:20, spendingSearch:'', spendingLimit:24, personLimit:24, requestUser:'operator', policyPreview:null, activityUser:'', activityChannel:'', activityModel:'', auditFilters:{}, auditFiltersOpen:false, auditMode:'events', toolDraft:null, opError:'' };
 let toastTimer;
 let beforeOverlayFocus = null;
 function persist(){try{localStorage.setItem(STORE,JSON.stringify(state));}catch{ /* Browser storage may be disabled */ }}
@@ -126,7 +126,23 @@ function setupEvents(){
     ui.pausedIds=ui.activityPaused?new Set(state.events.map(e=>e.id)):null;
     showToast(ui.activityPaused?'Activity feed paused':'Activity feed resumed');break;
    }
-   case 'clear-activity':ui.activitySearch='';ui.activityAgentSearch='';ui.activityUser='';ui.activityChannel='';ui.activityStatus='all';ui.activityLimit=30;render({keepScroll:true});break;
+   case 'spending-requests':
+   case 'spending-person-requests':
+   case 'spending-model-requests':{
+    const agentId=element.dataset.id||'';
+    if(agentId&&!agentById(state,agentId))break;
+    ui.activitySearch='';ui.activityAgentSearch='';ui.activityUser=act==='spending-person-requests'?(element.dataset.person||''):'';
+    ui.activityChannel='inference';ui.activityModel=act==='spending-model-requests'?(element.dataset.model||''):'';
+    ui.activityStatus='all';ui.activityLimit=30;ui.activityPaused=false;ui.pausedIds=null;
+    go(`activity${agentId?`/${encodeURIComponent(agentId)}`:''}`);break;
+   }
+   case 'spending-trace':{
+    const traceId=element.dataset.id||'',agentId=element.dataset.agent||'';
+    if(!state.events.some(e=>e.id===traceId&&(!agentId||e.agent===agentId)))break;
+    ui.auditSearch=traceId;ui.auditFilters={};ui.auditMode='events';ui.auditLimit=30;
+    go(`audit${agentId?`/${encodeURIComponent(agentId)}`:''}`);break;
+   }
+   case 'clear-activity':ui.activitySearch='';ui.activityAgentSearch='';ui.activityUser='';ui.activityChannel='';ui.activityModel='';ui.activityStatus='all';ui.activityLimit=30;render({keepScroll:true});break;
    case 'clear-audit':ui.auditSearch='';ui.auditFilters={};ui.auditLimit=30;render({keepScroll:true});break;
    case 'approval-confirm':if(allowApproval())openOverlay('modal',{kind:'approval',id:element.dataset.id,decision:element.dataset.value});break;
    case 'confirm-approval':{
@@ -156,7 +172,7 @@ function setupEvents(){
    case 'appearance':state.appearance=element.dataset.value;persist();render({keepScroll:true,focusOverlay:true});announce(`${state.appearance} appearance`);break;
    case 'reset-request':openOverlay('modal',{kind:'reset'});break;
    case 'confirm-reset':{
-    const prefs={theme:state.theme,appearance:state.appearance,role:state.role};state={...cleanState(),...prefs};ui.drawer=null;ui.modal=null;ui.policyPreview=null;ui.activityUser='';ui.activityChannel='';ui.auditFilters={};ui.auditFiltersOpen=false;ui.auditMode='events';ui.activityPaused=false;ui.pausedIds=null;ui.catalogSearch='';ui.connectionSearch='';ui.rulesSearch='';ui.activitySearch='';ui.activityAgentSearch='';ui.activityStatus='all';ui.auditSearch='';ui.approvalsSearch='';ui.approvalsView='pending';ui.spendingSearch='';ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;ui.connectionLimit=24;ui.rulesLimit=24;ui.activityLimit=30;ui.auditLimit=30;ui.approvalsLimit=20;ui.spendingLimit=24;ui.personLimit=24;persist();go('home');showToast('Workspace reset');break;
+    const prefs={theme:state.theme,appearance:state.appearance,role:state.role};state={...cleanState(),...prefs};ui.drawer=null;ui.modal=null;ui.policyPreview=null;ui.activityUser='';ui.activityChannel='';ui.activityModel='';ui.auditFilters={};ui.auditFiltersOpen=false;ui.auditMode='events';ui.activityPaused=false;ui.pausedIds=null;ui.catalogSearch='';ui.connectionSearch='';ui.rulesSearch='';ui.activitySearch='';ui.activityAgentSearch='';ui.activityStatus='all';ui.auditSearch='';ui.approvalsSearch='';ui.approvalsView='pending';ui.spendingSearch='';ui.catalogAgentLimit=24;ui.catalogToolLimit=30;ui.catalogPeopleLimit=24;ui.connectionLimit=24;ui.rulesLimit=24;ui.activityLimit=30;ui.auditLimit=30;ui.approvalsLimit=20;ui.spendingLimit=24;ui.personLimit=24;persist();go('home');showToast('Workspace reset');break;
    }
    case 'tour-start':state.tour=0;persist();go(TOUR[0].route);break;
    case 'tour-next':{
@@ -171,7 +187,8 @@ function setupEvents(){
  });
  document.addEventListener('change',event=>{
   const id=event.target.id;const value=event.target.value;
-  if(id==='op-reviewer-person'){state.reviewPerson=value;persist();render({keepScroll:true});}
+  if(id==='activity-model'){ui.activityModel=value;ui.activityLimit=30;render({keepScroll:true});}
+  else if(id==='op-reviewer-person'){state.reviewPerson=value;persist();render({keepScroll:true});}
   else if(id==='activity-channel'){ui.activityChannel=value;render({keepScroll:true});}
   else if(['audit-model','audit-channel','audit-connection','audit-status'].includes(id)){ui.auditFilters[id.replace('audit-','')]=value;render({keepScroll:true});}
   else if(id==='role-select'){

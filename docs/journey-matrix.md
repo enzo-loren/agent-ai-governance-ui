@@ -12,11 +12,11 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 
 | Resultado | Casos |
 | --- | ---: |
-| Funcional (simulado) | 95 |
+| Funcional (simulado) | 104 |
 | Parcial | 20 |
 | Sin recorrido | 0 |
 
-**Total: 115 recorridos y variantes.** Un caso marcado como «Sin recorrido» no es una prueba funcional aprobada.
+**Total: 124 recorridos y variantes.** Un caso marcado como «Sin recorrido» no es una prueba funcional aprobada.
 
 ## Catalog
 
@@ -144,6 +144,15 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `S-08` | Inspect alerts at 50/80/100 thresholds | FIN-02, CON-06 | Funcional (simulado) | 2 |
 | `S-09` | Invalid budget input is rejected without state mutation (*invalid value*) | CON-06, FIN-02 | Funcional (simulado) | 4 |
 | `X-12` | Invalid rate limit is not saved | FIN-02 | Funcional (simulado) | 4 |
+| `S-10` | Drill down from spending totals to agent usage (*customer investigation*) | CON-06, FIN-02 | Funcional (simulado) | 2 |
+| `S-11` | Follow agent spending to model request activity (*customer investigation*) | CON-06, CON-03 | Funcional (simulado) | 3 |
+| `S-12` | Follow a named person cost to attributed requests (*customer investigation*) | FIN-03, CON-03 | Funcional (simulado) | 2 |
+| `S-13` | Follow model breakdown to filtered request activity (*customer investigation*) | FIN-01, CON-03 | Funcional (simulado) | 2 |
+| `S-14` | Investigate cost-bearing trace directly in Audit (*customer investigation*) | CON-06, EVD-02 | Funcional (simulado) | 3 |
+| `S-15` | Inspect spending alert and open its agent (*customer investigation*) | FIN-02, CON-06 | Funcional (simulado) | 3 |
+| `S-16` | Return from scoped audit trace to same agent spending (*customer investigation*) | CON-06, EVD-02 | Funcional (simulado) | 4 |
+| `S-17` | Inspect request explanation without leaving spending (*customer investigation*) | CON-02, CON-06 | Funcional (simulado) | 3 |
+| `S-18` | Do not assign missing identity to an actionable person (*customer investigation*) | FIN-03, IDN-01 | Funcional (simulado) | 2 |
 
 ## Audit
 

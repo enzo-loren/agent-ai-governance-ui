@@ -4492,6 +4492,351 @@
           "equals": 2
         }
       ]
+    },
+    {
+      "id": "S-10",
+      "area": "Spending",
+      "goal": "Drill down from spending totals to agent usage",
+      "variant": "customer investigation",
+      "role": "operator",
+      "requirements": [
+        "CON-06",
+        "FIN-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/spending/atlas\"].agent-name"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/spending/atlas"
+        },
+        {
+          "type": "visible",
+          "selector": ".spending-record"
+        },
+        {
+          "type": "text",
+          "selector": ".spending-next",
+          "contains": "Investigate Atlas Support"
+        }
+      ]
+    },
+    {
+      "id": "S-11",
+      "area": "Spending",
+      "goal": "Follow agent spending to model request activity",
+      "variant": "customer investigation",
+      "role": "operator",
+      "requirements": [
+        "CON-06",
+        "CON-03"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/spending/atlas\"].agent-name"
+        },
+        {
+          "do": "click",
+          "selector": ".spending-next [data-action=\"spending-requests\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/activity/atlas"
+        },
+        {
+          "type": "state",
+          "path": "ui.activityChannel",
+          "equals": "inference"
+        },
+        {
+          "type": "visible",
+          "selector": "table"
+        }
+      ]
+    },
+    {
+      "id": "S-12",
+      "area": "Spending",
+      "goal": "Follow a named person cost to attributed requests",
+      "variant": "customer investigation",
+      "role": "operator",
+      "requirements": [
+        "FIN-03",
+        "CON-03"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"spending-person-requests\"][data-person=\"Maya Chen\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/activity/atlas"
+        },
+        {
+          "type": "visible",
+          "selector": "#activity-user[value=\"Maya Chen\"]"
+        },
+        {
+          "type": "state",
+          "path": "ui.activityChannel",
+          "equals": "inference"
+        }
+      ]
+    },
+    {
+      "id": "S-13",
+      "area": "Spending",
+      "goal": "Follow model breakdown to filtered request activity",
+      "variant": "customer investigation",
+      "role": "operator",
+      "requirements": [
+        "FIN-01",
+        "CON-03"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"spending-model-requests\"][data-model=\"GPT-6\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/activity"
+        },
+        {
+          "type": "state",
+          "path": "ui.activityModel",
+          "equals": "GPT-6"
+        },
+        {
+          "type": "state",
+          "path": "ui.activityChannel",
+          "equals": "inference"
+        }
+      ]
+    },
+    {
+      "id": "S-14",
+      "area": "Spending",
+      "goal": "Investigate cost-bearing trace directly in Audit",
+      "variant": "customer investigation",
+      "role": "operator",
+      "requirements": [
+        "CON-06",
+        "EVD-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/spending/atlas\"].agent-name"
+        },
+        {
+          "do": "click",
+          "selector": ".spending-record [data-action=\"spending-trace\"][data-id=\"TRC-1044\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/audit/atlas"
+        },
+        {
+          "type": "visible",
+          "selector": "#audit-search[value=\"TRC-1044\"]"
+        },
+        {
+          "type": "count",
+          "selector": "tbody tr",
+          "equals": 1
+        }
+      ]
+    },
+    {
+      "id": "S-15",
+      "area": "Spending",
+      "goal": "Inspect spending alert and open its agent",
+      "variant": "customer investigation",
+      "role": "operator",
+      "requirements": [
+        "FIN-02",
+        "CON-06"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"op-spending-alerts\"]"
+        },
+        {
+          "do": "click",
+          "selector": ".drawer a[href=\"#/spending/invoice\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/spending/invoice"
+        },
+        {
+          "type": "text",
+          "selector": ".spending-next",
+          "contains": "Investigate Invoice Assistant"
+        }
+      ]
+    },
+    {
+      "id": "S-16",
+      "area": "Spending",
+      "goal": "Return from scoped audit trace to same agent spending",
+      "variant": "customer investigation",
+      "role": "operator",
+      "requirements": [
+        "CON-06",
+        "EVD-02"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/spending/atlas\"].agent-name"
+        },
+        {
+          "do": "click",
+          "selector": ".spending-record [data-action=\"spending-trace\"][data-id=\"TRC-1044\"]"
+        },
+        {
+          "do": "click",
+          "selector": ".scope-bar a[href=\"#/spending/atlas\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "url",
+          "value": "#/spending/atlas"
+        },
+        {
+          "type": "visible",
+          "selector": ".spending-record"
+        }
+      ]
+    },
+    {
+      "id": "S-17",
+      "area": "Spending",
+      "goal": "Inspect request explanation without leaving spending",
+      "variant": "customer investigation",
+      "role": "operator",
+      "requirements": [
+        "CON-02",
+        "CON-06"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/spending/atlas\"].agent-name"
+        },
+        {
+          "do": "click",
+          "selector": ".spending-record [data-action=\"open-event\"][data-id=\"TRC-1044\"]"
+        }
+      ],
+      "checks": [
+        {
+          "type": "visible",
+          "selector": ".drawer"
+        },
+        {
+          "type": "text",
+          "selector": ".drawer",
+          "contains": "What happened"
+        },
+        {
+          "type": "url",
+          "value": "#/spending/atlas"
+        }
+      ]
+    },
+    {
+      "id": "S-18",
+      "area": "Spending",
+      "goal": "Do not assign missing identity to an actionable person",
+      "variant": "customer investigation",
+      "role": "operator",
+      "requirements": [
+        "FIN-03",
+        "IDN-01"
+      ],
+      "status": "ui-working",
+      "actions": [
+        {
+          "do": "click",
+          "selector": "a.nav-link[href=\"#/spending\"]"
+        },
+        {
+          "do": "click",
+          "selector": "a[href=\"#/spending/atlas\"].agent-name"
+        }
+      ],
+      "checks": [
+        {
+          "type": "absent",
+          "selector": "[data-action=\"spending-person-requests\"][data-person=\"No user identity\"]"
+        },
+        {
+          "type": "text",
+          "selector": ".budget-item",
+          "contains": "Atlas Support"
+        }
+      ]
     }
   ]
 }

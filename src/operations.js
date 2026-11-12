@@ -47,6 +47,7 @@ export function renderConnectionOperations(state,a){
 export function renderActivityOperations(state,ui){
  return `<div class="op-compact-tools"><label>Person <input class="field-input" id="activity-user" placeholder="Search person" value="${e(ui.activityUser||'')}"></label>
  <label>Channel <select class="field-select" id="activity-channel">${[['','All channels'],['inference','Model'],['tool','Tool']].map(x=>opt(x[0],x[1],ui.activityChannel||'')).join('')}</select></label>
+ <label>Model <select class="field-select" id="activity-model">${[['','All models'],...Array.from(new Set(state.events.map(ev=>ev.model).filter(Boolean))).map(name=>[name,name])].map(x=>opt(x[0],x[1],ui.activityModel||'')).join('')}</select></label>
  ${button('Add sample request','op-add-sample-event','','tiny')}${ui.activityPaused?small('Replay buffered','op-replay-buffer'):''}
  <span class="micro muted">Sample feed · no live gateway connection</span></div>`;
 }
@@ -57,11 +58,11 @@ export function renderApprovalsOperations(state,ui){
 }
 export function renderSpendingOperations(state,ui,id=''){
  const agents=id?state.agents.filter(a=>a.id===id):state.agents;
- const byModel=Object.entries(state.events.filter(x=>!id||x.agent===id).reduce((a,event)=>{const m=event.model||'Unknown';a[m]=(a[m]||0)+event.cost;return a;},{}));
+ const byModel=Object.entries(state.events.filter(x=>x.kind==='inference'&&(!id||x.agent===id)).reduce((a,event)=>{const m=event.model||'Unknown';a[m]=(a[m]||0)+event.cost;return a;},{}));
  const alerts=agents.filter(a=>a.budget&&a.spent/a.budget>=.5).map(a=>({a,percent:Math.round(100*a.spent/a.budget),band:a.spent/a.budget>=1?100:a.spent/a.budget>=.8?80:50}));
  return `<section class="card card-pad op-section mt-6"><div class="card-title-row"><div><h2 class="card-title">Limits and alerts</h2><p class="card-subtitle">Example limits do not stop real requests</p></div><div class="button-row">${canEdit(state)?small('Model tariffs','op-tariffs'):''}${small('View spending alerts','op-spending-alerts')}</div></div>
- <div class="op-compact-list">${agents.slice(0,ui.spendingLimit||24).map(a=>{const l=state.limits[a.id]||{};return `<div class="op-list-row"><div><strong>${e(a.name)}</strong><p>${l.rpm||60} req/min · ${l.tokens||100000} tokens/day · ${e(l.action||'Alert')} after limit</p></div>${canEdit(state)?`${small('Edit limits','op-limits',`data-id="${e(a.id)}"`)}${hasConnection(a,'C')?small('Person limits','op-user-limits',`data-id="${e(a.id)}"`):''}`:''}</div>`}).join('')}</div>
- <div class="section-head"><h2>By model</h2></div><div class="op-signal-grid">${byModel.map(([model,total])=>`<div><strong>${e(formatUSD(total))}</strong><span>${e(model)} · recorded sample</span></div>`).join('')}</div>
+ <div class="op-compact-list">${agents.slice(0,ui.spendingLimit||24).map(a=>{const l=state.limits[a.id]||{};return `<div class="op-list-row"><div><a href="#/spending/${encodeURIComponent(a.id)}" class="text-link">${e(a.name)}</a><p>${l.rpm||60} req/min · ${l.tokens||100000} tokens/day · ${e(l.action||'Alert')} after limit</p></div>${canEdit(state)?`${small('Edit limits','op-limits',`data-id="${e(a.id)}"`)}${hasConnection(a,'C')?small('Person limits','op-user-limits',`data-id="${e(a.id)}"`):''}`:''}</div>`}).join('')}</div>
+ <div class="section-head"><h2>By model</h2></div><div class="op-signal-grid">${byModel.map(([model,total])=>`<div><strong>${e(formatUSD(total))}</strong><span>${e(model)} · recorded inference samples</span>${button('View requests','spending-model-requests',`data-id="${e(id)}" data-model="${e(model)}"`,'tiny')}</div>`).join('')}</div><p class="micro muted mt-4">These recorded samples are not a reconciliation of reported daily spending.</p>
  ${alerts.length?`<p class="micro muted mt-4">${alerts.length} agent${alerts.length!==1?'s':''} crossed a sample budget threshold (50%, 80% or 100%).</p>`:''}</section>`;
 }
 export function renderAuditOperations(state,ui){
@@ -131,7 +132,7 @@ export function renderOpsDrawer(state,ui){
  }
  if(d.kind==='op-spending-alerts'){
   const crossed=state.agents.filter(a=>a.budget&&a.spent/a.budget>=.5);
-  return drawer('Spending alerts',crossed.map(a=>{const p=a.spent/a.budget;return `<div class="op-history-entry"><strong>${e(a.name)} · ${p>=1?'100%':p>=.8?'80%':'50%'} threshold</strong><p>${e(formatUSD(a.spent))} of ${e(formatUSD(a.budget))} today. Sample calculation; no notification was sent.</p></div>`}).join('')||info('No sample agents have crossed a threshold.'));
+  return drawer('Spending alerts',crossed.map(a=>{const p=a.spent/a.budget;return `<div class="op-history-entry"><strong>${e(a.name)} · ${p>=1?'100%':p>=.8?'80%':'50%'} threshold</strong><p>${e(formatUSD(a.spent))} of ${e(formatUSD(a.budget))} today. Sample calculation; no notification was sent.</p><div class="spending-inline-actions"><a class="text-link" href="#/spending/${encodeURIComponent(a.id)}">Investigate usage</a>${canEdit(state)?button('Review limits','op-limits',`data-id="${e(a.id)}"`,'tiny'):''}</div></div>`}).join('')||info('No sample agents have crossed a threshold.'));
  }
  return null;
 }
