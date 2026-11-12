@@ -12,10 +12,10 @@ test('Every primary destination renders an explicit page heading and main landma
   assert.match(html(page),/<h1>/);
  }
 });
-test('One quiet Preview label replaces repeated demo disclaimers and marketing copy',()=>{
+test('One quiet Demo label replaces repeated demo disclaimers and marketing copy',()=>{
  for(const page of ['home','catalog','activity','rules','approvals','spending','audit','connections']){
   const output=html(page);
-  assert.match(output,/>Preview<\/span>/);
+  assert.match(output,/>Demo<\/span>/);
   assert.doesNotMatch(output,/Interactive demo|Sample data only|Every agent\.<br>One clear view|Nothing here connects to your systems/);
  }
 });

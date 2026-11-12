@@ -1,4 +1,4 @@
-import { SEED_AGENTS, SEED_EVENTS, SEED_APPROVALS, SEED_TOOLS } from './data.js';
+import { SEED_AGENTS, SEED_EVENTS, SEED_APPROVALS, SEED_TOOLS, MODEL_CATALOG, INITIAL_REVIEWER, PERSONA_CATALOG, SCENARIO_MODELS, SCENARIO_TOKEN_USAGE } from './mock/fixtures.js';
 
 export const STATUS = {
   allowed: { label: 'Allowed', icon: 'check', tone: 'positive' },
@@ -16,9 +16,9 @@ export const STATUS = {
 export function toolSchema(t){return t.type==='Read'?{query:'string'}:t.type==='Critical'?{amount:'number',target_id:'string'}:{amount:'number',id:'string'};}
 export const CAN_EDIT = ['operator'];
 export const CAN_APPROVE = ['approver'];
-export const DEMO_REVIEWER = 'Elena Kim';
+export const DEMO_REVIEWER = INITIAL_REVIEWER;
 export function cleanState() {
-  return {agents:structuredClone(SEED_AGENTS), tools:structuredClone(SEED_TOOLS).map(t=>({...t,classification:'suggested',supervision:t.type==='Critical'?'approval':t.type==='Write'?'notify':'autonomous',schemaVersion:1,schema:toolSchema(t)})), events:structuredClone(SEED_EVENTS), approvals:structuredClone(SEED_APPROVALS), changes:[], rules:[], limits:{}, credentials:{}, identityConfig:{}, modelTariffs:{'GPT-6':{input:0.002,output:0.008},'Claude Sonnet':{input:0.003,output:0.015}}, presentation:false, userLimits:{}, theme:'forest', appearance:'light', role:'operator', tour:-1, selectedAgent:'atlas', budgetUnit:'day'};
+  return {agents:structuredClone(SEED_AGENTS), tools:structuredClone(SEED_TOOLS).map(t=>({...t,classification:'suggested',supervision:t.type==='Critical'?'approval':t.type==='Write'?'notify':'autonomous',schemaVersion:1,schema:toolSchema(t)})), events:structuredClone(SEED_EVENTS), approvals:structuredClone(SEED_APPROVALS), changes:[], rules:[], cedarDrafts:[], limits:{}, credentials:{}, identityConfig:{}, modelTariffs:{'GPT-6':{input:0.002,output:0.008},'Claude Sonnet':{input:0.003,output:0.015}}, presentation:false, userLimits:{}, theme:'forest', appearance:'light', role:'operator', tour:-1, selectedAgent:'atlas', budgetUnit:'day'};
 }
 export function safeReadState(serialized) {
   const initial=cleanState();
@@ -26,7 +26,7 @@ export function safeReadState(serialized) {
   try {
     const data=JSON.parse(serialized);
     if (!data || !Array.isArray(data.agents) || !Array.isArray(data.events) || !Array.isArray(data.approvals)) return initial;
-    return { ...initial, ...data, tools:Array.isArray(data.tools)?data.tools:initial.tools, changes:Array.isArray(data.changes)?data.changes:[], rules:Array.isArray(data.rules)?data.rules:[], limits:data.limits&&typeof data.limits==='object'?data.limits:{}, credentials:data.credentials&&typeof data.credentials==='object'?data.credentials:{}, identityConfig:data.identityConfig&&typeof data.identityConfig==='object'?data.identityConfig:{}, modelTariffs:data.modelTariffs&&typeof data.modelTariffs==='object'?data.modelTariffs:initial.modelTariffs, presentation:Boolean(data.presentation), userLimits:data.userLimits&&typeof data.userLimits==='object'?data.userLimits:{},
+    return { ...initial, ...data, tools:Array.isArray(data.tools)?data.tools:initial.tools, changes:Array.isArray(data.changes)?data.changes:[], rules:Array.isArray(data.rules)?data.rules:[], cedarDrafts:Array.isArray(data.cedarDrafts)?data.cedarDrafts:[], limits:data.limits&&typeof data.limits==='object'?data.limits:{}, credentials:data.credentials&&typeof data.credentials==='object'?data.credentials:{}, identityConfig:data.identityConfig&&typeof data.identityConfig==='object'?data.identityConfig:{}, modelTariffs:data.modelTariffs&&typeof data.modelTariffs==='object'?data.modelTariffs:initial.modelTariffs, presentation:Boolean(data.presentation), userLimits:data.userLimits&&typeof data.userLimits==='object'?data.userLimits:{},
       theme:['forest','violet','ocean'].includes(data.theme)?data.theme:'forest',
       appearance:['light','dark'].includes(data.appearance)?data.appearance:'light',
       role:['operator','approver','auditor'].includes(data.role)?data.role:'operator',
@@ -148,8 +148,11 @@ export function changeMode(state,agentId,next){
   agent.mode=next;return true;
 }
 // Evaluate each channel and policy separately. Outside-B tool attempts have no execution verdict.
-export function appendScenario(state,{agentId='atlas',action='Delete customer record',channel='tool',toolId=null,userRole='operator',parameters={}}={}){
+export function appendScenario(state,{agentId='atlas',action='Delete customer record',channel='tool',toolId=null,userRole='operator',parameters={},model=null}={}){
   const agent=agentById(state,agentId);if(!agent||agent.mode==='retired'||!['tool','inference'].includes(channel))return null;
+  const chosenModel=model||agent.allowedModels?.[0]||SCENARIO_MODELS[agentId]||MODEL_CATALOG[0].name;
+  const tariff=state.modelTariffs[chosenModel]||{input:0,output:0};
+  const modelCost=Number(((SCENARIO_TOKEN_USAGE.input*tariff.input+SCENARIO_TOKEN_USAGE.output*tariff.output)/1000).toFixed(6));
   const tool=state.tools.find(t=>t.id===toolId && t.agent===agentId)
     || state.tools.find(t=>t.agent===agentId && t.name===action);
   const name=tool?.name||action;
@@ -179,20 +182,24 @@ export function appendScenario(state,{agentId='atlas',action='Delete customer re
       else if(critical&&channel==='tool'){decision='pending';reason='This tool must be approved by another person before it runs.';}
       else if(critical&&channel==='inference'){decision='allow';reason='The model may request this tool. Execution requires separate approval through tool execution control.';}
     }else if(agent.preset===3){decision='deny';rule='Strict';reason='No explicit permission has been configured for this action.';}
+    if(channel==='inference'&&agent.allowedModels?.length&&!agent.allowedModels.includes(chosenModel)){decision='deny';rule='Allowed models';reason='This model is not permitted for the agent.';}
+    const trust=state.identityConfig?.[agent.id];
+    if(trust?.missing==='reject' && hasConnection(agent,'C') && !withIdentity){decision='deny';rule='User identity required';reason='This connection requires a user identity on every request.';}
     const matching=state.rules.filter(r=>r.agent===agent.id && (!r.toolId||r.toolId===tool?.id) && (r.type==='Any'||r.type===tool?.type) && (!r.parameter || (Object.hasOwn(parameters,r.parameter) && (r.comparator==='>'?Number(parameters[r.parameter])>Number(r.value):r.comparator==='<'?Number(parameters[r.parameter])<Number(r.value):r.comparator==='='?String(parameters[r.parameter])===String(r.value):false))));
     const deny=matching.find(r=>r.effect==='deny');const allow=matching.find(r=>r.effect==='allow');
-    if(deny){decision='deny';rule=deny.id;reason=`Example custom rule ${deny.id} denies these parameters.`;}
-    else if(allow&&agent.preset===3){decision='allow';rule=allow.id;reason=`Example custom rule ${allow.id} permits this request.`;}
+    if(deny){decision='deny';rule=deny.id;reason=`Custom rule ${deny.id} denies these parameters.`;}
+    else if(allow&&agent.preset===3){decision='allow';rule=allow.id;reason=`Custom rule ${allow.id} permits this request.`;}
     if(decision==='pending')status=agent.mode==='observe'?'would_block':'pending';
     else if(decision==='deny')status=agent.mode==='observe'?'would_block':'blocked';
     if(status==='would_block')reason=`Would be denied by ${rule}. ${reason} The policy decision was observed, not enforced.`;
   }
   const id=nextTraceId(state);
   const pathConnections=channel==='inference'?['A',...(withIdentity?['C']:[])]:[...(controlled?['B']:[]),...(controlled&&withIdentity?['C']:[])];
-  const record={id,at:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),ago:'Just now',
-    agent:agentId,actor:withIdentity?(userRole==='reader'?'Eli Ramos':'Maya Chen'):'No user identity',action:name,kind:channel,model:'GPT-6',status,
-    connections:pathConnections,cost:channel==='tool'?0:0.013,rule,version:'v1.8',reason,evidence:!external};
+  const record={id,date:new Date().toISOString().slice(0,10),at:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),ago:'Just now',
+    agent:agentId,actor:withIdentity?((PERSONA_CATALOG[userRole]||PERSONA_CATALOG.operator).name):'No user identity',action:name,kind:channel,model:chosenModel,status,
+    connections:pathConnections,cost:channel==='tool'?0:modelCost,rule,version:'v1.8',reason,evidence:!external};
   state.events.unshift(record);
+  if(channel==='inference'){agent.requests+=1;agent.spent=Number((agent.spent+record.cost).toFixed(6));}
   if(status==='pending'&&channel==='tool'){
     state.approvals.unshift({id:`APR-${id.replace('TRC-','')}`,agent:agentId,action:name,
       requestedBy:record.actor,requestedAt:record.at,reason:'Requires a second reviewer.',expires:'15 min',status:'pending',trace:id});
@@ -204,7 +211,7 @@ export function decideApproval(state,id,decision,reviewer=state.reviewPerson||DE
   if(item.requestedBy===reviewer || !approvalReady(state,item)) return false;
   item.status=decision;item.reviewedBy=reviewer;item.comment=String(comment||'').slice(0,400);
   changeRecord(state,'Execution decision',item.agent,item.id,'pending',{decision,reviewer,comment:item.comment});
-  state.events.unshift({id:nextTraceId(state),at:'Now',ago:'Just now',agent:item.agent,actor:reviewer,action:item.action,kind:'tool',model:'GPT-6',status:decision==='approved'?'allowed':'blocked',connections:[...(agentById(state,item.agent)?.connections||[])],cost:0,rule:'Human decision',version:'v1.8',reason:decision==='approved'?'Another person approved this simulated execution.':'A reviewer rejected the simulated execution.',evidence:true});
+  state.events.unshift({id:nextTraceId(state),at:'Now',ago:'Just now',agent:item.agent,actor:reviewer,action:item.action,kind:'tool',model:'GPT-6',status:decision==='approved'?'allowed':'blocked',connections:[...(agentById(state,item.agent)?.connections||[])],cost:0,rule:'Human decision',version:'v1.8',reason:decision==='approved'?'A separate reviewer approved this execution request.':'A reviewer rejected this execution request.',evidence:true});
   return true;
 }
 export function toggleConnection(state,agentId,connection){
@@ -213,14 +220,11 @@ export function toggleConnection(state,agentId,connection){
   agent.connections=agent.connections.includes(connection)?agent.connections.filter(x=>x!==connection):[...agent.connections,connection].sort();
   return true;
 }
-export const sampleModels=[
-  {name:'GPT-6',provider:'OpenAI',agentCount:2},
-  {name:'Claude Sonnet',provider:'Anthropic',agentCount:1}
-];
+export const sampleModels=MODEL_CATALOG;
 export function toolsForAgent(id,state){return (state?.tools||SEED_TOOLS).filter(t=>t.agent===id);}
 export function toolById(state,id){return state.tools.find(t=>t.id===id)||null;}
 export function changeRecord(state,kind,agentId,resource,before,after){
- const record={id:`ADM-${String((state.changes||[]).length+1).padStart(4,'0')}`,kind,agent:agentId,resource,from:structuredClone(before??null),to:structuredClone(after??null),actor:state.role==='operator'?'Operator (preview)':state.role==='approver'?'Approver (preview)':'Auditor (preview)',time:new Date().toISOString()};
+ const record={id:`ADM-${String((state.changes||[]).length+1).padStart(4,'0')}`,kind,agent:agentId,resource,from:structuredClone(before??null),to:structuredClone(after??null),actor:state.role==='operator'?'Operator':state.role==='approver'?'Approver':'Auditor',time:new Date().toISOString()};
  if(!Array.isArray(state.changes))state.changes=[];
  state.changes.unshift(record);return record;
 }
@@ -243,9 +247,21 @@ export function addRule(state,agentId,rule){
    const type=target.schema?.[rule.parameter];if(!type)return {error:`Parameter ${rule.parameter} is not in the tool schema`};
    if(type==='number'&&!Number.isFinite(Number(rule.value)))return {error:'The value must be numeric'};
  }
- const next={...rule,id:`RULE-${String(state.rules.length+1).padStart(3,'0')}`,agent:agentId,version:state.rules.filter(r=>r.agent===agentId).length+1,created:new Date().toISOString(),author:'Operator (preview)'};
+ const next={...rule,id:`RULE-${String(state.rules.length+1).padStart(3,'0')}`,agent:agentId,version:state.rules.filter(r=>r.agent===agentId).length+1,created:new Date().toISOString(),author:'Operator'};
  state.rules.push(next);changeRecord(state,'Custom rule',agentId,next.id,null,next);return {rule:next};
 }
 export function filterAuditEvents(state,filters={}){
  return state.events.filter(e=>(!filters.agent||e.agent===filters.agent)&&(!filters.model||e.model===filters.model)&&(!filters.channel||e.kind===filters.channel)&&(!filters.user||e.actor.toLowerCase().includes(filters.user.toLowerCase()))&&(!filters.tool||e.action.toLowerCase().includes(filters.tool.toLowerCase()))&&(!filters.connection||e.connections.includes(filters.connection))&&(!filters.status||e.status===filters.status));
+}
+
+/** A Cedar text draft has no runtime effect until a real Cedar evaluator validates and publishes it. */
+export function saveCedarDraft(state,agentId,text){
+ if(!canEdit(state)||!agentById(state,agentId))return {error:'No permission or agent'};
+ const source=String(text||'').trim();
+ if(!/^(?:permit|forbid)\s*\(/.test(source)||!source.includes('{')||!source.includes('}')||!source.endsWith(';'))return {error:'Draft must include permit/forbid, a condition and a semicolon'};
+ if(!Array.isArray(state.cedarDrafts))state.cedarDrafts=[];
+ const draft={id:`CEDAR-${String(state.cedarDrafts.length+1).padStart(3,'0')}`,agent:agentId,text:source,status:'draft',created:new Date().toISOString()};
+ state.cedarDrafts.push(draft);
+ changeRecord(state,'Cedar draft',agentId,draft.id,null,{status:'draft'});
+ return {draft};
 }

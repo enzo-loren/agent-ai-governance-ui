@@ -84,7 +84,7 @@ test('Tool-review modal explicitly names the tool and intended decision',()=>{
  const html=renderOpsModal(state,ui);
  assert.match(html,/Delete customer record/);
  assert.match(html,/Confirm review/);
- assert.match(html,/No production rule is deployed|no production rule is deployed/);
+ assert.match(html,/Local tools remain outside the execution gateway/);
  assert.equal(toolById(state,'t3').approved,false);
 });
 

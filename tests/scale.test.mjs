@@ -39,8 +39,8 @@ test('Activity uses agent-name filter not huge dropdown, and bounds 3,200 events
  assert.match(activity,/id="activity-agent-search"/);
  assert.doesNotMatch(activity,/id="activity-agent"/);
  assert.equal(count(activity,'<tr>'),31);
- assert.match(activity,/30 of 3210 events/);
- assert.match(pageActivity(s,{...ui,activityLimit:60}),/60 of 3210 events/);
+ assert.match(activity,new RegExp(`30 of ${s.events.length} events`));
+ assert.match(pageActivity(s,{...ui,activityLimit:60}),new RegExp(`60 of ${s.events.length} events`));
  const scoped=pageActivity(s,ui,'agent-96');
  assert.match(scoped,/Team agent 96/);
  assert.match(scoped,/href="#\/activity"/);
@@ -54,7 +54,7 @@ test('Activity uses agent-name filter not huge dropdown, and bounds 3,200 events
 test('Audit lists 30 records, filters by trace and respects scoped agent',()=>{
  const s=highVolumeState();
  assert.equal(count(pageAudit(s,ui),'<tr>'),31);
- assert.match(pageAudit(s,ui),/30 of 3210 records/);
+ assert.match(pageAudit(s,ui),new RegExp(`30 of ${s.events.length} records`));
  assert.match(pageAudit(s,{...ui,auditSearch:'TRC-SCALE-3199'}),/TRC-SCALE-3199/);
  assert.match(pageAudit(s,ui,'agent-20'),/Team agent 20/);
  assert.match(pageAudit(s,ui,'agent-20'),/href="#\/audit"/);
