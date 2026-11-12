@@ -56,3 +56,16 @@ Additional evidence: 96 Node tests, Request Studio Chromium walkthrough at 1100 
 ## Remaining platform dependencies
 
 Request Studio cannot establish JWT verification, actual MCP interception, model-provider billing, Cedar compilation, server-side permissions, Object Lock immutability, or backend throughput. The in-browser repository's revision checks are also not atomic across concurrent tabs. The underlying requirements remain unchanged, including the explicit `CON-04` coverage-index deviation in [`traceability.md`](traceability.md).
+
+## Follow-up · 12 November 2026: role guidance and contextual navigation
+
+A customer inspection identified two remaining presentation defects after test controls were isolated:
+
+1. **Approvals as Auditor.** The old permission message told the reader to select an Approver role “above,” despite role impersonation having been moved to Request Studio. The new text states the current permission explicitly: Auditor access is read-only; Operator access can inspect requests but not decide them. Approve/Reject controls remain disabled outside the Approver role, and the permission note appears only when a pending decision is relevant. The page eyebrow now says **Execution review**, distinguishing a held execution from classifying a tool in Catalog.
+2. **Connections → What this changes.** The detached four-button footer (`Catalog`, `Rules`, `Spending`, `Approvals`) appeared directly after **Spending by person**, making generic site navigation look like part of that capability. The footer was removed. Each capability instead contains a quiet, task-specific link preserving the selected agent: model requests → Activity; tool execution and user-specific rules → agent Rules; human approval → Approvals; person spending → Spending. This retains investigative continuity without repeating the global sidebar.
+
+A copy scan also identified two help descriptions speaking about the **future or real backend** rather than the actual operator task. Safe-start help now distinguishes Enforce/Observe behavior without referring to a future implementation. Audit help explains that an event record is not evidence of immutable retention and preserves the operational `Not verified` state. No evidence is invented.
+
+**Verification:** three new Node contracts cover Auditor/Operator/Approver, agent-scoped capability destinations (Atlas and Invoice), absence of detached navigation, and technical copy. A Chromium test checks read-only decisions, all five contextual links, navigation to the correct agent, audit help and layout at 320, 390, 900, 1100, and 1440 px. The compiled-site smoke still covers eight screens in seven widths. These checks validate UX behavior in the static client, not backend authorization.
+
+The provided screenshot was of the **agent's Connections tab**, specifically its capability list—not of the global Spending page. That distinction determined where the correction belongs. The remaining requirement gaps described above have not been reclassified as implemented.
