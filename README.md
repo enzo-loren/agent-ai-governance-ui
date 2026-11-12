@@ -22,6 +22,10 @@ Agent registration exposes a model `BASE_URL` and a one-time agent credential. N
 
 The tool catalog review workflow and an approval for one specific tool execution remain separate. Tool approval does not imply that local execution is routed through the gateway.
 
+## Sharing the workspace
+
+The root URL is the Overview sharing entry point. Its Open Graph and Twitter Card metadata point to `assets/social/overview-og.png` (1200 × 630), a locally hosted social preview built from a real Chromium render of the current Overview (not an outdated screenshot). The source of truth for regeneration is `scripts/render_social_preview.py`. Share `https://enzo-loren.github.io/agent-ai-governance-ui/` to use this preview. Routes after `#` are client-side and cannot supply individual per-agent social previews.
+
 ## Data and testing
 
 The static site uses a local data repository with synthetic initial records. The presentation does not embed fixture creation controls.
