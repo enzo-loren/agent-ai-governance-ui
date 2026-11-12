@@ -37,7 +37,12 @@ def exercise(browser,width):
     page=context.new_page();errors=[]
     page.on('pageerror',lambda e:errors.append(str(e)))
     try:
-        page.set_content(inline_studio(),wait_until='load')
+        # The hosted studio uses HTTPS. Serve an inlined response at a secure origin
+        # so Web Crypto can validate the agent's one-time key in browser tests.
+        origin='https://studio.example.test/'
+        context.route(origin,lambda route: route.fulfill(status=200,content_type='text/html',body=inline_studio()))
+        page.goto(origin,wait_until='load')
+        assert page.evaluate('window.isSecureContext')
         page.locator('#send-request').wait_for()
         assert '/v1/model-requests' in page.locator('#endpoint').input_value()
         assert page.locator('#agent-token').count()==1
