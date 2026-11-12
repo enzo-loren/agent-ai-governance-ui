@@ -111,7 +111,6 @@ export function createTestApi(backend=createMockBackend()) {
         if(err instanceof BackendConflictError)return bad('Workspace was modified concurrently',409);
         return bad('Request rejected by local handler',500);
       }
-    }
  };
  return Object.freeze({
   get(){const {state,revision}=backend.read();return {revision,agents:state.agents,tools:state.tools,approvals:state.approvals,events:state.events,state};},
