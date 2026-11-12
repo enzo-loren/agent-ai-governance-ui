@@ -1,5 +1,6 @@
 /** Local POST-shaped test transport. It does not accept network traffic or authenticate users. */
 import {createMockBackend,BackendConflictError} from './backend.js';
+import {matchesActiveCredential} from './credentials.js';
 import {agentById,appendScenario,changeRecord,toolById,safeId} from '../domain.js';
 
 export const TEST_ENDPOINTS=Object.freeze([
@@ -18,9 +19,8 @@ const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
 const validSchema=s=>object(s)&&Object.keys(s).length>0&&Object.keys(s).length<=30&&Object.values(s).every(v=>['string','number','boolean'].includes(v));
 
 export function createTestApi(backend=createMockBackend()) {
-  return Object.freeze({
-    get(){const {state,revision}=backend.read();return {revision,agents:state.agents,tools:state.tools,approvals:state.approvals,events:state.events,state};},
-    post(path,body={}) {
+ const dispatch=(path,body={},credentialVerified=false)=>{
+
       if(!TEST_ENDPOINTS.includes(path))return bad('Unknown endpoint',404);
       if(!object(body))return bad('JSON body must be an object');
       try {
@@ -52,6 +52,7 @@ export function createTestApi(backend=createMockBackend()) {
         if(path==='/v1/model-requests'||path==='/v1/tool-invocations') {
           if(typeof body.agentId!=='string'||!agentById(state,body.agentId))return bad('Unknown agentId',422);
           const agent=agentById(state,body.agentId);
+          if(state.credentials?.[body.agentId]&&!credentialVerified)return bad('Agent API key is missing, invalid or revoked',401);
           if(agent.mode==='retired')return bad('Agent retired',409);
           if(body.toolId!==undefined && !state.tools.some(t=>t.agent===body.agentId&&t.id===body.toolId))return bad('Tool does not belong to agent',422);
           if(body.userRole!==undefined && !['operator','reader','none'].includes(body.userRole))return bad('Invalid userRole',422);
@@ -65,9 +66,12 @@ export function createTestApi(backend=createMockBackend()) {
             userRole:body.userRole||'operator',model:body.model||null,parameters:body.parameters||{}});
           if(!result)return bad('Could not process this request',422);
           result.source='test-console';
+          if(channel==='inference'&&credentialVerified&&agent.connectionCheck?.status==='pending'){
+            agent.connectionCheck={status:'verified',verifiedAt:new Date().toISOString(),traceId:result.id};
+          }
           const saved=backend.save(state,snapshot.revision);
           return {status:201,body:{trace_id:result.id,agent_id:result.agent,decision:result.status,channel:result.kind,
-            cost_usd:result.cost,revision:saved.revision}};
+            cost_usd:result.cost,connection_status:agent.connectionCheck?.status||null,revision:saved.revision}};
         }
         if(path==='/v1/tools/discoveries') {
           const agent=agentById(state,body.agentId);
@@ -107,6 +111,16 @@ export function createTestApi(backend=createMockBackend()) {
         if(err instanceof BackendConflictError)return bad('Workspace was modified concurrently',409);
         return bad('Request rejected by local handler',500);
       }
-    }
-  });
+ };
+ return Object.freeze({
+  get(){const {state,revision}=backend.read();return {revision,agents:state.agents,tools:state.tools,approvals:state.approvals,events:state.events,state};},
+  post(path,body={}){return dispatch(path,body,false);},
+  async postAuthenticated(path,body={},token=''){
+   if(!['/v1/model-requests','/v1/tool-invocations'].includes(path)||!object(body))return dispatch(path,body,false);
+   const snapshot=backend.read(),record=snapshot.state.credentials?.[body.agentId];
+   if(!record)return dispatch(path,body,false);
+   if(!await matchesActiveCredential(record,token))return bad('Agent API key is missing, invalid or revoked',401);
+   return dispatch(path,body,true);
+  }
+ });
 }

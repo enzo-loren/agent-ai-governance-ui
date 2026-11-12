@@ -209,3 +209,29 @@ hr{border:0;height:1px;background:var(--border);margin:22px 0}.muted{color:var(-
 
 /* Display the current account role; test impersonation is outside the workspace. */
 .role-indicator{font-size:12px;font-weight:650;color:var(--text-muted);padding:7px 12px;border-radius:999px;border:1px solid var(--border);white-space:nowrap}
+
+/* Agent onboarding and one-time credential receipt. */
+.onboarding-advanced{margin:18px 0;padding:13px 15px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2)}
+.onboarding-advanced summary{font-weight:740;cursor:pointer;font-size:13px}.onboarding-fields{padding-top:19px}
+.onboarding-models{margin:0 0 17px;padding:12px;border:1px solid var(--border);border-radius:10px}.onboarding-models legend{font-size:12px;font-weight:740}
+.onboarding-receipt{min-width:0}.onboarding-receipt .field-input{width:100%;font-size:12px}.onboarding-receipt .op-pre{margin-top:18px;white-space:pre-wrap;overflow-wrap:anywhere}
+.modal-card:has(#new-agent-form),.modal-card:has(.onboarding-receipt){width:min(610px,100%);max-height:calc(100dvh - 35px);overflow:auto;overscroll-behavior:contain}
+.agent-connection-summary .drawer-dl{grid-template-columns:minmax(90px,160px) minmax(0,1fr)}.agent-connection-summary dd{overflow-wrap:anywhere}.agent-connection-summary .mono{font-size:12px}
+@media(max-width:670px){.modal-card:has(#new-agent-form),.modal-card:has(.onboarding-receipt){padding:20px}.agent-connection-summary .drawer-dl{grid-template-columns:1fr}.agent-connection-summary .card-title-row{align-items:flex-start;flex-wrap:wrap}}
+.onboarding-fields>.field-group{display:flex;flex-direction:column;align-items:stretch;gap:6px;margin-bottom:19px}
+.onboarding-fields>.field-group .field-label{margin-bottom:0}
+.onboarding-fields>.field-group .field-input,.onboarding-fields>.field-group .field-select{width:100%}
+.onboarding-fields>.onboarding-models{margin:18px 0 20px}
+.onboarding-fields>.onboarding-models legend{padding:0 6px}
+
+/* Connection verification is independent from Observe / Enforce mode. */
+.path-tag.awaiting{background:var(--info-bg);color:var(--info-text);border-color:var(--border)}
+.connection-awaiting{background:var(--info-bg);color:var(--info-text);border:1px solid var(--border);display:inline-flex;align-items:center;gap:5px}
+.connection-verified{background:var(--accent-soft);color:var(--accent-ink);border:1px solid var(--border);display:inline-flex;align-items:center;gap:5px}
+.connection-next{margin-top:16px;padding:15px 17px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2)}
+.connection-next strong{font-size:13px;display:flex;align-items:center;gap:7px}.connection-next p{color:var(--text-muted);font-size:12px;margin:6px 0 12px}
+.connection-next.verified p{margin-bottom:0}.connection-next .btn{white-space:normal;text-align:center}
+.agent-card-head{gap:7px;flex-wrap:wrap}.agent-card-head .pill{margin-left:0}
+.detail-head .connection-awaiting{margin-top:8px}
+.modal-card:has(.onboarding-receipt) .modal-actions{flex-wrap:wrap;gap:7px}
+@media(max-width:480px){.modal-card:has(.onboarding-receipt) .modal-actions .btn{flex:1 1 135px;white-space:normal}.connection-next{padding:13px}}

@@ -4,11 +4,12 @@ import {parseRoute,activityFromSpending,auditFromSpending} from './router.js';
 import { cleanState, safeReadState, canEdit, canApprove, agentById, safeId, appendScenario, changeMode, toggleConnection, decideApproval, changeRecord } from './domain.js';
 import { TOUR, CONNECTIONS, POLICY_PRESETS } from './data.js';
 import { renderPage, renderAppShell, integrationInstructions } from './views.js';
+import {mintLocalCredential,stageCredential,revokeLocalCredential,credentialRecord,agentConnectionSnippet,mcpBaseUrl} from './mock/credentials.js';
 
 const backend=createMockBackend();
 const app=document.getElementById('app');
 let {state,revision}=backend.read();
-let ui = { navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogToolLimit:30, catalogPeopleLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, rulesSearch:'', rulesLimit:24, activitySearch:'', activityAgentSearch:'', activityLimit:30, activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', auditLimit:30, approvalsSearch:'', approvalsView:'pending', approvalsLimit:20, spendingSearch:'', spendingLimit:24, personLimit:24, requestUser:'operator', policyPreview:null, activityUser:'', activityChannel:'', activityModel:'', auditFilters:{}, auditFiltersOpen:false, auditMode:'events', toolDraft:null, opError:'' };
+let ui = { credentialReceipt:null, navOpen:false, drawer:null, modal:null, toast:'', catalogTab:'agents', catalogToolFilter:'all', catalogAgentLimit:24, catalogToolLimit:30, catalogPeopleLimit:24, catalogSearch:'', connectionSearch:'', connectionLimit:24, rulesSearch:'', rulesLimit:24, activitySearch:'', activityAgentSearch:'', activityLimit:30, activityStatus:'all', activityPaused:false, pausedIds:null, auditSearch:'', auditLimit:30, approvalsSearch:'', approvalsView:'pending', approvalsLimit:20, spendingSearch:'', spendingLimit:24, personLimit:24, requestUser:'operator', policyPreview:null, activityUser:'', activityChannel:'', activityModel:'', auditFilters:{}, auditFiltersOpen:false, auditMode:'events', toolDraft:null, opError:'' };
 let toastTimer;
 let beforeOverlayFocus = null;
 function persist(){
@@ -30,10 +31,10 @@ function render(opts={}){
   if(target){target.focus({preventScroll:true});const v=target.value;try{target.setSelectionRange(v.length,v.length)}catch{}}
   else if(opts.focusOverlay){(app.querySelector('.modal [autofocus]')||app.querySelector('.drawer .icon-btn')||app.querySelector('.modal .btn'))?.focus({preventScroll:true});}
 }
-function go(path){ui.drawer=null;ui.modal=null;ui.navOpen=false;const target='#/'+path;if(location.hash!==target)location.hash=target;else{render();window.scrollTo({top:0,behavior:'instant'});}}
+function go(path){ui.credentialReceipt=null;ui.drawer=null;ui.modal=null;ui.navOpen=false;const target='#/'+path;if(location.hash!==target)location.hash=target;else{render();window.scrollTo({top:0,behavior:'instant'});}}
 function showToast(message){ui.toast=message;clearTimeout(toastTimer);render({keepScroll:true});announce(message);toastTimer=setTimeout(()=>{ui.toast='';render({keepScroll:true})},3600)}
 function openOverlay(slot,details){beforeOverlayFocus=document.activeElement;ui[slot]=details;render({keepScroll:true,focusOverlay:true});}
-function closeOverlay(){ui.drawer=null;ui.modal=null;render({keepScroll:true});if(beforeOverlayFocus?.isConnected)beforeOverlayFocus.focus();else document.getElementById('main')?.focus({preventScroll:true});}
+function closeOverlay(){ui.credentialReceipt=null;ui.drawer=null;ui.modal=null;render({keepScroll:true});if(beforeOverlayFocus?.isConnected)beforeOverlayFocus.focus();else document.getElementById('main')?.focus({preventScroll:true});}
 function copyText(value){
   if(navigator.clipboard?.writeText)return navigator.clipboard.writeText(value).then(()=>showToast('Copied')).catch(()=>legacyCopy(value));
   return legacyCopy(value);
@@ -44,11 +45,39 @@ function legacyCopy(value){
 function allowEdit(){if(!canEdit(state)){showToast('Operator permission required');return false;}return true;}
 function allowApproval(){if(!canApprove(state)){showToast('Approver permission required');return false;}return true;}
 function setupEvents(){
- document.addEventListener('click',event=>{
+ document.addEventListener('click',async event=>{
   const element=event.target.closest('[data-action]');if(!element)return;
   const act=element.dataset.action;
   if(!act)return;
   event.preventDefault();
+  if(act==='copy-agent-key'||act==='copy-agent-config'){
+   const receipt=ui.credentialReceipt;
+   if(receipt && (ui.modal?.kind==='new-agent-key'||ui.modal?.kind==='agent-credential-receipt') && ui.modal.id===receipt.agentId){
+     copyText(act==='copy-agent-key'?receipt.token:agentConnectionSnippet(receipt.token));
+   }
+   return;
+  }
+  if(act==='op-confirm-agent-action' && ui.modal?.kind==='op-confirm-agent' && ['rotate','revoke'].includes(ui.modal.action)){
+    if(!allowEdit())return;
+    const target=agentById(state,ui.modal.id);if(!target)return;
+    if(ui.modal.action==='rotate'){
+      try{
+        const issued=await mintLocalCredential();
+        const prior=structuredClone(state.credentials?.[target.id]||null);
+        stageCredential(state.credentials,target.id,issued.record);
+        changeRecord(state,'Agent credential rotated',target.id,target.name,prior,{credentialId:issued.record.id,version:credentialRecord(state.credentials,target.id).version});
+        if(!persist())return;
+        ui.credentialReceipt={agentId:target.id,token:issued.token};ui.modal={kind:'agent-credential-receipt',id:target.id};render({keepScroll:true,focusOverlay:true});
+      }catch{showToast('Secure credential generation is unavailable');}
+    }else{
+      const keyId=document.getElementById('credential-to-revoke')?.value;
+      const before=structuredClone(state.credentials?.[target.id]||null);
+      if(!keyId||!revokeLocalCredential(state.credentials,target.id,keyId)){showToast('Select an active credential');return;}
+      changeRecord(state,'Agent credential revoked',target.id,target.name,before,{credentialId:keyId,status:'revoked'});
+      if(!persist())return;ui.modal=null;showToast('Credential marked revoked');
+    }
+    return;
+  }
   if(act.startsWith('op-')){
    const result=handleOpsClick(state,ui,element);
    if(!result.handled)return;
@@ -155,7 +184,7 @@ function setupEvents(){
     const name=CONNECTIONS.find(c=>c.id===ui.modal.connection)?.name||'Connection';
     ui.modal=null;if(!persist())return;showToast(`${name} configuration updated`);break;
    }
-   case 'copy-connection':copyText(integrationInstructions[element.dataset.id]?.snippet||'');break;
+   case 'copy-connection':copyText(element.dataset.id==='A'?agentConnectionSnippet():element.dataset.id==='B'?`MCP_URL=${mcpBaseUrl()}\nAUTH=Bearer <agent-token>`:integrationInstructions[element.dataset.id]?.snippet||'');break;
    case 'copy-trace':copyText(element.dataset.value||'');break;
    case 'theme':state.theme=element.dataset.value;if(!persist())return;render({keepScroll:true,focusOverlay:true});announce(`Palette: ${state.theme}`);break;
    case 'appearance':state.appearance=element.dataset.value;if(!persist())return;render({keepScroll:true,focusOverlay:true});announce(`${state.appearance} appearance`);break;
@@ -195,7 +224,7 @@ function setupEvents(){
   else if(id==='spending-search'){ui.spendingSearch=event.target.value;ui.spendingLimit=24;ui.personLimit=24;}
   render({keepScroll:true,focusId:id});
  });
- document.addEventListener('submit',event=>{
+ document.addEventListener('submit',async event=>{
   if(event.target.getAttribute('id')?.startsWith('op-')){
     event.preventDefault();const r=handleOpsSubmit(state,ui,event.target);
     if(!r.handled)return;if(r.changed&&!persist())return;
@@ -206,8 +235,17 @@ function setupEvents(){
     event.preventDefault();if(!allowEdit())return;
     const fd=new FormData(event.target);const name=String(fd.get('name')||'').trim();const owner=String(fd.get('owner')||'').trim();if(!name||!owner)return;
     let id=safeId(name)||'agent';if(state.agents.some(a=>a.id===id))id+=`-${state.agents.length+1}`;
-    state.agents.push({id,name:name.slice(0,54),owner:owner.slice(0,54),initials:name.split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase(),team:'New agent',mode:'observe',connections:['A'],preset:1,budget:25,spent:0,requests:0,tools:0,accent:'mint',active:true});
-    state.selectedAgent=id;if(!persist())return;ui.modal={kind:'new-agent-key',id};render({focusOverlay:true,keepScroll:true});announce('Agent created');
+    const allowedModels=fd.getAll('model').filter(model=>state.modelTariffs?.[model]);
+    if(!allowedModels.length){showToast('Select at least one model');return;}
+    const budget=Number(fd.get('budget')||25);
+    if(!Number.isFinite(budget)||budget<1||budget>100000){showToast('Enter a budget from 1 to 100,000');return;}
+    let issued;try{issued=await mintLocalCredential();}catch{showToast('Secure credential generation is unavailable');return;}
+    const record={id,name:name.slice(0,54),owner:owner.slice(0,54),initials:name.split(/\s+/).slice(0,2).map(x=>x[0]||'').join('').toUpperCase(),team:String(fd.get('team')||'').trim().slice(0,54)||'Unassigned',description:String(fd.get('description')||'').trim().slice(0,200),version:String(fd.get('version')||'1.0.0').trim().slice(0,30),mode:'observe',connections:['A'],connectionCheck:{status:'pending',verifiedAt:null,traceId:null},preset:Number(fd.get('preset')||1),budget,spent:0,requests:0,tools:0,accent:'mint',active:true,allowedModels,blockStyle:fd.get('blockStyle')||'message',guardrailDiscovery:fd.get('guardrailDiscovery')||'block',invalidUserToken:fd.get('invalidUserToken')||'auto',acceptedClients:String(fd.get('acceptedClients')||'').split(',').map(x=>x.trim()).filter(Boolean).slice(0,30),hasHumanUsers:fd.has('hasHumanUsers')};
+    if(!POLICY_PRESETS.some(x=>x.id===record.preset)){showToast('Choose a policy');return;}
+    state.agents.push(record);state.credentials[id]={version:1,revoked:0,issuedTotal:0,active:[]};stageCredential(state.credentials,id,issued.record);
+    changeRecord(state,'Agent registered',id,name,null,{...record,credentialId:issued.record.id});
+    state.selectedAgent=id;if(!persist())return;
+    ui.credentialReceipt={agentId:id,token:issued.token};ui.modal={kind:'new-agent-key',id};render({focusOverlay:true,keepScroll:true});announce('Agent created');
   } else if(event.target.getAttribute('id')==='budget-form'){
     event.preventDefault();if(!allowEdit())return;
     const fd=new FormData(event.target);const agent=agentById(state,fd.get('id'));const num=Number(fd.get('budget'));
@@ -227,8 +265,8 @@ function setupEvents(){
     else if(!event.shiftKey&&document.activeElement===nodes.at(-1)){event.preventDefault();nodes[0].focus();}
   }
  });
- window.addEventListener('storage',event=>{if(event.key==='agent-governance-mock-v3'){const fresh=backend.read();state=fresh.state;revision=fresh.revision;ui.drawer=null;ui.modal=null;render({keepScroll:true});announce('Workspace data updated');}});
- window.addEventListener('hashchange',()=>{ui.drawer=null;ui.modal=null;ui.policyPreview=null;ui.navOpen=false;applyDeepLinkFilters();render();window.scrollTo({top:0,behavior:'instant'});document.getElementById('main')?.focus({preventScroll:true});});
+ window.addEventListener('storage',event=>{if(event.key==='agent-governance-mock-v3'){const fresh=backend.read();state=fresh.state;revision=fresh.revision;ui.drawer=null;ui.modal=null;ui.credentialReceipt=null;render({keepScroll:true});announce('Workspace data updated');}});
+ window.addEventListener('hashchange',()=>{ui.credentialReceipt=null;ui.drawer=null;ui.modal=null;ui.policyPreview=null;ui.navOpen=false;applyDeepLinkFilters();render();window.scrollTo({top:0,behavior:'instant'});document.getElementById('main')?.focus({preventScroll:true});});
 }
 function clearRouteQuery(){const current=location.hash;if(current.includes('?'))history.replaceState(null,'',current.split('?')[0]);}
 function applyDeepLinkFilters(){const r=route(),q=r.params;if(!q.toString())return;

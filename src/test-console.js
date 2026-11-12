@@ -8,18 +8,22 @@ const root=document.getElementById('test-studio');
 let templates=[],selectedTemplate=0,lastResponse=null;
 const pretty=value=>JSON.stringify(value,null,2);
 const escape=escapeHTML;
-const workspaceUrl=()=>`./index.html#/home`;
+const setupAgentId=new URLSearchParams(window.location.search).get('agent');
+const workspaceUrl=()=>setupAgentId?`./index.html#/agent/${encodeURIComponent(setupAgentId)}`:`./index.html#/home`;
 function recordLinks(response) {
   const id=response?.body?.trace_id;
   const agent=response?.body?.agent_id;
   if(!id||!agent)return '';
   const href=`./index.html#/audit/${encodeURIComponent(agent)}?trace=${encodeURIComponent(id)}`;
-  return `<a class="studio-button primary" id="open-audit" href="${escape(href)}">Inspect in Audit <span aria-hidden="true">↗</span></a>
+  return `<a class="studio-button" href="./index.html#/agent/${encodeURIComponent(agent)}">Open agent</a><a class="studio-button primary" id="open-audit" href="${escape(href)}">Inspect in Audit <span aria-hidden="true">↗</span></a>
     <a class="studio-button" href="./index.html#/activity/${encodeURIComponent(agent)}?trace=${encodeURIComponent(id)}">Open Activity</a>`;
 }
 function caseOptions(){return templates.map((t,i)=>`<option value="${i}" ${i===selectedTemplate?'selected':''}>${escape(t.name)}</option>`).join('');}
 function render() {
   const snapshot=api.get();templates=testCases(snapshot);
+  const setupAgent=snapshot.agents.find(a=>a.id===setupAgentId);
+  if(setupAgent)templates.unshift({name:`First model request · ${setupAgent.name}`,path:'/v1/model-requests',payload:{agentId:setupAgent.id,action:'Connection check',model:setupAgent.allowedModels?.[0]||'GPT-6',userRole:'none'}});
+
   const current=templates[selectedTemplate]||templates[0];
   root.innerHTML=`<div class="studio-shell">
     <header class="studio-topbar"><div class="studio-brand"><span class="studio-mark" aria-hidden="true">◈</span><span><strong>Agent Governance</strong><small>Request Studio</small></span></div><a class="studio-back" href="${workspaceUrl()}">Open workspace <span aria-hidden="true">↗</span></a></header>
@@ -27,6 +31,7 @@ function render() {
     <div class="studio-grid"><section class="studio-card" aria-labelledby="composer-title"><div class="studio-card-header"><div><h2 id="composer-title">Request composer</h2><p>Choose a scenario or edit the JSON directly.</p></div><span class="studio-label">Local transport</span></div>
       <label class="studio-field" for="scenario"><span>Scenario</span><select id="scenario">${caseOptions()}</select></label>
       <label class="studio-field" for="endpoint"><span>Endpoint</span><select id="endpoint">${TEST_ENDPOINTS.map(e=>`<option value="${escape(e)}" ${current.path===e?'selected':''}>POST ${escape(e)}</option>`).join('')}</select></label>
+      <label class="studio-field" for="agent-token"><span>Agent API key</span><input id="agent-token" type="password" autocomplete="off" spellcheck="false" placeholder="Paste the one-time agent key"><small>Required for registered agents. Never include credentials in the JSON body.</small></label>
       <label class="studio-field" for="payload"><span>JSON body</span><textarea id="payload" spellcheck="false" rows="12">${escape(pretty(current.payload))}</textarea></label>
       <div class="studio-actions"><button class="studio-button primary" id="send-request" type="button">Send request</button><button class="studio-button" id="reset-template" type="button">Restore template</button></div>
     </section>
@@ -51,14 +56,14 @@ function refreshCounts(){
  document.getElementById('event-count').textContent=snapshot.events.length;
  document.getElementById('pending-count').textContent=snapshot.approvals.filter(a=>a.status==='pending').length;
 }
-function submitRequest(){
+async function submitRequest(){
  const endpoint=document.getElementById('endpoint').value;
  const text=document.getElementById('payload').value;
  let payload,reply;
  try {payload=JSON.parse(text);}catch {reply={status:400,body:{error:'Invalid JSON body'}};}
  if(!reply){
   if(endpoint==='/_test/workspace/reset'&&!window.confirm('Restore the original local data? Your workspace changes will be lost.'))return;
-  reply=api.post(endpoint,payload);
+  reply=await api.postAuthenticated(endpoint,payload,document.getElementById('agent-token').value);
  }
  lastResponse=reply;
  const status=document.getElementById('http-status');
