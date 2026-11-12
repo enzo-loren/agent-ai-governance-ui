@@ -19,16 +19,34 @@ const formModal=(title,form)=>modal(title,form,'');
 
 export function renderAgentOperations(state,a){
  if(!canEdit(state))return '';
- if(a.mode==='retired')return `<section class="card card-pad op-section"><h2 class="card-title">Retired agent</h2><p class="card-subtitle">Operations are disabled. Recorded changes can still be inspected.</p>${small('View history','op-history',`data-id="${e(a.id)}"`)}</section>`;
+ if(a.mode==='retired')return `<div class="agent-settings-panel"><p class="settings-intro">This agent is retired. Its configuration cannot be changed.</p><button class="btn tiny" data-action="op-history" data-id="${e(a.id)}">View change history ${I('arrow',13)}</button></div>`;
  const cred=credentialRecord(state.credentials,a.id);
- const active=cred.active.filter(x=>!x.revokedAt).length;
- return `<section class="card card-pad op-section"><div class="card-title-row"><div><h2 class="card-title">Agent setup</h2><p class="card-subtitle">Details and access settings</p></div></div><div class="op-action-grid">
- ${small('Edit details','op-edit-agent',`data-id="${e(a.id)}"`)}
- ${small('Allowed models','op-models',`data-id="${e(a.id)}"`)}${small('Request handling','op-agent-settings',`data-id="${e(a.id)}"`)}
- ${small('Rotate credential','op-rotate-token',`data-id="${e(a.id)}"`)}
- ${small('Revoke credential','op-revoke-token',`data-id="${e(a.id)}"`)}
- ${small('Retire agent','op-retire-agent',`data-id="${e(a.id)}"`)}${small('Change history','op-history',`data-id="${e(a.id)}"`)}
- </div><div class="credential-summary"><span class="micro muted">${active} active · ${cred.revoked} revoked · Version ${cred.version}</span><details><summary class="text-link">Credential records</summary><div class="op-compact-list">${cred.active.map(k=>`<div class="op-list-row"><div><strong>${e(k.id)}</strong><p>${k.revokedAt?'Revoked':'Active'} · ${e(k.createdAt?.slice(0,10)||'Date unavailable')}</p></div></div>`).join('')}</div></details></div></section>`;
+ const active=cred.active.filter(k=>!k.revokedAt).length;
+ const row=(title,description,action,label,kind='')=>`<div class="agent-setting-row"><div class="agent-setting-copy"><strong>${e(title)}</strong><p>${e(description)}</p></div>${button(label,action,`data-id="${e(a.id)}"`,`tiny ${kind}`)}</div>`;
+ const status=a.mode==='suspended'?'Paused':a.mode==='enforce'?'Enforcing rules':'Observing';
+ return `<div class="agent-settings-panel">
+  <p class="settings-intro">Manage details, access and availability for this agent.</p>
+  <section class="agent-settings-section" aria-labelledby="settings-general"><h3 id="settings-general">General</h3>
+   ${row('Agent details','Name, owner and team','op-edit-agent','Edit')}
+   ${row('Allowed models','Models this agent can request','op-models','Manage')}
+   ${row('Request handling','Responses and identity options','op-agent-settings','Manage')}
+  </section>
+  <section class="agent-settings-section" aria-labelledby="settings-access"><h3 id="settings-access">Credentials</h3>
+   <p class="settings-section-note">${active} active · ${cred.revoked} revoked · Version ${cred.version}</p>
+   ${row('Rotate API key','Issue a new key while existing keys remain active','op-rotate-token','Rotate')}
+   ${row('Revoke API key','Stop a specific key from being used','op-revoke-token','Revoke','danger-outline')}
+   <details class="settings-records"><summary>Credential records</summary><div class="op-compact-list">${cred.active.map(k=>`<div class="op-list-row"><div><strong>${e(k.id)}</strong><p>${k.revokedAt?'Revoked':'Active'} · ${e(k.createdAt?.slice(0,10)||'Date unavailable')}</p></div></div>`).join('')}</div></details>
+  </section>
+  <section class="agent-settings-section" aria-labelledby="settings-availability"><h3 id="settings-availability">Availability</h3>
+   ${row('Agent status',`${status} · ${a.mode==='suspended'?'Resume requests through the gateway.':'Pause requests through the gateway without retiring this agent.'}`,'toggle-pause',a.mode==='suspended'?'Resume agent':'Pause agent',a.mode==='suspended'?'primary':'')}
+  </section>
+  <div class="settings-history"><button class="text-link" data-action="op-history" data-id="${e(a.id)}">${I('clock',14)} View change history</button></div>
+  <section class="agent-settings-danger" aria-labelledby="settings-danger"><h3 id="settings-danger">Danger zone</h3>
+   <div class="agent-setting-row"><div class="agent-setting-copy"><strong>Retire agent</strong><p>Remove this agent from active use. Its recorded history remains available.</p></div>
+    ${button('Retire agent','op-retire-agent',`data-id="${e(a.id)}"`,'danger tiny')}
+   </div>
+  </section>
+ </div>`;
 }
 export function renderRulesOperations(state,ui,a){
  const rules=state.rules.filter(r=>r.agent===a.id);
@@ -87,6 +105,7 @@ export function renderAuditChangeTable(state,ui,id=''){
 export function renderOpsDrawer(state,ui){
  const d=ui.drawer;if(!d?.kind?.startsWith('op-'))return null;
  const a=agentById(state,d.id);
+ if(d.kind==='op-agent-manage'){if(!a)return null;return drawer(`${a.name} · settings`,renderAgentOperations(state,a));}
  if(d.kind==='op-tool'){
   const t=toolById(state,d.id);if(!t)return null;
   const agent=agentById(state,t.agent),status=toolOperationalStatus(agent,t),current=ui.toolDraft?.id===t.id?ui.toolDraft:null;
@@ -177,9 +196,9 @@ export function handleOpsClick(state,ui,element){
  const action=element.dataset.action;if(!action?.startsWith('op-'))return {handled:false};
  const id=element.dataset.id;
  const a=agentById(state,id),tool=toolById(state,id);
- const sensitive=new Set(['op-edit-agent','op-models','op-agent-settings','op-rotate-token','op-revoke-token','op-retire-agent','op-confirm-agent-action','op-create-rule','op-cedar-editor','op-mcp','op-identity','op-limits','op-user-limits','op-tariffs','op-confirm-tool','op-expire-approval']);
+ const sensitive=new Set(['op-agent-manage','op-edit-agent','op-models','op-agent-settings','op-rotate-token','op-revoke-token','op-retire-agent','op-confirm-agent-action','op-create-rule','op-cedar-editor','op-mcp','op-identity','op-limits','op-user-limits','op-tariffs','op-confirm-tool','op-expire-approval']);
  if(sensitive.has(action)&&!canEdit(state) && !['op-expire-approval'].includes(action))return handled(false,'Operator permission required');
- const open=(slot,kind,details={})=>{ui[slot]={kind,...details};ui.opError='';return handled()};
+ const open=(slot,kind,details={})=>{if(slot==='modal'&&ui.drawer?.kind==='op-agent-manage')ui.drawer=null;ui[slot]={kind,...details};ui.opError='';return handled()};
  switch(action){
  case 'op-open-tool':if(!tool)return handled();ui.toolDraft=null;return open('drawer','op-tool',{id});
  case 'op-back-tool':ui.modal=null;return handled();
@@ -189,6 +208,7 @@ export function handleOpsClick(state,ui,element){
    ui.drawer=null;ui.modal=null;ui.toolDraft=null;return handled(true,'Tool review saved');
  }
 
+ case 'op-agent-manage':if(a)return open('drawer','op-agent-manage',{id});return handled();
  case 'op-edit-agent':if(a)return open('modal','op-agent-edit',{id});return handled();
  case 'op-models':if(a)return open('modal','op-models',{id});return handled();
  case 'op-agent-settings':if(a)return open('modal','op-agent-settings',{id});return handled();
