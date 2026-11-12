@@ -27,10 +27,10 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `C-03` | No-results state is explanatory (*not found*) | CON-04 | Funcional (simulado) | 2 |
 | `C-04` | Register an agent and continue to its configuration | REG-02 | Funcional (simulado) | 5 |
 | `C-05` | Cancel new agent without changes (*cancel*) | REG-02 | Funcional (simulado) | 3 |
-| `C-06` | Edit required agent metadata (*edit missing*) | REG-02 | Funcional (simulado) | 4 |
-| `C-07` | Rotate agent credential with dual-active tokens (*rotation missing*) | REG-02 | Parcial | 3 hasta bloqueo |
-| `C-08` | Revoke an active agent credential (*revocation missing*) | REG-02 | Parcial | 3 hasta bloqueo |
-| `C-09` | Retire agent without erasing evidence | REG-02, REG-01 | Parcial | 3 hasta bloqueo |
+| `C-06` | Edit required agent metadata (*edit missing*) | REG-02 | Funcional (simulado) | 5 |
+| `C-07` | Rotate agent credential with dual-active tokens (*rotation missing*) | REG-02 | Parcial | 4 hasta bloqueo |
+| `C-08` | Revoke an active agent credential (*revocation missing*) | REG-02 | Parcial | 4 hasta bloqueo |
+| `C-09` | Retire agent without erasing evidence | REG-02, REG-01 | Parcial | 4 hasta bloqueo |
 | `C-10` | List tools and filter needs action | CON-07, INF-02 | Funcional (simulado) | 3 |
 | `C-11` | Inspect individual tool schema and suggested class (*detail missing*) | INF-02, CON-07 | Funcional (simulado) | 3 |
 | `C-12` | Confirm or correct tool class after discovery (*no classification action*) | INF-02, CON-07 | Funcional (simulado) | 7 |
@@ -41,7 +41,7 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `C-17` | Observe newly declared tool in catalog after real inference | INF-02 | Parcial | 2 hasta bloqueo |
 | `C-19` | See actual named versus unassigned user requests | IDN-01, CON-04 | Funcional (simulado) | 2 |
 | `C-20` | Inspect observed models | INF-03, CON-04 | Funcional (simulado) | 2 |
-| `C-21` | Edit models permitted for agent | INF-03 | Funcional (simulado) | 4 |
+| `C-21` | Edit models permitted for agent | INF-03 | Funcional (simulado) | 5 |
 | `C-22` | Auditor cannot create an agent (*auditor role*) | CON-01, REG-02 | Funcional (simulado) | 1 |
 | `X-01` | Cancel review without saving | CON-07 | Funcional (simulado) | 5 |
 | `X-02` | Return from confirmation to review without saving | CON-07 | Funcional (simulado) | 6 |
@@ -73,8 +73,8 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `A-01` | Inspect model requests, tool routing and named identities | CON-04 | Funcional (simulado) | 1 |
 | `A-02` | Preview and confirm change to Observe (*enforce to observe*) | REG-01 | Funcional (simulado) | 3 |
 | `A-03` | Cancel mode change; no mutation (*cancel*) | REG-01 | Funcional (simulado) | 3 |
-| `A-04` | Pause agent with confirmation | REG-03 | Funcional (simulado) | 3 |
-| `A-05` | Resume agent to previous Enforce mode (*suspend/resume*) | REG-03 | Funcional (simulado) | 5 |
+| `A-04` | Pause agent with confirmation | REG-03 | Funcional (simulado) | 4 |
+| `A-05` | Resume agent to previous Enforce mode (*suspend/resume*) | REG-03 | Funcional (simulado) | 7 |
 | `A-08` | Block enforcement when required owner is absent | REG-01 | Parcial | 3 hasta bloqueo |
 
 ## Rules
@@ -154,7 +154,7 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `E-02` | Inspect technical rule details | CON-02, EVD-03 | Funcional (simulado) | 3 |
 | `E-03` | Combine period, model, tool, channel and connection filters | EVD-02 | Funcional (simulado) | 6 |
 | `E-04` | Reconstruct correlated multi-step transaction | EVD-05 | Parcial | 3 hasta bloqueo |
-| `E-05` | Inspect administrative changes with old/new value | EVD-04 | Funcional (simulado) | 6 |
+| `E-05` | Inspect administrative changes with old/new value | EVD-04 | Funcional (simulado) | 7 |
 | `E-06` | Prove Object Lock immutability with denied delete | EVD-06 | Parcial | 3 hasta bloqueo |
 | `E-07` | Identify missing evidence explicitly | EVD-01, CON-02 | Funcional (simulado) | 2 |
 | `E-08` | Clear nonmatching trace search and restore results (*clear filters*) | EVD-02 | Funcional (simulado) | 3 |

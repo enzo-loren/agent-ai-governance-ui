@@ -4,7 +4,7 @@ import {parseRoute,activityFromSpending,auditFromSpending} from './router.js';
 import { cleanState, safeReadState, canEdit, canApprove, agentById, safeId, appendScenario, changeMode, toggleConnection, decideApproval, changeRecord } from './domain.js';
 import { TOUR, CONNECTIONS, POLICY_PRESETS } from './data.js';
 import { renderPage, renderAppShell, integrationInstructions } from './views.js';
-import {mintLocalCredential,stageCredential,revokeLocalCredential,credentialRecord,agentConnectionSnippet,mcpBaseUrl} from './mock/credentials.js';
+import {mintLocalCredential,stageCredential,revokeLocalCredential,credentialRecord,inferenceBaseUrl,mcpBaseUrl} from './mock/credentials.js';
 
 const backend=createMockBackend();
 const app=document.getElementById('app');
@@ -50,10 +50,10 @@ function setupEvents(){
   const act=element.dataset.action;
   if(!act)return;
   event.preventDefault();
-  if(act==='copy-agent-key'||act==='copy-agent-config'){
+  if(act==='copy-agent-key'||act==='copy-agent-url'){
    const receipt=ui.credentialReceipt;
-   if(receipt && (ui.modal?.kind==='new-agent-key'||ui.modal?.kind==='agent-credential-receipt') && ui.modal.id===receipt.agentId){
-     copyText(act==='copy-agent-key'?receipt.token:agentConnectionSnippet(receipt.token));
+   if((ui.modal?.kind==='new-agent-key'||ui.modal?.kind==='agent-credential-receipt') && ui.modal.id===receipt?.agentId){
+     copyText(act==='copy-agent-key'?receipt.token:inferenceBaseUrl());
    }
    return;
   }
@@ -139,7 +139,7 @@ function setupEvents(){
     if(!allowEdit())break;
     const agent=agentById(state,element.dataset.id);if(!agent?.owner?.trim()){showToast('Assign an owner before enabling rules');break;}const previous=agent?.mode;changeMode(state,element.dataset.id,element.dataset.value);if(agent)changeRecord(state,'Agent mode',agent.id,agent.name,previous,agent.mode);if(!persist())return;ui.modal=null;showToast(element.dataset.value==='enforce'?'Rules enabled':'Agent returned to Observe');break;
    }
-   case 'toggle-pause':if(allowEdit())openOverlay('modal',{kind:'pause',id:element.dataset.id});break;
+   case 'toggle-pause':if(allowEdit()){if(ui.drawer?.kind==='op-agent-manage')ui.drawer=null;openOverlay('modal',{kind:'pause',id:element.dataset.id});}break;
    case 'confirm-pause':{
     if(!allowEdit())break;
     const a=agentById(state,element.dataset.id);if(!a)break;

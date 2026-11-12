@@ -77,53 +77,57 @@
       "id": "C-06",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 4,
-      "stepsToCompletion": 4,
+      "actionsFromHome": 5,
+      "stepsToCompletion": 5,
       "stepsToBlocker": null,
       "steps": [
         "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. click [data-action=\"op-edit-agent\"]",
-        "3. fill #op-agent-form [name=\"owner\"]",
-        "4. click #op-agent-form button[type=\"submit\"]"
+        "2. click [data-action=\"op-agent-manage\"]",
+        "3. click [data-action=\"op-edit-agent\"]",
+        "4. fill #op-agent-form [name=\"owner\"]",
+        "5. click #op-agent-form button[type=\"submit\"]"
       ]
     },
     {
       "id": "C-07",
       "status": "partial",
       "result": "as_expected",
-      "actionsFromHome": 3,
+      "actionsFromHome": 4,
       "stepsToCompletion": null,
-      "stepsToBlocker": 3,
+      "stepsToBlocker": 4,
       "steps": [
         "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. click [data-action=\"op-rotate-token\"]",
-        "3. click [data-action=\"op-confirm-agent-action\"]"
+        "2. click [data-action=\"op-agent-manage\"]",
+        "3. click [data-action=\"op-rotate-token\"]",
+        "4. click [data-action=\"op-confirm-agent-action\"]"
       ]
     },
     {
       "id": "C-08",
       "status": "partial",
       "result": "as_expected",
-      "actionsFromHome": 3,
+      "actionsFromHome": 4,
       "stepsToCompletion": null,
-      "stepsToBlocker": 3,
+      "stepsToBlocker": 4,
       "steps": [
         "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. click [data-action=\"op-revoke-token\"]",
-        "3. click [data-action=\"op-confirm-agent-action\"]"
+        "2. click [data-action=\"op-agent-manage\"]",
+        "3. click [data-action=\"op-revoke-token\"]",
+        "4. click [data-action=\"op-confirm-agent-action\"]"
       ]
     },
     {
       "id": "C-09",
       "status": "partial",
       "result": "as_expected",
-      "actionsFromHome": 3,
+      "actionsFromHome": 4,
       "stepsToCompletion": null,
-      "stepsToBlocker": 3,
+      "stepsToBlocker": 4,
       "steps": [
         "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. click [data-action=\"op-retire-agent\"]",
-        "3. click [data-action=\"op-confirm-agent-action\"]"
+        "2. click [data-action=\"op-agent-manage\"]",
+        "3. click [data-action=\"op-retire-agent\"]",
+        "4. click [data-action=\"op-confirm-agent-action\"]"
       ]
     },
     {
@@ -272,14 +276,15 @@
       "id": "C-21",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 4,
-      "stepsToCompletion": 4,
+      "actionsFromHome": 5,
+      "stepsToCompletion": 5,
       "stepsToBlocker": null,
       "steps": [
         "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. click [data-action=\"op-models\"]",
-        "3. click #op-models-form input[value=\"Claude Sonnet\"]",
-        "4. click #op-models-form button[type=\"submit\"]"
+        "2. click [data-action=\"op-agent-manage\"]",
+        "3. click [data-action=\"op-models\"]",
+        "4. click #op-models-form input[value=\"Claude Sonnet\"]",
+        "5. click #op-models-form button[type=\"submit\"]"
       ]
     },
     {
@@ -424,28 +429,31 @@
       "id": "A-04",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 3,
-      "stepsToCompletion": 3,
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
       "stepsToBlocker": null,
       "steps": [
         "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. click [data-action=\"toggle-pause\"][data-id=\"atlas\"]",
-        "3. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]"
+        "2. click [data-action=\"op-agent-manage\"]",
+        "3. click [data-action=\"toggle-pause\"][data-id=\"atlas\"]",
+        "4. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]"
       ]
     },
     {
       "id": "A-05",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 5,
-      "stepsToCompletion": 5,
+      "actionsFromHome": 7,
+      "stepsToCompletion": 7,
       "stepsToBlocker": null,
       "steps": [
         "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. click [data-action=\"toggle-pause\"][data-id=\"atlas\"]",
-        "3. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]",
-        "4. click [data-action=\"toggle-pause\"][data-id=\"atlas\"]",
-        "5. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]"
+        "2. click [data-action=\"op-agent-manage\"]",
+        "3. click [data-action=\"toggle-pause\"][data-id=\"atlas\"]",
+        "4. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]",
+        "5. click [data-action=\"op-agent-manage\"]",
+        "6. click [data-action=\"toggle-pause\"][data-id=\"atlas\"]",
+        "7. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]"
       ]
     },
     {
@@ -952,16 +960,17 @@
       "id": "E-05",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 6,
-      "stepsToCompletion": 6,
+      "actionsFromHome": 7,
+      "stepsToCompletion": 7,
       "stepsToBlocker": null,
       "steps": [
         "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. click [data-action=\"op-edit-agent\"]",
-        "3. fill #op-agent-form [name=\"owner\"]",
-        "4. click #op-agent-form button[type=\"submit\"]",
-        "5. click a.nav-link[href=\"#/audit\"]",
-        "6. click [data-action=\"op-audit-mode\"][data-value=\"changes\"]"
+        "2. click [data-action=\"op-agent-manage\"]",
+        "3. click [data-action=\"op-edit-agent\"]",
+        "4. fill #op-agent-form [name=\"owner\"]",
+        "5. click #op-agent-form button[type=\"submit\"]",
+        "6. click a.nav-link[href=\"#/audit\"]",
+        "7. click [data-action=\"op-audit-mode\"][data-value=\"changes\"]"
       ]
     },
     {

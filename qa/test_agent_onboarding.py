@@ -40,7 +40,13 @@ def main():
                 assert agent['mode']=='observe' and agent['connections']==['A']
                 assert agent['connectionCheck']['status']=='pending'
                 assert receipt not in str(stored)
-                page.locator('[data-action="copy-agent-config"]').click()
+                assert page.locator('#agent-sdk-snippet').count()==0
+                assert page.locator('.onboarding-receipt .credential-copy-group').count()==2
+                assert page.locator('[data-action="copy-agent-url"]').count()==1
+                assert page.locator('[data-action="copy-agent-key"]').count()==1
+                assert page.locator('.modal-actions [data-action^="copy-agent"]').count()==0
+                page.locator('[data-action="copy-agent-url"]').click()
+                page.locator('[data-action="copy-agent-key"]').click()
                 page.locator('[data-action="navigate"][data-route="agent/research-assistant"]').click()
                 page.wait_for_timeout(75)
                 assert page.evaluate('location.hash')=='#/agent/research-assistant'
@@ -50,6 +56,12 @@ def main():
                 assert 'Awaiting connection' in page.locator('.agent-connection-summary').inner_text()
                 assert page.locator('.agent-connection-summary a[href*="test-console.html"]').count()==0
                 assert 'non-routable local test setting' not in page.locator('#app').inner_text()
+                assert page.locator('.op-section').count()==0
+                page.locator('[data-action="op-agent-manage"]').click()
+                assert page.locator('.agent-settings-panel').count()==1
+                assert page.locator('.settings-danger').count()==0
+                assert page.locator('.agent-settings-danger [data-action="op-retire-agent"]').count()==1
+                assert page.locator('.agent-settings-panel [data-action="toggle-pause"]').count()==1
                 page.locator('[data-action="op-rotate-token"]').click()
                 page.locator('[data-action="op-confirm-agent-action"]').click()
                 page.locator('#agent-credential-once').wait_for()
@@ -59,12 +71,14 @@ def main():
                 assert len([k for k in state['active'] if not k['revokedAt']])==2
                 assert receipt not in str(state) and rotated not in str(state)
                 page.locator('[data-action="navigate"][data-route="agent/research-assistant"]').click()
+                page.locator('[data-action="op-agent-manage"]').click()
                 page.locator('[data-action="op-revoke-token"]').click()
                 assert page.locator('#credential-to-revoke option').count()==2
                 page.locator('[data-action="op-confirm-agent-action"]').click()
                 state=page.evaluate('''()=>state.credentials['research-assistant']''')
                 assert state['revoked']==1
                 assert len([k for k in state['active'] if not k['revokedAt']])==1
+                page.locator('[data-action="op-agent-manage"]').click()
                 page.locator('[data-action="op-agent-settings"]').click()
                 assert page.locator('#op-agent-settings-form').count()==1
                 page.locator('#op-agent-settings-form [name="invalidUserToken"]').select_option('reject')
@@ -73,7 +87,20 @@ def main():
                 updated=page.evaluate("()=>state.agents.find(a=>a.id==='research-assistant')")
                 assert updated['invalidUserToken']=='reject'
                 assert updated['acceptedClients']==['web-portal','mobile']
+                # Availability is managed in the settings drawer, never through a top-level danger button.
+                page.locator('[data-action="op-agent-manage"]').click()
+                assert page.locator('.agent-settings-panel [data-action="toggle-pause"]').inner_text()=='Pause agent'
+                page.locator('.agent-settings-panel [data-action="toggle-pause"]').click()
+                assert 'Pause this agent?' in page.locator('.modal').inner_text()
+                page.locator('[data-action="confirm-pause"]').click()
+                assert page.evaluate("state.agents.find(a=>a.id==='research-assistant').mode")=='suspended'
+                page.locator('[data-action="op-agent-manage"]').click()
+                assert page.locator('.agent-settings-panel [data-action="toggle-pause"]').inner_text()=='Resume agent'
+                page.locator('.agent-settings-panel [data-action="toggle-pause"]').click()
+                page.locator('[data-action="confirm-pause"]').click()
+                assert page.evaluate("state.agents.find(a=>a.id==='research-assistant').mode")=='observe'
                 page.evaluate("state.role='auditor';render()")
+                assert page.locator('[data-action="op-agent-manage"]').count()==0
                 assert page.locator('[data-action="op-rotate-token"]').count()==0
                 assert page.locator('[data-action="op-revoke-token"]').count()==0
                 assert not errors,errors

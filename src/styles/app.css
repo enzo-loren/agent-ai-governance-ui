@@ -235,3 +235,39 @@ hr{border:0;height:1px;background:var(--border);margin:22px 0}.muted{color:var(-
 .detail-head .connection-awaiting{margin-top:8px}
 .modal-card:has(.onboarding-receipt) .modal-actions{flex-wrap:wrap;gap:7px}
 @media(max-width:480px){.modal-card:has(.onboarding-receipt) .modal-actions .btn{flex:1 1 135px;white-space:normal}.connection-next{padding:13px}}
+
+/* Compact agent settings drawer: ordinary configuration and risky actions have separate hierarchy. */
+.agent-settings-panel{display:grid;gap:26px}
+.agent-settings-panel .settings-intro{font-size:12px;color:var(--text-muted);margin:0}
+.agent-settings-section{min-width:0}
+.agent-settings-section>h3,.agent-settings-danger>h3{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-muted);margin:0 0 11px}
+.settings-section-note{margin:0 0 8px!important;font-size:11px!important;color:var(--text-muted)!important}
+.agent-setting-row{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid var(--border);padding:15px 0}
+.agent-setting-copy{min-width:0;flex:1}
+.agent-setting-copy strong{font-size:13px;font-weight:740;display:block}
+.agent-setting-copy p{font-size:12px!important;line-height:1.55!important;margin:3px 0 0!important;color:var(--text-muted)}
+.agent-setting-row .btn{flex:none;min-width:74px;white-space:normal}
+.btn.danger-outline{color:var(--danger-text);border-color:var(--danger-outline);background:var(--surface)}
+.btn.danger-outline:hover:not(:disabled){background:var(--danger-bg)}
+.settings-records{border-top:1px solid var(--border);padding:14px 0}
+.settings-records summary{cursor:pointer;color:var(--accent-ink);font-size:12px;font-weight:700}
+.settings-records .op-compact-list{margin-top:10px}
+.settings-history .text-link{font-size:12px;display:inline-flex;align-items:center;gap:7px}
+.agent-settings-danger{padding:18px;border:1px solid var(--danger-outline);border-radius:var(--radius-md);background:var(--danger-bg)}
+.agent-settings-danger>h3{color:var(--danger-text);margin-bottom:5px}
+.agent-settings-danger .agent-setting-row{border-top:0;padding:8px 0 0}
+.agent-settings-danger .agent-setting-copy strong{color:var(--danger-text)}
+/* One visible value per credential; two secondary icon copy actions. */
+.onboarding-receipt{display:grid;gap:17px}
+.credential-copy-group{min-width:0}
+.credential-copy-group .field-label{display:block;margin-bottom:7px}
+.credential-copy-field{display:flex;align-items:stretch;min-width:0;border:1px solid var(--border-strong);background:var(--surface);border-radius:var(--radius-sm);overflow:hidden;transition:border-color .15s,box-shadow .15s}
+.credential-copy-field:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.credential-copy-field .field-input{border:0!important;box-shadow:none!important;outline:0!important;min-width:0;flex:1;width:100%;border-radius:0;background:transparent}
+.credential-copy-button{flex:none;display:grid;place-items:center;width:43px;min-height:43px;border:0;border-left:1px solid var(--border);background:var(--surface-2);color:var(--text-muted);cursor:pointer}
+.credential-copy-button:hover{background:var(--accent-soft);color:var(--accent-ink)}
+.credential-copy-button:focus-visible{outline:2px solid var(--focus);outline-offset:-4px}
+.credential-receipt-note{font-size:12px!important;line-height:1.6!important;color:var(--text-muted)!important;margin:0!important}
+.credential-receipt-agent{margin-bottom:17px!important}
+.modal-card:has(.onboarding-receipt) .modal-actions .btn{margin-left:auto}
+@media(max-width:470px){.agent-setting-row{gap:10px}.agent-setting-row .btn{min-width:65px}.agent-settings-danger{padding:14px}.credential-copy-field .field-input{font-size:11px!important}}
