@@ -63,15 +63,13 @@ test('Policy change confirmation names the agent and both policies, including Ob
   assert.equal(agentById(state,'invoice').preset,1);
 });
 
-test('Request as is a full-width labeled select in agent and Rules screens',()=>{
-  const state=cleanState();
-  for(const html of [pageAgent(state,ui,'atlas'),pageRules(state,ui,'atlas',true)]){
-    assert.match(html,/<label class="request-user" for="request-user">/);
-    assert.match(html,/<span class="request-user-field"><select id="request-user"/);
-    assert.match(html,/<option value="none"[^>]*>No user identity/);
-  }
-  const css=readFileSync(new URL('../src/styles/app.css',import.meta.url),'utf8');
-  assert.match(css,/\.request-user-field select\{[^}]*width:100%/);
-  assert.match(css,/\.request-user-field select\{[^}]*appearance:none/);
-  assert.match(css,/\.request-user-field:focus-within/);
+test('Policy preview stays available while synthetic request identity belongs to the separate request studio',()=>{
+ const state=cleanState();
+ const agent=pageAgent(state,ui,'atlas');
+ const rules=pageRules(state,ui,'atlas',true);
+ assert.doesNotMatch(agent,/id="request-user"|Try a request/);
+ assert.doesNotMatch(rules,/id="request-user"|data-action="simulate"/);
+ assert.match(rules,/data-action="choose-preset"/);
+ const page=readFileSync(new URL('../test-console.html',import.meta.url),'utf8');
+ assert.match(page,/src\/test-console.js/);
 });

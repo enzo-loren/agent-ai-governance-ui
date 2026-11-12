@@ -6,14 +6,14 @@
 
 | Estado de los recorridos de UI | Casos | Significado |
 | --- | ---: | --- |
-| Funcionales en el prototipo | **104** | La tarea produce una respuesta o un cambio verificable en el navegador, sobre datos sintéticos |
-| Parciales | **20** | Existe un recorrido visible, pero falta una garantía central que depende de servicios o evidencia externa |
+| Funcionales en el prototipo | **92** | La tarea produce una respuesta o un cambio verificable en el navegador, sobre datos sintéticos |
+| Parciales | **19** | Existe un recorrido visible, pero falta una garantía central que depende de servicios o evidencia externa |
 | Sin recorrido | **0** | No quedan objetivos de la matriz anterior sin una entrada de UI |
-| **Total** | **124** | Recorridos principales, variantes, errores y pruebas a escala |
+| **Total** | **111** | Recorridos principales, variantes, errores y pruebas a escala |
 
 Se mide una acción por clic, selección, escritura en un campo o envío. **Todos los casos empiezan en Inicio**. No se suman caracteres ni desplazamientos. Un caso parcial informa las acciones hasta la vista disponible, **no** un costo de finalización del requisito real. El desglose íntegro está en [la matriz](journey-matrix.md), con acciones en [`qa/journeys.json`](../qa/journeys.json) y resultados de Chromium en [`qa/journey-results.json`](../qa/journey-results.json).
 
-Los resultados no equivalen a 124 requisitos implementados ni a cobertura de seguridad. El repositorio utiliza un adaptador de datos en el navegador, sin servicios de producción.
+Los resultados no equivalen a 111 requisitos implementados ni a cobertura de seguridad. El repositorio es un frontend sin backend.
 
 ## Recorridos operativos implementados
 
@@ -60,7 +60,7 @@ Se ejercitaron directorios con **123 agentes**, **465 herramientas** y **272 sol
 
 ## Límites pendientes: pantalla disponible no significa control implementado
 
-La matriz conserva **20 recorridos parciales** porque requieren garantías que este repositorio no puede proporcionar:
+La matriz conserva **19 recorridos parciales** porque requieren garantías que este repositorio no puede proporcionar:
 
 - **Credenciales de agente** (`REG-02`): las versiones, rotación, revocación y retiro son representaciones locales; no se emiten tokens opacos, no se mantienen dos credenciales reales y no se prueban respuestas 401 ni revocación en plazo.
 - **Conexiones** (`MCP-01`, `IDN-01`, `OPS-01`): formularios de destinos y confianza OIDC no registran MCP real ni validan JWT. La presencia del campo no prueba encaminamiento ni identidad.
@@ -68,7 +68,7 @@ La matriz conserva **20 recorridos parciales** porque requieren garantías que e
 - **Aprobación humana** (`HITL-02/03`, `CON-05`): el solicitante y el revisor son ejemplos seleccionables. No hay sesión autenticada, bloqueo 403 de API, expiración de backend ni liberación real de una llamada MCP.
 - **Actividad** (`CON-03`, `NFR-03`): el flujo, la pausa y la reanudación corresponden a eventos en memoria; no se miden latencias de publicación ni streaming de la puerta.
 - **Consumo e identidad** (`FIN-03`): los límites por persona se configuran como ejemplo; no se aplican a tráfico real ni se verifican contra tokens OIDC.
-- **Auditoría** (`EVD-01/02/04/05/06`): el historial administrativo y las agrupaciones de solicitudes son locales; faltan correlación causal del backend, registro durable y prueba real de S3 Object Lock. La UI ya no muestra un rechazo S3 ficticio: indica «Not verified» y «Unavailable» mientras no exista una verificación real.
+- **Auditoría** (`EVD-01/02/04/05/06`): el historial administrativo y las agrupaciones de solicitudes son locales; faltan correlación causal del backend, registro durable y prueba real de S3 Object Lock. La interfaz ya no muestra un rechazo S3 ficticio: informa «Not verified» y «Unavailable» mientras no exista verificación material.
 
 Estos pendientes corresponden al proyecto de plataforma, no a una promesa de seguridad de esta UI. El índice numérico exigido por `CON-04` sigue siendo una desviación de diseño explícita: el catálogo muestra hechos operativos sin puntuación global, según la decisión de producto, pero el YAML todavía no cambió.
 
@@ -90,4 +90,8 @@ El pipeline comprueba que cada escenario ejecutado conserva su clasificación, s
 
 ## Reevaluación tras la separación del mock · 2026-11-11
 
-Se ejecutó de nuevo la matriz de 124 recorridos después de separar fixtures, almacenamiento y rutas. El detalle de defectos confirmados y pendientes está en [`deep-ux-data-audit.md`](deep-ux-data-audit.md). Las 20 rutas parciales siguen siendo parciales por dependencias externas; las pantallas nuevas no convierten ausencia de backend en un requisito cumplido. Se agregaron tests sobre integridad de datos, snapshots, edición concurrente, borradores Cedar y URLs de investigación.
+Se ejecutó de nuevo la matriz de 111 recorridos después de separar fixtures, almacenamiento y rutas. El detalle de defectos confirmados y pendientes está en [`deep-ux-data-audit.md`](deep-ux-data-audit.md). Las rutas parciales siguen siendo parciales por dependencias externas; las pantallas nuevas no convierten ausencia de backend en un requisito cumplido. Se agregaron tests sobre integridad de datos, snapshots, edición concurrente, borradores Cedar y URLs de investigación.
+
+## Separación de la superficie del cliente · 12 noviembre 2026
+
+La auditoría de recorridos ahora distingue las operaciones visibles para clientes de los controles de inyección de datos. Trece recorridos anteriores se trasladaron al **Request Studio** y se archivaron para trazabilidad en `qa/studio-migrated-journals.json`, con pruebas específicas del transporte local. Los 111 recorridos de cliente conservados parten de Inicio. Esta clasificación sustituye los totales anteriores de 124; no constituye una mejora cuantitativa de seguridad. Véase [`customer-surface-audit.md`](customer-surface-audit.md).

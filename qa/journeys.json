@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "method": "Actions: click/select/fill/press each count as one. Start at Home. Gaps have steps to blocker only; never finite completion. Browser checks assert visible behavior or absent required action, not backend guarantees. Implemented UI demo paths are categorized separately from external backend proof; partially simulated dependencies retain limitations.",
+  "version": 3,
+  "method": "Customer-facing journeys begin at Home. Synthetic data injection, role changes, presentation and reset live in the separate Request Studio. Count one click/select/fill/press per action. Partial cases record steps to the unavailable requirement, not completed backend behavior.",
   "journeys": [
     {
       "id": "C-01",
@@ -95,7 +95,7 @@
     {
       "id": "C-04",
       "area": "Catalog/agents",
-      "goal": "Register sample agent and see one-time example key",
+      "goal": "Register an agent and continue to its configuration",
       "variant": "",
       "role": "operator",
       "requirements": [
@@ -134,7 +134,7 @@
         {
           "type": "text",
           "selector": ".modal-card",
-          "contains": "Test credential"
+          "contains": "Agent created"
         },
         {
           "type": "state",
@@ -661,80 +661,16 @@
         {
           "do": "click",
           "selector": "[data-action=\"catalog-tab\"][data-value=\"tools\"]"
-        },
+        }
+      ],
+      "checks": [
         {
-          "do": "click",
+          "type": "absent",
           "selector": "[data-action=\"op-tool-discovery\"]"
         }
       ],
-      "checks": [
-        {
-          "type": "state",
-          "path": "state.tools.15.type",
-          "equals": "Unclassified"
-        },
-        {
-          "type": "state",
-          "path": "state.tools.15.approved",
-          "equals": false
-        }
-      ],
-      "note": "New tool is synthetically discovered in browser; real inference discovery requires backend",
+      "note": "Requires actual inference discovery in platform; fake discovery moved to Request Studio.",
       "limitation": "New tool is synthetically discovered in browser; real inference discovery requires backend"
-    },
-    {
-      "id": "C-18",
-      "area": "Catalog/tools",
-      "goal": "Inspect schema change and re-review pending tool",
-      "variant": "",
-      "role": "operator",
-      "requirements": [
-        "INF-02"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "a.nav-link[href=\"#/catalog\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"catalog-tab\"][data-value=\"tools\"]"
-        },
-        {
-          "do": "click",
-          "selector": "button.row-link[data-action=\"op-open-tool\"][data-id=\"t3\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-schema-change\"]"
-        },
-        {
-          "do": "select",
-          "selector": "#op-tool-form [name=\"decision\"]",
-          "value": "approved"
-        },
-        {
-          "do": "click",
-          "selector": "#op-tool-form button[type=\"submit\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-confirm-tool\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "state",
-          "path": "state.tools.2.schemaVersion",
-          "equals": 2
-        },
-        {
-          "type": "state",
-          "path": "state.tools.2.classification",
-          "equals": "confirmed"
-        }
-      ]
     },
     {
       "id": "C-19",
@@ -1077,6 +1013,11 @@
         },
         {
           "do": "fill",
+          "selector": "#op-identity-form [name=\"issuer\"]",
+          "value": "https://login.customer.test"
+        },
+        {
+          "do": "fill",
           "selector": "#op-identity-form [name=\"audience\"]",
           "value": "demo-audience"
         },
@@ -1133,7 +1074,7 @@
         {
           "type": "text",
           "selector": ".drawer",
-          "contains": "Example only"
+          "contains": "BASE_URL"
         },
         {
           "type": "absent",
@@ -1304,73 +1245,6 @@
           "type": "state",
           "path": "state.agents.0.mode",
           "equals": "enforce"
-        }
-      ]
-    },
-    {
-      "id": "A-06",
-      "area": "Agent overview",
-      "goal": "Model-request simulation opens an explanatory trace",
-      "variant": "",
-      "role": "operator",
-      "requirements": [
-        "CON-02",
-        "POL-01"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"simulate\"][data-channel=\"inference\"][data-id=\"atlas\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "visible",
-          "selector": ".drawer"
-        },
-        {
-          "type": "text",
-          "selector": ".drawer",
-          "contains": "What happened"
-        }
-      ],
-      "note": "Simulation only"
-    },
-    {
-      "id": "A-07",
-      "area": "Agent overview",
-      "goal": "Outside-gateway tool simulation cannot claim control",
-      "variant": "local tool",
-      "role": "operator",
-      "requirements": [
-        "CON-07",
-        "MCP-01"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"simulate\"][data-channel=\"tool\"][data-tool=\"t5\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "visible",
-          "selector": ".drawer"
-        },
-        {
-          "type": "text",
-          "selector": ".drawer",
-          "contains": "does not pass through the gateway"
         }
       ]
     },
@@ -1649,11 +1523,6 @@
       "status": "ui-working",
       "actions": [
         {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "auditor"
-        },
-        {
           "do": "click",
           "selector": "a.nav-link[href=\"#/rules\"]"
         },
@@ -1676,7 +1545,8 @@
           "path": "state.agents.0.preset",
           "equals": 2
         }
-      ]
+      ],
+      "setup": "state.role='auditor';render();"
     },
     {
       "id": "R-08",
@@ -1970,28 +1840,19 @@
         {
           "do": "click",
           "selector": "a.nav-link[href=\"#/activity\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"activity-pause\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-add-sample-event\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-replay-buffer\"]"
         }
       ],
       "checks": [
         {
-          "type": "state",
-          "path": "state.events.0.action",
-          "equals": "Search knowledge base"
+          "type": "absent",
+          "selector": "[data-action=\"activity-pause\"]"
+        },
+        {
+          "type": "absent",
+          "selector": "[data-action=\"op-add-sample-event\"]"
         }
       ],
-      "note": "Pause retains synthetic events; no live transport or replay cursor",
+      "note": "Live pause/buffer requires backend streaming; fixture injection is in Request Studio.",
       "limitation": "Pause retains synthetic events; no live transport or replay cursor"
     },
     {
@@ -2047,25 +1908,15 @@
         {
           "do": "click",
           "selector": "a.nav-link[href=\"#/activity\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-add-sample-event\"]"
         }
       ],
       "checks": [
         {
-          "type": "state",
-          "path": "state.events.0.action",
-          "equals": "Search knowledge base"
-        },
-        {
-          "type": "text",
-          "selector": "main",
-          "contains": "Generate request"
+          "type": "absent",
+          "selector": "[data-action=\"op-add-sample-event\"]"
         }
       ],
-      "note": "Generates only a local sample event; no real gateway stream or p95 timing",
+      "note": "Live event propagation requires backend streaming; synthetic requests are sent in Request Studio.",
       "limitation": "Generates only a local sample event; no real gateway stream or p95 timing"
     },
     {
@@ -2080,11 +1931,6 @@
       ],
       "status": "ui-working",
       "actions": [
-        {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "approver"
-        },
         {
           "do": "click",
           "selector": "a.nav-link[href=\"#/approvals\"]"
@@ -2105,7 +1951,8 @@
           "equals": "approved"
         }
       ],
-      "note": "Synthetic client-only approval, not MCP execution"
+      "note": "Synthetic client-only approval, not MCP execution",
+      "setup": "state.role='approver';render();"
     },
     {
       "id": "H-02",
@@ -2119,11 +1966,6 @@
       ],
       "status": "ui-working",
       "actions": [
-        {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "approver"
-        },
         {
           "do": "click",
           "selector": "a.nav-link[href=\"#/approvals\"]"
@@ -2143,7 +1985,8 @@
           "path": "state.approvals.0.status",
           "equals": "rejected"
         }
-      ]
+      ],
+      "setup": "state.role='approver';render();"
     },
     {
       "id": "H-03",
@@ -2156,11 +1999,6 @@
       ],
       "status": "ui-working",
       "actions": [
-        {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "approver"
-        },
         {
           "do": "click",
           "selector": "a.nav-link[href=\"#/approvals\"]"
@@ -2180,7 +2018,8 @@
           "path": "state.approvals.0.status",
           "equals": "pending"
         }
-      ]
+      ],
+      "setup": "state.role='approver';render();"
     },
     {
       "id": "H-04",
@@ -2219,18 +2058,8 @@
       "status": "partial",
       "actions": [
         {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "approver"
-        },
-        {
           "do": "click",
           "selector": "a.nav-link[href=\"#/approvals\"]"
-        },
-        {
-          "do": "select",
-          "selector": "#op-reviewer-person",
-          "value": "Maya Chen"
         }
       ],
       "checks": [
@@ -2240,7 +2069,8 @@
         }
       ],
       "note": "Self-approval disabled for synthetic identities; no authenticated reviewer identity or server 403",
-      "limitation": "Self-approval disabled for synthetic identities; no authenticated reviewer identity or server 403"
+      "limitation": "Self-approval disabled for synthetic identities; no authenticated reviewer identity or server 403",
+      "setup": "state.role='approver';state.reviewPerson='Maya Chen';render();"
     },
     {
       "id": "H-06",
@@ -2254,11 +2084,6 @@
       ],
       "status": "partial",
       "actions": [
-        {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "approver"
-        },
         {
           "do": "click",
           "selector": "a.nav-link[href=\"#/approvals\"]"
@@ -2280,7 +2105,8 @@
         }
       ],
       "note": "Masked example arguments and sample countdown; no backend request payload or timer",
-      "limitation": "Masked example arguments and sample countdown; no backend request payload or timer"
+      "limitation": "Masked example arguments and sample countdown; no backend request payload or timer",
+      "setup": "state.role='approver';render();"
     },
     {
       "id": "H-07",
@@ -2293,11 +2119,6 @@
       ],
       "status": "ui-working",
       "actions": [
-        {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "approver"
-        },
         {
           "do": "click",
           "selector": "a.nav-link[href=\"#/approvals\"]"
@@ -2322,46 +2143,8 @@
           "path": "state.approvals.0.comment",
           "equals": "Reviewed context"
         }
-      ]
-    },
-    {
-      "id": "H-08",
-      "area": "Approvals",
-      "goal": "Expire pending approval at deadline",
-      "variant": "",
-      "role": "operator",
-      "requirements": [
-        "HITL-02"
       ],
-      "status": "partial",
-      "actions": [
-        {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "approver"
-        },
-        {
-          "do": "click",
-          "selector": "a.nav-link[href=\"#/approvals\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-approval-details\"][data-id=\"APR-201\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-expire-approval\"][data-id=\"APR-201\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "state",
-          "path": "state.approvals.0.status",
-          "equals": "expired"
-        }
-      ],
-      "note": "Deadline can be simulated; there is no running timer or MCP timeout resolution",
-      "limitation": "Deadline can be simulated; there is no running timer or MCP timeout resolution"
+      "setup": "state.role='approver';render();"
     },
     {
       "id": "H-09",
@@ -2513,11 +2296,6 @@
       "status": "ui-working",
       "actions": [
         {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "auditor"
-        },
-        {
           "do": "click",
           "selector": "a.nav-link[href=\"#/spending\"]"
         }
@@ -2527,7 +2305,8 @@
           "type": "absent",
           "selector": "[data-action=\"edit-budget\"]"
         }
-      ]
+      ],
+      "setup": "state.role='auditor';render();"
     },
     {
       "id": "S-05",
@@ -2999,135 +2778,6 @@
       ]
     },
     {
-      "id": "G-02",
-      "area": "Workspace",
-      "goal": "Reset workspace after confirmation",
-      "variant": "",
-      "role": "operator",
-      "requirements": [
-        "CON-01"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "[data-action=\"open-settings\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"reset-request\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"confirm-reset\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "url",
-          "value": "#/home"
-        },
-        {
-          "type": "state",
-          "path": "state.agents.0.budget",
-          "equals": 40
-        }
-      ]
-    },
-    {
-      "id": "G-03",
-      "area": "Workspace",
-      "goal": "Cancel reset without losing workspace",
-      "variant": "cancel reset",
-      "role": "operator",
-      "requirements": [
-        "CON-01"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "[data-action=\"open-settings\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"reset-request\"]"
-        },
-        {
-          "do": "click",
-          "selector": ".modal-card [data-action=\"close-overlay\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "absent",
-          "selector": ".modal-card"
-        },
-        {
-          "type": "absent",
-          "selector": ".drawer"
-        }
-      ]
-    },
-    {
-      "id": "G-04",
-      "area": "Workspace",
-      "goal": "Launch and progress guided tour",
-      "variant": "",
-      "role": "operator",
-      "requirements": [
-        "CON-08"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "[data-action=\"tour-start\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"tour-next\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "url",
-          "value": "#/catalog"
-        },
-        {
-          "type": "visible",
-          "selector": ".tour-bar"
-        }
-      ],
-      "note": "Guided tour is not presentation mode"
-    },
-    {
-      "id": "G-05",
-      "area": "Workspace",
-      "goal": "Enter actual presentation mode at 1080p",
-      "variant": "",
-      "role": "operator",
-      "requirements": [
-        "CON-08"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-presentation\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "visible",
-          "selector": ".presentation-view"
-        },
-        {
-          "type": "no-overflow"
-        }
-      ]
-    },
-    {
       "id": "G-06",
       "area": "Workspace",
       "goal": "Reach evidence from agent catalog in three clicks",
@@ -3177,11 +2827,6 @@
       "status": "ui-working",
       "actions": [
         {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "auditor"
-        },
-        {
           "do": "click",
           "selector": "a.nav-link[href=\"#/catalog\"]"
         }
@@ -3191,7 +2836,8 @@
           "type": "absent",
           "selector": "[data-action=\"add-agent\"]"
         }
-      ]
+      ],
+      "setup": "state.role='auditor';render();"
     },
     {
       "id": "I-08",
@@ -3206,11 +2852,6 @@
       "status": "ui-working",
       "actions": [
         {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "auditor"
-        },
-        {
           "do": "click",
           "selector": "a.nav-link[href=\"#/connections\"]"
         },
@@ -3224,7 +2865,8 @@
           "type": "absent",
           "selector": "[data-action=\"toggle-connection\"]"
         }
-      ]
+      ],
+      "setup": "state.role='auditor';render();"
     },
     {
       "id": "I-09",
@@ -3290,39 +2932,6 @@
             "A",
             "C"
           ]
-        }
-      ]
-    },
-    {
-      "id": "A-09",
-      "area": "Agent overview",
-      "goal": "A request without end-user identity remains attributable to agent",
-      "variant": "solo_workload sample",
-      "role": "operator",
-      "requirements": [
-        "IDN-01"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "a.agent-name[href=\"#/agent/atlas\"]"
-        },
-        {
-          "do": "select",
-          "selector": "#request-user",
-          "value": "none"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"simulate\"][data-channel=\"inference\"][data-id=\"atlas\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "state",
-          "path": "state.events.0.actor",
-          "equals": "No user identity"
         }
       ]
     },
@@ -3421,11 +3030,6 @@
       "status": "ui-working",
       "actions": [
         {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "approver"
-        },
-        {
           "do": "click",
           "selector": "a.nav-link[href=\"#/approvals\"]"
         }
@@ -3435,7 +3039,8 @@
           "type": "disabled",
           "selector": "[data-action=\"approval-confirm\"][data-id=\"APR-202\"][data-value=\"approved\"]"
         }
-      ]
+      ],
+      "setup": "state.role='approver';render();"
     },
     {
       "id": "S-09",
@@ -3623,11 +3228,6 @@
       "status": "ui-working",
       "actions": [
         {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "auditor"
-        },
-        {
           "do": "click",
           "selector": "a.nav-link[href=\"#/catalog\"]"
         },
@@ -3654,7 +3254,8 @@
           "type": "absent",
           "selector": "[data-action=\"op-schema-change\"]"
         }
-      ]
+      ],
+      "setup": "state.role='auditor';render();"
     },
     {
       "id": "X-04",
@@ -3713,52 +3314,6 @@
           "type": "text",
           "selector": ".drawer",
           "contains": "Outside gateway"
-        }
-      ]
-    },
-    {
-      "id": "X-05",
-      "area": "Catalog/tools",
-      "goal": "Schema update invalidates prior review and requires reapproval",
-      "variant": "",
-      "role": "operator",
-      "requirements": [
-        "INF-02"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "a.nav-link[href=\"#/catalog\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"catalog-tab\"][data-value=\"tools\"]"
-        },
-        {
-          "do": "click",
-          "selector": "button.row-link[data-action=\"op-open-tool\"][data-id=\"t3\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-schema-change\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "state",
-          "path": "state.tools.2.schemaVersion",
-          "equals": 2
-        },
-        {
-          "type": "state",
-          "path": "state.tools.2.approved",
-          "equals": false
-        },
-        {
-          "type": "state",
-          "path": "state.tools.2.reviewStatus",
-          "equals": "pending"
         }
       ]
     },
@@ -3868,129 +3423,6 @@
       ]
     },
     {
-      "id": "X-08",
-      "area": "Rules",
-      "goal": "Example custom deny rule blocks parameter value 25",
-      "variant": "",
-      "role": "operator",
-      "requirements": [
-        "POL-04"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "a.nav-link[href=\"#/rules\"]"
-        },
-        {
-          "do": "click",
-          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-create-rule\"]"
-        },
-        {
-          "do": "select",
-          "selector": "#op-rule-form [name=\"toolId\"]",
-          "value": "t4"
-        },
-        {
-          "do": "select",
-          "selector": "#op-rule-form [name=\"type\"]",
-          "value": "Critical"
-        },
-        {
-          "do": "fill",
-          "selector": "#op-rule-form [name=\"parameter\"]",
-          "value": "amount"
-        },
-        {
-          "do": "click",
-          "selector": "#op-rule-form button[type=\"submit\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-rule-test\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-simulate-rule\"][data-value=\"25\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "state",
-          "path": "state.events.0.rule",
-          "equals": "RULE-001"
-        },
-        {
-          "type": "state",
-          "path": "state.events.0.status",
-          "equals": "blocked"
-        }
-      ]
-    },
-    {
-      "id": "X-09",
-      "area": "Rules",
-      "goal": "Example custom deny rule does not match parameter value 8",
-      "variant": "",
-      "role": "operator",
-      "requirements": [
-        "POL-04"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "a.nav-link[href=\"#/rules\"]"
-        },
-        {
-          "do": "click",
-          "selector": "a[href=\"#/agent/atlas/rules\"].btn"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-create-rule\"]"
-        },
-        {
-          "do": "select",
-          "selector": "#op-rule-form [name=\"toolId\"]",
-          "value": "t4"
-        },
-        {
-          "do": "select",
-          "selector": "#op-rule-form [name=\"type\"]",
-          "value": "Critical"
-        },
-        {
-          "do": "fill",
-          "selector": "#op-rule-form [name=\"parameter\"]",
-          "value": "amount"
-        },
-        {
-          "do": "click",
-          "selector": "#op-rule-form button[type=\"submit\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-rule-test\"]"
-        },
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-simulate-rule\"][data-value=\"8\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "state",
-          "path": "state.events.0.status",
-          "equals": "pending"
-        }
-      ]
-    },
-    {
       "id": "X-10",
       "area": "Connections",
       "goal": "Cancel disconnection without changing active path",
@@ -4042,11 +3474,6 @@
       "status": "ui-working",
       "actions": [
         {
-          "do": "select",
-          "selector": "#role-select",
-          "value": "approver"
-        },
-        {
           "do": "click",
           "selector": "a.nav-link[href=\"#/approvals\"]"
         },
@@ -4070,7 +3497,8 @@
           "path": "state.approvals.0.status",
           "equals": "pending"
         }
-      ]
+      ],
+      "setup": "state.role='approver';render();"
     },
     {
       "id": "X-12",
@@ -4135,6 +3563,11 @@
           "do": "fill",
           "selector": "#op-identity-form [name=\"issuer\"]",
           "value": "http://identity.example.test"
+        },
+        {
+          "do": "fill",
+          "selector": "#op-identity-form [name=\"audience\"]",
+          "value": "customer-client"
         },
         {
           "do": "click",
@@ -4344,36 +3777,6 @@
       "viewport": {
         "width": 390,
         "height": 844
-      }
-    },
-    {
-      "id": "X-19",
-      "area": "Responsive",
-      "goal": "Presentation view has no horizontal overflow at 1920 × 1080",
-      "variant": "",
-      "role": "operator",
-      "requirements": [
-        "CON-08"
-      ],
-      "status": "ui-working",
-      "actions": [
-        {
-          "do": "click",
-          "selector": "[data-action=\"op-presentation\"]"
-        }
-      ],
-      "checks": [
-        {
-          "type": "visible",
-          "selector": ".presentation-view"
-        },
-        {
-          "type": "no-overflow"
-        }
-      ],
-      "viewport": {
-        "width": 1920,
-        "height": 1080
       }
     },
     {

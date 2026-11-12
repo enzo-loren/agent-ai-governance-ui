@@ -1,6 +1,5 @@
 import {handleOpsClick,handleOpsSubmit} from './operations.js';
 import {createMockBackend,BackendConflictError} from './mock/backend.js';
-import {SCENARIO_ACTIONS,exampleCredential} from './mock/fixtures.js';
 import {parseRoute,activityFromSpending,auditFromSpending} from './router.js';
 import { cleanState, safeReadState, canEdit, canApprove, agentById, safeId, appendScenario, changeMode, toggleConnection, decideApproval, changeRecord } from './domain.js';
 import { TOUR, CONNECTIONS, POLICY_PRESETS } from './data.js';
@@ -117,18 +116,6 @@ function setupEvents(){
     const a=agentById(state,element.dataset.id);if(!a)break;
     const previous=a.mode;changeMode(state,a.id,a.mode==='suspended'?(a.previousMode||'observe'):'suspended');changeRecord(state,'Agent mode',a.id,a.name,previous,a.mode);if(!persist())return;ui.modal=null;showToast(a.mode==='suspended'?'Agent paused':'Agent resumed');break;
    }
-   case 'simulate':{
-    const id=element.dataset.id||'atlas';const a=agentById(state,id);if(!a)break;
-    const action=SCENARIO_ACTIONS[a.id]||SCENARIO_ACTIONS.atlas;
-    const e=appendScenario(state,{agentId:id,action,channel:element.dataset.channel||'inference',toolId:element.dataset.tool||null,userRole:ui.requestUser});
-    if(!e)break;
-    if(!persist())return;ui.modal=null;ui.drawer={kind:'event',id:e.id};render({focusOverlay:true,keepScroll:true});announce('Decision: '+e.status.replaceAll('_',' '));break;
-   }
-   case 'activity-pause':{
-    ui.activityPaused=!ui.activityPaused;
-    ui.pausedIds=ui.activityPaused?new Set(state.events.map(e=>e.id)):null;
-    showToast(ui.activityPaused?'Activity feed paused':'Activity feed resumed');break;
-   }
    case 'spending-requests':
    case 'spending-person-requests':
    case 'spending-model-requests':{
@@ -170,7 +157,6 @@ function setupEvents(){
    }
    case 'copy-connection':copyText(integrationInstructions[element.dataset.id]?.snippet||'');break;
    case 'copy-trace':copyText(element.dataset.value||'');break;
-   case 'copy-demo-key':{const credential=exampleCredential(element.dataset.id||'new-agent');copyText(`BASE_URL=${credential.baseUrl}\nAPI_KEY=${credential.token}`);break;}
    case 'theme':state.theme=element.dataset.value;if(!persist())return;render({keepScroll:true,focusOverlay:true});announce(`Palette: ${state.theme}`);break;
    case 'appearance':state.appearance=element.dataset.value;if(!persist())return;render({keepScroll:true,focusOverlay:true});announce(`${state.appearance} appearance`);break;
    case 'reset-request':openOverlay('modal',{kind:'reset'});break;
@@ -191,12 +177,8 @@ function setupEvents(){
  document.addEventListener('change',event=>{
   const id=event.target.id;const value=event.target.value;
   if(id==='activity-model'){ui.activityModel=value;ui.activityLimit=30;render({keepScroll:true});}
-  else if(id==='op-reviewer-person'){state.reviewPerson=value;if(!persist())return;render({keepScroll:true});}
   else if(id==='activity-channel'){ui.activityChannel=value;render({keepScroll:true});}
   else if(['audit-model','audit-channel','audit-connection','audit-status'].includes(id)){ui.auditFilters[id.replace('audit-','')]=value;render({keepScroll:true});}
-  else if(id==='role-select'){
-    state.role=value;if(!persist())return;showToast(`View role: ${value}`);
-  } else if(id==='request-user'){ui.requestUser=value;render({keepScroll:true});}
   else if(id==='activity-status'){ui.activityStatus=value;ui.activityLimit=30;render({keepScroll:true});}
  });
  document.addEventListener('input',event=>{
@@ -245,6 +227,7 @@ function setupEvents(){
     else if(!event.shiftKey&&document.activeElement===nodes.at(-1)){event.preventDefault();nodes[0].focus();}
   }
  });
+ window.addEventListener('storage',event=>{if(event.key==='agent-governance-mock-v3'){const fresh=backend.read();state=fresh.state;revision=fresh.revision;ui.drawer=null;ui.modal=null;render({keepScroll:true});announce('Workspace data updated');}});
  window.addEventListener('hashchange',()=>{ui.drawer=null;ui.modal=null;ui.policyPreview=null;ui.navOpen=false;applyDeepLinkFilters();render();window.scrollTo({top:0,behavior:'instant'});document.getElementById('main')?.focus({preventScroll:true});});
 }
 function clearRouteQuery(){const current=location.hash;if(current.includes('?'))history.replaceState(null,'',current.split('?')[0]);}

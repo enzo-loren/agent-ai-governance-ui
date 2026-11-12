@@ -12,12 +12,16 @@ test('Every primary destination renders an explicit page heading and main landma
   assert.match(html(page),/<h1>/);
  }
 });
-test('One quiet Demo label replaces repeated demo disclaimers and marketing copy',()=>{
+test('Customer pages expose operational actions without any test environment chrome',()=>{
  for(const page of ['home','catalog','activity','rules','approvals','spending','audit','connections']){
   const output=html(page);
-  assert.match(output,/>Demo<\/span>/);
-  assert.doesNotMatch(output,/Interactive demo|Sample data only|Every agent\.<br>One clear view|Nothing here connects to your systems/);
+  assert.doesNotMatch(output,/>Demo<\/span>|Product requirements:|role-select|op-presentation|tour-start|Generate request|Discover tool|Test request|Test tool|Request as/);
+  assert.match(output,/role-indicator/);
  }
+ const agent=renderPage(state,ui,'agent','atlas');
+ assert.doesNotMatch(agent,/Try a request|Test model request|Test local tool|data-action="simulate"/);
+ const rules=renderPage(state,ui,'agent','atlas','rules');
+ assert.doesNotMatch(rules,/id="request-user"|Test request/);
 });
 test('Auditor can preview policies but does not receive commit or approval actions',()=>{
  const audit=structuredClone(state);audit.role='auditor';

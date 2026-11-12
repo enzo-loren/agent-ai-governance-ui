@@ -2,9 +2,9 @@
   "method": "Actual browser DOM interactions from #/home, one step per click, field fill, or select change. No typing-character, scrolling, or menu opening double counts.",
   "source": "UI source files on current branch; browser inlined only to remove network dependence.",
   "summary": {
-    "cases": 124,
-    "observedWorking": 104,
-    "partialPreview": 20,
+    "cases": 111,
+    "observedWorking": 92,
+    "partialPreview": 19,
     "unreachable": 0,
     "unexpectedFailures": 0
   },
@@ -236,30 +236,12 @@
       "id": "C-17",
       "status": "partial",
       "result": "as_expected",
-      "actionsFromHome": 3,
+      "actionsFromHome": 2,
       "stepsToCompletion": null,
-      "stepsToBlocker": 3,
+      "stepsToBlocker": 2,
       "steps": [
         "1. click a.nav-link[href=\"#/catalog\"]",
-        "2. click [data-action=\"catalog-tab\"][data-value=\"tools\"]",
-        "3. click [data-action=\"op-tool-discovery\"]"
-      ]
-    },
-    {
-      "id": "C-18",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 7,
-      "stepsToCompletion": 7,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click a.nav-link[href=\"#/catalog\"]",
-        "2. click [data-action=\"catalog-tab\"][data-value=\"tools\"]",
-        "3. click button.row-link[data-action=\"op-open-tool\"][data-id=\"t3\"]",
-        "4. click [data-action=\"op-schema-change\"]",
-        "5. select #op-tool-form [name=\"decision\"]",
-        "6. click #op-tool-form button[type=\"submit\"]",
-        "7. click [data-action=\"op-confirm-tool\"]"
+        "2. click [data-action=\"catalog-tab\"][data-value=\"tools\"]"
       ]
     },
     {
@@ -374,17 +356,18 @@
       "id": "I-06",
       "status": "partial",
       "result": "as_expected",
-      "actionsFromHome": 7,
+      "actionsFromHome": 8,
       "stepsToCompletion": null,
-      "stepsToBlocker": 7,
+      "stepsToBlocker": 8,
       "steps": [
         "1. click a.nav-link[href=\"#/connections\"]",
         "2. click a[href=\"#/agent/atlas/connections\"].btn",
         "3. click [data-action=\"open-connection\"][data-id=\"C\"]",
         "4. click .drawer [data-action=\"close-overlay\"] >> nth=-1",
         "5. click [data-action=\"op-identity\"]",
-        "6. fill #op-identity-form [name=\"audience\"]",
-        "7. click #op-identity-form button[type=\"submit\"]"
+        "6. fill #op-identity-form [name=\"issuer\"]",
+        "7. fill #op-identity-form [name=\"audience\"]",
+        "8. click #op-identity-form button[type=\"submit\"]"
       ]
     },
     {
@@ -463,30 +446,6 @@
         "3. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]",
         "4. click [data-action=\"toggle-pause\"][data-id=\"atlas\"]",
         "5. click [data-action=\"confirm-pause\"][data-id=\"atlas\"]"
-      ]
-    },
-    {
-      "id": "A-06",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 2,
-      "stepsToCompletion": 2,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. click [data-action=\"simulate\"][data-channel=\"inference\"][data-id=\"atlas\"]"
-      ]
-    },
-    {
-      "id": "A-07",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 2,
-      "stepsToCompletion": 2,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. click [data-action=\"simulate\"][data-channel=\"tool\"][data-tool=\"t5\"]"
       ]
     },
     {
@@ -589,14 +548,13 @@
       "id": "R-07",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 4,
-      "stepsToCompletion": 4,
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/rules\"]",
-        "3. click a[href=\"#/agent/atlas/rules\"].btn",
-        "4. click [data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
+        "1. click a.nav-link[href=\"#/rules\"]",
+        "2. click a[href=\"#/agent/atlas/rules\"].btn",
+        "3. click [data-action=\"choose-preset\"][data-value=\"3\"][data-id=\"atlas\"]"
       ]
     },
     {
@@ -699,14 +657,11 @@
       "id": "V-04",
       "status": "partial",
       "result": "as_expected",
-      "actionsFromHome": 4,
+      "actionsFromHome": 1,
       "stepsToCompletion": null,
-      "stepsToBlocker": 4,
+      "stepsToBlocker": 1,
       "steps": [
-        "1. click a.nav-link[href=\"#/activity\"]",
-        "2. click [data-action=\"activity-pause\"]",
-        "3. click [data-action=\"op-add-sample-event\"]",
-        "4. click [data-action=\"op-replay-buffer\"]"
+        "1. click a.nav-link[href=\"#/activity\"]"
       ]
     },
     {
@@ -726,54 +681,50 @@
       "id": "V-06",
       "status": "partial",
       "result": "as_expected",
-      "actionsFromHome": 2,
+      "actionsFromHome": 1,
       "stepsToCompletion": null,
-      "stepsToBlocker": 2,
+      "stepsToBlocker": 1,
       "steps": [
-        "1. click a.nav-link[href=\"#/activity\"]",
-        "2. click [data-action=\"op-add-sample-event\"]"
+        "1. click a.nav-link[href=\"#/activity\"]"
       ]
     },
     {
       "id": "H-01",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 4,
-      "stepsToCompletion": 4,
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/approvals\"]",
-        "3. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]",
-        "4. click [data-action=\"confirm-approval\"][data-id=\"APR-201\"]"
+        "1. click a.nav-link[href=\"#/approvals\"]",
+        "2. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]",
+        "3. click [data-action=\"confirm-approval\"][data-id=\"APR-201\"]"
       ]
     },
     {
       "id": "H-02",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 4,
-      "stepsToCompletion": 4,
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/approvals\"]",
-        "3. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"rejected\"]",
-        "4. click [data-action=\"confirm-approval\"][data-id=\"APR-201\"]"
+        "1. click a.nav-link[href=\"#/approvals\"]",
+        "2. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"rejected\"]",
+        "3. click [data-action=\"confirm-approval\"][data-id=\"APR-201\"]"
       ]
     },
     {
       "id": "H-03",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 4,
-      "stepsToCompletion": 4,
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/approvals\"]",
-        "3. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]",
-        "4. click .modal-card [data-action=\"close-overlay\"]"
+        "1. click a.nav-link[href=\"#/approvals\"]",
+        "2. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]",
+        "3. click .modal-card [data-action=\"close-overlay\"]"
       ]
     },
     {
@@ -791,55 +742,37 @@
       "id": "H-05",
       "status": "partial",
       "result": "as_expected",
-      "actionsFromHome": 3,
+      "actionsFromHome": 1,
       "stepsToCompletion": null,
-      "stepsToBlocker": 3,
+      "stepsToBlocker": 1,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/approvals\"]",
-        "3. select #op-reviewer-person"
+        "1. click a.nav-link[href=\"#/approvals\"]"
       ]
     },
     {
       "id": "H-06",
       "status": "partial",
       "result": "as_expected",
-      "actionsFromHome": 3,
+      "actionsFromHome": 2,
       "stepsToCompletion": null,
-      "stepsToBlocker": 3,
+      "stepsToBlocker": 2,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/approvals\"]",
-        "3. click [data-action=\"op-approval-details\"][data-id=\"APR-201\"]"
+        "1. click a.nav-link[href=\"#/approvals\"]",
+        "2. click [data-action=\"op-approval-details\"][data-id=\"APR-201\"]"
       ]
     },
     {
       "id": "H-07",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 5,
-      "stepsToCompletion": 5,
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/approvals\"]",
-        "3. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]",
-        "4. fill #approval-comment",
-        "5. click [data-action=\"confirm-approval\"][data-id=\"APR-201\"]"
-      ]
-    },
-    {
-      "id": "H-08",
-      "status": "partial",
-      "result": "as_expected",
-      "actionsFromHome": 4,
-      "stepsToCompletion": null,
-      "stepsToBlocker": 4,
-      "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/approvals\"]",
-        "3. click [data-action=\"op-approval-details\"][data-id=\"APR-201\"]",
-        "4. click [data-action=\"op-expire-approval\"][data-id=\"APR-201\"]"
+        "1. click a.nav-link[href=\"#/approvals\"]",
+        "2. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"approved\"]",
+        "3. fill #approval-comment",
+        "4. click [data-action=\"confirm-approval\"][data-id=\"APR-201\"]"
       ]
     },
     {
@@ -898,12 +831,11 @@
       "id": "S-04",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 2,
-      "stepsToCompletion": 2,
+      "actionsFromHome": 1,
+      "stepsToCompletion": 1,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/spending\"]"
+        "1. click a.nav-link[href=\"#/spending\"]"
       ]
     },
     {
@@ -1070,55 +1002,6 @@
       ]
     },
     {
-      "id": "G-02",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 3,
-      "stepsToCompletion": 3,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click [data-action=\"open-settings\"]",
-        "2. click [data-action=\"reset-request\"]",
-        "3. click [data-action=\"confirm-reset\"]"
-      ]
-    },
-    {
-      "id": "G-03",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 3,
-      "stepsToCompletion": 3,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click [data-action=\"open-settings\"]",
-        "2. click [data-action=\"reset-request\"]",
-        "3. click .modal-card [data-action=\"close-overlay\"]"
-      ]
-    },
-    {
-      "id": "G-04",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 2,
-      "stepsToCompletion": 2,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click [data-action=\"tour-start\"]",
-        "2. click [data-action=\"tour-next\"]"
-      ]
-    },
-    {
-      "id": "G-05",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 1,
-      "stepsToCompletion": 1,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click [data-action=\"op-presentation\"]"
-      ]
-    },
-    {
       "id": "G-06",
       "status": "partial",
       "result": "as_expected",
@@ -1135,25 +1018,23 @@
       "id": "C-22",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 2,
-      "stepsToCompletion": 2,
+      "actionsFromHome": 1,
+      "stepsToCompletion": 1,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/catalog\"]"
+        "1. click a.nav-link[href=\"#/catalog\"]"
       ]
     },
     {
       "id": "I-08",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 3,
-      "stepsToCompletion": 3,
+      "actionsFromHome": 2,
+      "stepsToCompletion": 2,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/connections\"]",
-        "3. click a[href=\"#/agent/atlas/connections\"].btn"
+        "1. click a.nav-link[href=\"#/connections\"]",
+        "2. click a[href=\"#/agent/atlas/connections\"].btn"
       ]
     },
     {
@@ -1180,19 +1061,6 @@
         "2. click a[href=\"#/agent/atlas/connections\"].btn",
         "3. click [data-action=\"toggle-connection\"][data-id=\"C\"][data-agent=\"atlas\"]",
         "4. click [data-action=\"confirm-connection\"][data-id=\"C\"]"
-      ]
-    },
-    {
-      "id": "A-09",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 3,
-      "stepsToCompletion": 3,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click a.agent-name[href=\"#/agent/atlas\"]",
-        "2. select #request-user",
-        "3. click [data-action=\"simulate\"][data-channel=\"inference\"][data-id=\"atlas\"]"
       ]
     },
     {
@@ -1226,12 +1094,11 @@
       "id": "H-10",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 2,
-      "stepsToCompletion": 2,
+      "actionsFromHome": 1,
+      "stepsToCompletion": 1,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/approvals\"]"
+        "1. click a.nav-link[href=\"#/approvals\"]"
       ]
     },
     {
@@ -1296,14 +1163,13 @@
       "id": "X-03",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 4,
-      "stepsToCompletion": 4,
+      "actionsFromHome": 3,
+      "stepsToCompletion": 3,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/catalog\"]",
-        "3. click [data-action=\"catalog-tab\"][data-value=\"tools\"]",
-        "4. click button.row-link[data-action=\"op-open-tool\"][data-id=\"t3\"]"
+        "1. click a.nav-link[href=\"#/catalog\"]",
+        "2. click [data-action=\"catalog-tab\"][data-value=\"tools\"]",
+        "3. click button.row-link[data-action=\"op-open-tool\"][data-id=\"t3\"]"
       ]
     },
     {
@@ -1322,20 +1188,6 @@
         "6. click #op-tool-form button[type=\"submit\"]",
         "7. click [data-action=\"op-confirm-tool\"]",
         "8. click button.row-link[data-action=\"op-open-tool\"][data-id=\"t7\"]"
-      ]
-    },
-    {
-      "id": "X-05",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 4,
-      "stepsToCompletion": 4,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click a.nav-link[href=\"#/catalog\"]",
-        "2. click [data-action=\"catalog-tab\"][data-value=\"tools\"]",
-        "3. click button.row-link[data-action=\"op-open-tool\"][data-id=\"t3\"]",
-        "4. click [data-action=\"op-schema-change\"]"
       ]
     },
     {
@@ -1371,44 +1223,6 @@
       ]
     },
     {
-      "id": "X-08",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 9,
-      "stepsToCompletion": 9,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click a.nav-link[href=\"#/rules\"]",
-        "2. click a[href=\"#/agent/atlas/rules\"].btn",
-        "3. click [data-action=\"op-create-rule\"]",
-        "4. select #op-rule-form [name=\"toolId\"]",
-        "5. select #op-rule-form [name=\"type\"]",
-        "6. fill #op-rule-form [name=\"parameter\"]",
-        "7. click #op-rule-form button[type=\"submit\"]",
-        "8. click [data-action=\"op-rule-test\"]",
-        "9. click [data-action=\"op-simulate-rule\"][data-value=\"25\"]"
-      ]
-    },
-    {
-      "id": "X-09",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 9,
-      "stepsToCompletion": 9,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click a.nav-link[href=\"#/rules\"]",
-        "2. click a[href=\"#/agent/atlas/rules\"].btn",
-        "3. click [data-action=\"op-create-rule\"]",
-        "4. select #op-rule-form [name=\"toolId\"]",
-        "5. select #op-rule-form [name=\"type\"]",
-        "6. fill #op-rule-form [name=\"parameter\"]",
-        "7. click #op-rule-form button[type=\"submit\"]",
-        "8. click [data-action=\"op-rule-test\"]",
-        "9. click [data-action=\"op-simulate-rule\"][data-value=\"8\"]"
-      ]
-    },
-    {
       "id": "X-10",
       "status": "ui-working",
       "result": "as_expected",
@@ -1426,15 +1240,14 @@
       "id": "X-11",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 5,
-      "stepsToCompletion": 5,
+      "actionsFromHome": 4,
+      "stepsToCompletion": 4,
       "stepsToBlocker": null,
       "steps": [
-        "1. select #role-select",
-        "2. click a.nav-link[href=\"#/approvals\"]",
-        "3. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"rejected\"]",
-        "4. fill #approval-comment",
-        "5. click .modal [data-action=\"close-overlay\"]"
+        "1. click a.nav-link[href=\"#/approvals\"]",
+        "2. click [data-action=\"approval-confirm\"][data-id=\"APR-201\"][data-value=\"rejected\"]",
+        "3. fill #approval-comment",
+        "4. click .modal [data-action=\"close-overlay\"]"
       ]
     },
     {
@@ -1455,15 +1268,16 @@
       "id": "X-13",
       "status": "ui-working",
       "result": "as_expected",
-      "actionsFromHome": 5,
-      "stepsToCompletion": 5,
+      "actionsFromHome": 6,
+      "stepsToCompletion": 6,
       "stepsToBlocker": null,
       "steps": [
         "1. click a.nav-link[href=\"#/connections\"]",
         "2. click a[href=\"#/agent/atlas/connections\"].btn",
         "3. click [data-action=\"op-identity\"]",
         "4. fill #op-identity-form [name=\"issuer\"]",
-        "5. click #op-identity-form button[type=\"submit\"]"
+        "5. fill #op-identity-form [name=\"audience\"]",
+        "6. click #op-identity-form button[type=\"submit\"]"
       ]
     },
     {
@@ -1528,17 +1342,6 @@
         "1. click [data-action=\"toggle-nav\"]",
         "2. click a.nav-link[href=\"#/rules\"]",
         "3. click a[href=\"#/agent/atlas/rules\"].btn"
-      ]
-    },
-    {
-      "id": "X-19",
-      "status": "ui-working",
-      "result": "as_expected",
-      "actionsFromHome": 1,
-      "stepsToCompletion": 1,
-      "stepsToBlocker": null,
-      "steps": [
-        "1. click [data-action=\"op-presentation\"]"
       ]
     },
     {

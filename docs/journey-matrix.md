@@ -12,11 +12,11 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 
 | Resultado | Casos |
 | --- | ---: |
-| Funcional (simulado) | 104 |
-| Parcial | 20 |
+| Funcional (simulado) | 92 |
+| Parcial | 19 |
 | Sin recorrido | 0 |
 
-**Total: 124 recorridos y variantes.** Un caso marcado como «Sin recorrido» no es una prueba funcional aprobada.
+**Total: 111 recorridos y variantes.** Un caso marcado como «Sin recorrido» no es una prueba funcional aprobada.
 
 ## Catalog
 
@@ -25,7 +25,7 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `C-01` | Find agent from Home | CON-04 | Funcional (simulado) | 2 |
 | `C-02` | Search by owner among agents | CON-04 | Funcional (simulado) | 2 |
 | `C-03` | No-results state is explanatory (*not found*) | CON-04 | Funcional (simulado) | 2 |
-| `C-04` | Register sample agent and see one-time example key | REG-02 | Funcional (simulado) | 5 |
+| `C-04` | Register an agent and continue to its configuration | REG-02 | Funcional (simulado) | 5 |
 | `C-05` | Cancel new agent without changes (*cancel*) | REG-02 | Funcional (simulado) | 3 |
 | `C-06` | Edit required agent metadata (*edit missing*) | REG-02 | Funcional (simulado) | 4 |
 | `C-07` | Rotate agent credential with dual-active tokens (*rotation missing*) | REG-02 | Parcial | 3 hasta bloqueo |
@@ -38,17 +38,15 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `C-14` | Reject reviewed tool for use (*rejection missing*) | CON-07, INF-02 | Funcional (simulado) | 7 |
 | `C-15` | Set supervision autonomous/notify/approval for a tool (*supervision missing*) | HITL-01, CON-07 | Funcional (simulado) | 6 |
 | `C-16` | Locate tools outside execution gateway | CON-07, MCP-01 | Funcional (simulado) | 3 |
-| `C-17` | Observe newly declared tool in catalog after real inference | INF-02 | Parcial | 3 hasta bloqueo |
-| `C-18` | Inspect schema change and re-review pending tool | INF-02 | Funcional (simulado) | 7 |
+| `C-17` | Observe newly declared tool in catalog after real inference | INF-02 | Parcial | 2 hasta bloqueo |
 | `C-19` | See actual named versus unassigned user requests | IDN-01, CON-04 | Funcional (simulado) | 2 |
 | `C-20` | Inspect observed models | INF-03, CON-04 | Funcional (simulado) | 2 |
 | `C-21` | Edit models permitted for agent | INF-03 | Funcional (simulado) | 4 |
-| `C-22` | Auditor cannot create an agent (*auditor role*) | CON-01, REG-02 | Funcional (simulado) | 2 |
+| `C-22` | Auditor cannot create an agent (*auditor role*) | CON-01, REG-02 | Funcional (simulado) | 1 |
 | `X-01` | Cancel review without saving | CON-07 | Funcional (simulado) | 5 |
 | `X-02` | Return from confirmation to review without saving | CON-07 | Funcional (simulado) | 6 |
-| `X-03` | Auditor can inspect tool but cannot edit its classification | CON-01, CON-07 | Funcional (simulado) | 4 |
+| `X-03` | Auditor can inspect tool but cannot edit its classification | CON-01, CON-07 | Funcional (simulado) | 3 |
 | `X-04` | Approve local tool without implying execution control | MCP-01, CON-07 | Funcional (simulado) | 8 |
-| `X-05` | Schema update invalidates prior review and requires reapproval | INF-02 | Funcional (simulado) | 4 |
 | `X-06` | Human-approval supervision cannot be applied to an outside tool | HITL-01 | Funcional (simulado) | 6 |
 
 ## Connections
@@ -60,13 +58,13 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `I-03` | Switch on tool execution connection for an agent | OPS-01, MCP-01 | Funcional (simulado) | 4 |
 | `I-04` | Disconnect identity without changing historical trace | IDN-01 | Funcional (simulado) | 4 |
 | `I-05` | Register real MCP targets and verify tool-by-tool routing | MCP-01, OPS-01 | Parcial | 7 hasta bloqueo |
-| `I-06` | Configure OIDC trust, allowed clients and verify request token | IDN-01, OPS-01 | Parcial | 7 hasta bloqueo |
+| `I-06` | Configure OIDC trust, allowed clients and verify request token | IDN-01, OPS-01 | Parcial | 8 hasta bloqueo |
 | `I-07` | Copy model gateway config safely from live credentials | REG-02, OPS-01 | Parcial | 3 hasta bloqueo |
-| `I-08` | Auditor cannot connect or disconnect a channel (*auditor role*) | CON-01, OPS-01 | Funcional (simulado) | 3 |
+| `I-08` | Auditor cannot connect or disconnect a channel (*auditor role*) | CON-01, OPS-01 | Funcional (simulado) | 2 |
 | `I-09` | Required model connection cannot be disconnected (*required channel*) | OPS-01 | Funcional (simulado) | 2 |
 | `I-10` | Disabling identity preserves existing event attribution (*historic identity*) | IDN-01, EVD-04 | Funcional (simulado) | 4 |
 | `X-10` | Cancel disconnection without changing active path | OPS-01 | Funcional (simulado) | 4 |
-| `X-13` | OIDC issuer must use HTTPS | IDN-01 | Funcional (simulado) | 5 |
+| `X-13` | OIDC issuer must use HTTPS | IDN-01 | Funcional (simulado) | 6 |
 
 ## Agent overview
 
@@ -77,10 +75,7 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `A-03` | Cancel mode change; no mutation (*cancel*) | REG-01 | Funcional (simulado) | 3 |
 | `A-04` | Pause agent with confirmation | REG-03 | Funcional (simulado) | 3 |
 | `A-05` | Resume agent to previous Enforce mode (*suspend/resume*) | REG-03 | Funcional (simulado) | 5 |
-| `A-06` | Model-request simulation opens an explanatory trace | CON-02, POL-01 | Funcional (simulado) | 2 |
-| `A-07` | Outside-gateway tool simulation cannot claim control (*local tool*) | CON-07, MCP-01 | Funcional (simulado) | 2 |
 | `A-08` | Block enforcement when required owner is absent | REG-01 | Parcial | 3 hasta bloqueo |
-| `A-09` | A request without end-user identity remains attributable to agent (*solo_workload sample*) | IDN-01 | Funcional (simulado) | 3 |
 
 ## Rules
 
@@ -92,15 +87,13 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `R-04` | Apply candidate preset with explicit final confirmation (*commit*) | CON-07 | Funcional (simulado) | 5 |
 | `R-05` | Cancel policy confirmation; keep saved preset (*cancel confirmation*) | CON-07 | Funcional (simulado) | 5 |
 | `R-06` | Warn when selected preset requires absent identity and tool gateway | CON-07 | Funcional (simulado) | 3 |
-| `R-07` | Auditor may preview but cannot apply preset (*auditor*) | CON-01, CON-07 | Funcional (simulado) | 4 |
+| `R-07` | Auditor may preview but cannot apply preset (*auditor*) | CON-01, CON-07 | Funcional (simulado) | 3 |
 | `R-08` | Build parameterized visual rule and validate schema | POL-04 | Funcional (simulado) | 7 |
 | `R-09` | Author and validate Cedar text and versioned rules | POL-04 | Parcial | 4 hasta bloqueo |
 | `R-10` | Simulate alternative policy on recorded contexts | POL-05 | Parcial | 4 hasta bloqueo |
 | `R-11` | Inspect rule conflict and author history | EVD-04, POL-04 | Funcional (simulado) | 5 |
 | `R-12` | Confirm preset in Observe mode without enabling enforcement (*Observe*) | REG-01, CON-07 | Funcional (simulado) | 5 |
 | `X-07` | Reject rule referring to parameter not in discovered schema | POL-04 | Funcional (simulado) | 6 |
-| `X-08` | Example custom deny rule blocks parameter value 25 | POL-04 | Funcional (simulado) | 9 |
-| `X-09` | Example custom deny rule does not match parameter value 8 | POL-04 | Funcional (simulado) | 9 |
 
 ## Activity
 
@@ -109,26 +102,25 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `V-01` | Search by agent owner and inspect events | CON-03 | Funcional (simulado) | 2 |
 | `V-02` | Filter by decision state | CON-03 | Funcional (simulado) | 2 |
 | `V-03` | Open decision explanation in one additional action | CON-02 | Funcional (simulado) | 2 |
-| `V-04` | Pause feed then resume retaining intervening events | CON-03 | Parcial | 4 hasta bloqueo |
+| `V-04` | Pause feed then resume retaining intervening events | CON-03 | Parcial | 1 hasta bloqueo |
 | `V-05` | Filter by user and channel independently | CON-03 | Funcional (simulado) | 3 |
-| `V-06` | See live gateway event under three seconds | CON-03, NFR-03 | Parcial | 2 hasta bloqueo |
+| `V-06` | See live gateway event under three seconds | CON-03, NFR-03 | Parcial | 1 hasta bloqueo |
 | `V-07` | Agent deep link fixes scope and hides irrelevant agent picker (*agent scope*) | CON-03 | Funcional (simulado) | 2 |
 
 ## Approvals
 
 | ID | Acción o variante | Requisitos | Resultado | Pasos desde Inicio |
 | --- | --- | --- | --- | ---: |
-| `H-01` | Approve pending execution as reviewer | CON-05, HITL-02 | Funcional (simulado) | 4 |
-| `H-02` | Reject pending execution as reviewer (*reject*) | CON-05, HITL-02 | Funcional (simulado) | 4 |
-| `H-03` | Cancel pending approval dialog (*cancel*) | CON-05 | Funcional (simulado) | 4 |
+| `H-01` | Approve pending execution as reviewer | CON-05, HITL-02 | Funcional (simulado) | 3 |
+| `H-02` | Reject pending execution as reviewer (*reject*) | CON-05, HITL-02 | Funcional (simulado) | 3 |
+| `H-03` | Cancel pending approval dialog (*cancel*) | CON-05 | Funcional (simulado) | 3 |
 | `H-04` | Operator cannot act as reviewer (*operator denied*) | CON-01, CON-05 | Funcional (simulado) | 1 |
-| `H-05` | Separate requester and approver identities | HITL-03, CON-05 | Parcial | 3 hasta bloqueo |
-| `H-06` | See masked arguments, request trace and expiry clock | CON-05, HITL-02 | Parcial | 3 hasta bloqueo |
-| `H-07` | Leave optional decision comment | CON-05 | Funcional (simulado) | 5 |
-| `H-08` | Expire pending approval at deadline | HITL-02 | Parcial | 4 hasta bloqueo |
+| `H-05` | Separate requester and approver identities | HITL-03, CON-05 | Parcial | 1 hasta bloqueo |
+| `H-06` | See masked arguments, request trace and expiry clock | CON-05, HITL-02 | Parcial | 2 hasta bloqueo |
+| `H-07` | Leave optional decision comment | CON-05 | Funcional (simulado) | 4 |
 | `H-09` | Filter reviewed requests | CON-05 | Funcional (simulado) | 2 |
-| `H-10` | Pending request missing identity is not approvable (*C absent*) | HITL-03, CON-05 | Funcional (simulado) | 2 |
-| `X-11` | Reject dialog comment change by canceling approval | CON-05 | Funcional (simulado) | 5 |
+| `H-10` | Pending request missing identity is not approvable (*C absent*) | HITL-03, CON-05 | Funcional (simulado) | 1 |
+| `X-11` | Reject dialog comment change by canceling approval | CON-05 | Funcional (simulado) | 4 |
 
 ## Spending
 
@@ -137,7 +129,7 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | `S-01` | View agent spend by searching owner | CON-06 | Funcional (simulado) | 2 |
 | `S-02` | Edit daily budget through form | CON-06, FIN-02 | Funcional (simulado) | 4 |
 | `S-03` | Cancel budget change (*cancel*) | CON-06 | Funcional (simulado) | 4 |
-| `S-04` | Auditor cannot change limit (*auditor*) | CON-01, CON-06 | Funcional (simulado) | 2 |
+| `S-04` | Auditor cannot change limit (*auditor*) | CON-01, CON-06 | Funcional (simulado) | 1 |
 | `S-05` | Configure rate/tokens/budget action alert/throttle/block | FIN-02, CON-06 | Funcional (simulado) | 5 |
 | `S-06` | Edit model tariffs and breakdown by model | FIN-01, CON-06 | Funcional (simulado) | 4 |
 | `S-07` | View attributed historical person spend | FIN-03 | Parcial | 4 hasta bloqueo |
@@ -173,10 +165,6 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | ID | Acción o variante | Requisitos | Resultado | Pasos desde Inicio |
 | --- | --- | --- | --- | ---: |
 | `G-01` | Open appearance drawer and switch theme | CON-02 | Funcional (simulado) | 2 |
-| `G-02` | Reset workspace after confirmation | CON-01 | Funcional (simulado) | 3 |
-| `G-03` | Cancel reset without losing workspace (*cancel reset*) | CON-01 | Funcional (simulado) | 3 |
-| `G-04` | Launch and progress guided tour | CON-08 | Funcional (simulado) | 2 |
-| `G-05` | Enter actual presentation mode at 1080p | CON-08 | Funcional (simulado) | 1 |
 | `G-06` | Reach evidence from agent catalog in three clicks | EVD-05, CON-02 | Parcial | 3 hasta bloqueo |
 
 ## Scale
@@ -193,7 +181,6 @@ Requisitos: [`insumo/requisitos.yaml`](https://github.com/enzo-loren/agentic-ai-
 | --- | --- | --- | --- | ---: |
 | `X-17` | Tool review fits at 320px | CON-02, CON-07 | Funcional (simulado) | 4 |
 | `X-18` | Rules and custom rule controls fit at 390px | CON-02, CON-07 | Funcional (simulado) | 3 |
-| `X-19` | Presentation view has no horizontal overflow at 1920 × 1080 | CON-08 | Funcional (simulado) | 1 |
 
 ## Appearance
 

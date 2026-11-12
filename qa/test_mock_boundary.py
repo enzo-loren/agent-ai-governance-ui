@@ -24,8 +24,10 @@ def main():
         try:
             ctx=browser.new_context(viewport={'width':1100,'height':850})
             page,errors=fresh(ctx)
-            assert page.locator('.demo-pill').count()==1
-            assert page.locator('.demo-pill').inner_text().strip()=='Demo'
+            assert page.locator('.demo-pill').count()==0
+            assert page.locator('.role-indicator').inner_text()=='Operator'
+            assert page.locator('#role-select').count()==0
+            assert 'Product requirements:' not in page.locator('body').inner_text()
             page.evaluate('location.hash="#/activity/atlas?channel=inference&person=Maya+Chen&model=GPT-6"')
             page.locator('#activity-model').wait_for()
             assert page.locator('#activity-model').input_value()=='GPT-6'
@@ -51,7 +53,7 @@ def main():
             page,errors=fresh(ctx)
             page.evaluate('location.hash="#/agent/atlas"')
             before=page.evaluate('''()=>({requests:state.agents[0].requests,spent:state.agents[0].spent})''')
-            page.locator('[data-action="simulate"][data-channel="inference"]').first.click()
+            page.evaluate("()=>{appendScenario(state,{agentId:'atlas',channel:'inference',toolId:'t1',userRole:'operator'});render();}")
             after=page.evaluate('''()=>({requests:state.agents[0].requests,spent:state.agents[0].spent,cost:state.events[0].cost})''')
             assert after['requests']==before['requests']+1,(before,after)
             assert round(after['spent']-before['spent'],6)==after['cost'],(before,after)

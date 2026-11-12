@@ -30,7 +30,7 @@ La fuente normativa exige un índice numérico ponderado de cobertura y la guía
 
 ## Evidencia reproducible de la interfaz
 
-La [auditoría de recorridos](user-journey-audit.md) y su [matriz de pasos](journey-matrix.md) distinguen recorridos completados en el navegador de los **20 casos parciales que siguen requiriendo backend**. Los oráculos se ejecutan en Chromium sobre la UI de muestra. No se extrapolan a AWS, OIDC, MCP, Cedar, OTLP ni S3.
+La [auditoría de recorridos](user-journey-audit.md) y su [matriz de pasos](journey-matrix.md) distinguen recorridos completados en el navegador de los **19 casos parciales que siguen requiriendo backend**. Los oráculos se ejecutan en Chromium sobre la UI de muestra. No se extrapolan a AWS, OIDC, MCP, Cedar, OTLP ni S3.
 
 ## Continuidad de tareas de gasto
 
@@ -40,3 +40,7 @@ La [auditoría de recorridos](user-journey-audit.md) y su [matriz de pasos](jour
 ## Revisión de integridad de datos y lenguaje · 2026-11-11
 
 Se incorporó la auditoría [`deep-ux-data-audit.md`](deep-ux-data-audit.md) y el contrato [`mock-backend-contract.md`](mock-backend-contract.md). La UI usa fixtures y un repositorio local versionado, y no muestra repetidamente advertencias por formulario. Ninguno de estos cambios implementa controles HTTP 403/429 de producción, OIDC, Cedar real, MCP o inmutabilidad S3. Se corrigió especialmente que un borrador Cedar no se ejecute como una regla genérica. `CON-04` mantiene su desviación normativa previa.
+
+## Separación de pruebas y consola · 12 noviembre 2026
+
+Las acciones que crean solicitudes sintéticas, alteran esquemas, hacen vencer aprobaciones, seleccionan roles o restauran fixtures se trasladaron a [`test-console.html`](../test-console.html). La consola conserva los recorridos operativos; el transporte de prueba usa el mismo adaptador local en páginas diferentes. La auditoría de las superficies y las pruebas revisadas se describen en [`customer-surface-audit.md`](customer-surface-audit.md). No se han incorporado endpoints HTTP reales.

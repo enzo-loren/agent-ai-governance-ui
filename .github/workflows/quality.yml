@@ -29,5 +29,6 @@ jobs:
           python -u qa/test_distribution.py
           python -u qa/test_spending_navigation.py
           python -u qa/test_mock_boundary.py
+          python -u qa/test_request_studio.py
           python qa/generate_matrix.py
           git diff --exit-code -- qa/journey-results.json docs/journey-matrix.md
