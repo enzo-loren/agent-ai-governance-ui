@@ -13,7 +13,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def inline_studio():
     modules=[]
-    for name in ('mock/fixtures','data','domain','mock/backend','mock/test-api','mock/test-fixtures','test-console'):
+    for name in ('mock/fixtures','data','domain','mock/backend','mock/credentials','mock/test-api','mock/test-fixtures','test-console'):
         source=(ROOT/'src'/f'{name}.js').read_text()
         source=re.sub(r'^import\s+\{[^\n]+\}\s+from\s+[^\n]+;\s*','',source,flags=re.M)
         source=re.sub(r'\bexport\s+(?=(?:const|function|class)\b)','',source)
@@ -40,6 +40,7 @@ def exercise(browser,width):
         page.set_content(inline_studio(),wait_until='load')
         page.locator('#send-request').wait_for()
         assert '/v1/model-requests' in page.locator('#endpoint').input_value()
+        assert page.locator('#agent-token').count()==1
         before=int(page.locator('#event-count').inner_text())
         page.locator('#send-request').click()
         assert page.locator('#http-status').inner_text().startswith('201')
@@ -91,6 +92,38 @@ def exercise(browser,width):
             customer.locator('[data-action="op-open-tool"][data-id="t1"][data-mobile-tool="true"]' if width<=670 else 'button.row-link[data-action="op-open-tool"][data-id="t1"]').first.click()
             assert 'Needs review' in customer.locator('.drawer').inner_text()
             assert customer.locator('[data-action="op-schema-change"]').count()==0
+        finally:customer.close()
+        # A connection is confirmed only after the new agent sends a request with its key.
+        token=page.evaluate('''async()=>{
+          const issued=await mintLocalCredential(),backend=createMockBackend(),snapshot=backend.read(),state=snapshot.state;
+          const agent={...state.agents[0],id:'new-connection-test',name:'New connection test',mode:'observe',
+            connections:['A'],requests:0,spent:0,connectionCheck:{status:'pending',verifiedAt:null,traceId:null}};
+          state.agents.push(agent);
+          state.credentials[agent.id]={version:1,revoked:0,issuedTotal:0,active:[]};
+          stageCredential(state.credentials,agent.id,issued.record);
+          backend.save(state,snapshot.revision);
+          return issued.token;
+        }''')
+        payload={'agentId':'new-connection-test','model':'GPT-6','userRole':'none','action':'First connection check'}
+        page.locator('#scenario').select_option(label='Model request')
+        page.locator('#payload').fill(json.dumps(payload))
+        page.locator('#agent-token').fill('gov_test_'+'0'*48)
+        page.locator('#send-request').click()
+        assert page.locator('#http-status').inner_text().startswith('401')
+        assert page.evaluate("window.__studioSnapshot().agents.find(a=>a.id==='new-connection-test').connectionCheck.status")=='pending'
+        page.locator('#agent-token').fill(token)
+        page.locator('#send-request').click()
+        assert page.locator('#http-status').inner_text().startswith('201')
+        fresh=page.evaluate('window.__studioSnapshot()')
+        connected=next(a for a in fresh['agents'] if a['id']=='new-connection-test')
+        assert connected['connectionCheck']['status']=='verified'
+        assert connected['connectionCheck']['traceId']
+        customer=customer_from_snapshot(context,fresh)
+        try:
+            customer.evaluate('location.hash="#/agent/new-connection-test"')
+            assert 'First request received' in customer.locator('.agent-connection-summary').inner_text()
+            assert customer.locator('.agent-connection-summary a[href*="trace="]').count()==1
+            assert 'Awaiting connection' not in customer.locator('.agent-connection-summary').inner_text()
         finally:customer.close()
         geo=page.evaluate('()=>({scroll:document.documentElement.scrollWidth,width:innerWidth})')
         assert geo['scroll']<=geo['width'],f'Lab overflow {width}: {geo}'

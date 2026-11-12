@@ -38,6 +38,7 @@ def main():
                 assert agent['preset']==2 and agent['budget']==85 and agent['team']=='Insights',agent
                 assert agent['acceptedClients']==['app-web','app-mobile']
                 assert agent['mode']=='observe' and agent['connections']==['A']
+                assert agent['connectionCheck']['status']=='pending'
                 assert receipt not in str(stored)
                 page.locator('[data-action="copy-agent-config"]').click()
                 page.locator('[data-action="navigate"][data-route="agent/research-assistant"]').click()
@@ -45,7 +46,10 @@ def main():
                 assert page.evaluate('location.hash')=='#/agent/research-assistant'
                 assert page.locator('#agent-credential-once').count()==0
                 assert receipt not in page.locator('#app').inner_text()
-                assert '1 locally active' in page.locator('.agent-connection-summary').inner_text()
+                assert '1 active' in page.locator('.agent-connection-summary').inner_text()
+                assert 'Awaiting connection' in page.locator('.agent-connection-summary').inner_text()
+                assert page.locator('.agent-connection-summary a[href*="test-console.html?agent=research-assistant"]').count()==1
+                assert 'non-routable local test setting' not in page.locator('#app').inner_text()
                 page.locator('[data-action="op-rotate-token"]').click()
                 page.locator('[data-action="op-confirm-agent-action"]').click()
                 page.locator('#agent-credential-once').wait_for()

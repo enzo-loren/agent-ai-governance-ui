@@ -2,6 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {createTestApi,TEST_ENDPOINTS} from '../src/mock/test-api.js';
 import {createMockBackend,MemoryStorage} from '../src/mock/backend.js';
+import {mintLocalCredential,stageCredential,revokeLocalCredential} from '../src/mock/credentials.js';
+import {agentConnectionStatus} from '../src/domain.js';
 
 const fresh=()=>{
  const repository=createMockBackend(new MemoryStorage());
@@ -52,4 +54,36 @@ test('Expire an approval through the test transport, not a reviewer interface co
  assert.equal(api.post('/v1/approvals/expire',{approvalId:'APR-201'}).status,200);
  assert.equal(repository.read().state.approvals[0].status,'expired');
  assert.equal(api.post('/v1/approvals/expire',{approvalId:'APR-201'}).status,409);
+});
+
+test('First authenticated inference request verifies A; invalid and revoked keys never do',async()=>{
+ const {api,repository}=fresh(),issued=await mintLocalCredential();
+ const snapshot=repository.read(),state=snapshot.state;
+ const agent={...state.agents[0],id:'new-agent',name:'New agent',mode:'observe',connections:['A'],requests:0,spent:0,connectionCheck:{status:'pending',verifiedAt:null,traceId:null}};
+ state.agents.push(agent);
+ state.credentials[agent.id]={version:1,revoked:0,issuedTotal:0,active:[]};
+ stageCredential(state.credentials,agent.id,issued.record);
+ repository.save(state,snapshot.revision);
+ assert.equal(agentConnectionStatus(agent,state),'pending');
+ const request={agentId:agent.id,model:'GPT-6',userRole:'none',action:'Connection check'};
+ const before=repository.read();
+ assert.equal(api.post('/v1/model-requests',request).status,401);
+ assert.equal((await api.postAuthenticated('/v1/model-requests',request,'gov_test_'+'0'.repeat(48))).status,401);
+ assert.equal(repository.read().revision,before.revision);
+ assert.equal(agentConnectionStatus(repository.read().state.agents.at(-1),repository.read().state),'pending');
+ const accepted=await api.postAuthenticated('/v1/model-requests',request,issued.token);
+ assert.equal(accepted.status,201);
+ assert.equal(accepted.body.connection_status,'verified');
+ const connected=repository.read().state,found=connected.agents.find(a=>a.id===agent.id);
+ assert.equal(agentConnectionStatus(found,connected),'verified');
+ assert.equal(found.connectionCheck.traceId,accepted.body.trace_id);
+ assert.ok(found.connectionCheck.verifiedAt);
+ assert.equal(connected.events[0].source,'test-console');
+ assert.ok(!JSON.stringify(connected).includes(issued.token));
+ const rotated=await mintLocalCredential(),latest=repository.read();
+ stageCredential(latest.state.credentials,agent.id,rotated.record);
+ assert.ok(revokeLocalCredential(latest.state.credentials,agent.id,issued.record.id));
+ repository.save(latest.state,latest.revision);
+ assert.equal((await api.postAuthenticated('/v1/model-requests',request,issued.token)).status,401);
+ assert.equal((await api.postAuthenticated('/v1/model-requests',request,rotated.token)).status,201);
 });
