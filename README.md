@@ -1,5 +1,7 @@
 # Agent Governance
 
+The workspace uses the original [Morris & Opazo brand assets](https://github.com/christophernavarro/Governance-AI/commit/506ae122032c0f98d250287b5d25374dde07dab2) vendored in `assets/branding/`: `morris-wordmark.png` in the workspace sidebar and `morris-mark.png` in Request Studio and the favicon. Both retain their original Git blob SHA-1 IDs. The white wordmark is displayed on a fixed dark surface to preserve contrast in light/dark themes and across palettes.
+
 A console for managing AI agents, tool access, connection settings, policies, approvals, spending and request decisions.
 
 ## Workspace
