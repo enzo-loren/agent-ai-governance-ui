@@ -48,7 +48,7 @@ def main():
                 assert receipt not in page.locator('#app').inner_text()
                 assert '1 active' in page.locator('.agent-connection-summary').inner_text()
                 assert 'Awaiting connection' in page.locator('.agent-connection-summary').inner_text()
-                assert page.locator('.agent-connection-summary a[href*="test-console.html?agent=research-assistant"]').count()==1
+                assert page.locator('.agent-connection-summary a[href*="test-console.html"]').count()==0
                 assert 'non-routable local test setting' not in page.locator('#app').inner_text()
                 page.locator('[data-action="op-rotate-token"]').click()
                 page.locator('[data-action="op-confirm-agent-action"]').click()
