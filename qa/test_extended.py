@@ -47,14 +47,17 @@ def rules(p):
 
 def agent(p):
  sel(p,'a.agent-name[href="#/agent/atlas"]').click()
+ sel(p,'[data-action="op-agent-manage"]').click()
  sel(p,'[data-action="op-edit-agent"]').click()
  sel(p,'#op-agent-form [name=owner]').fill('New Owner')
  sel(p,'#op-agent-form button[type=submit]').click()
  assert p.evaluate('window.__uiAudit().state.agents[0].owner')=='New Owner'
+ sel(p,'[data-action="op-agent-manage"]').click()
  sel(p,'[data-action="op-models"]').click()
  sel(p,'#op-models-form input[value="Claude Sonnet"]').uncheck()
  sel(p,'#op-models-form button[type=submit]').click()
  assert p.evaluate('window.__uiAudit().state.agents[0].allowedModels')==['GPT-6']
+ sel(p,'[data-action="op-agent-manage"]').click()
  sel(p,'[data-action="op-rotate-token"]').click()
  sel(p,'[data-action="op-confirm-agent-action"]').click()
  assert p.evaluate('window.__uiAudit().state.credentials.atlas.version')==2

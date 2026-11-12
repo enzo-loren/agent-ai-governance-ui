@@ -196,6 +196,10 @@
         },
         {
           "do": "click",
+          "selector": "[data-action=\"op-agent-manage\"]"
+        },
+        {
+          "do": "click",
           "selector": "[data-action=\"op-edit-agent\"]"
         },
         {
@@ -233,6 +237,10 @@
         },
         {
           "do": "click",
+          "selector": "[data-action=\"op-agent-manage\"]"
+        },
+        {
+          "do": "click",
           "selector": "[data-action=\"op-rotate-token\"]"
         },
         {
@@ -264,6 +272,10 @@
         {
           "do": "click",
           "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"op-agent-manage\"]"
         },
         {
           "do": "click",
@@ -299,6 +311,10 @@
         {
           "do": "click",
           "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"op-agent-manage\"]"
         },
         {
           "do": "click",
@@ -753,6 +769,10 @@
         },
         {
           "do": "click",
+          "selector": "[data-action=\"op-agent-manage\"]"
+        },
+        {
+          "do": "click",
           "selector": "[data-action=\"op-models\"]"
         },
         {
@@ -1193,6 +1213,10 @@
         },
         {
           "do": "click",
+          "selector": "[data-action=\"op-agent-manage\"]"
+        },
+        {
+          "do": "click",
           "selector": "[data-action=\"toggle-pause\"][data-id=\"atlas\"]"
         },
         {
@@ -1225,11 +1249,19 @@
         },
         {
           "do": "click",
+          "selector": "[data-action=\"op-agent-manage\"]"
+        },
+        {
+          "do": "click",
           "selector": "[data-action=\"toggle-pause\"][data-id=\"atlas\"]"
         },
         {
           "do": "click",
           "selector": "[data-action=\"confirm-pause\"][data-id=\"atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"op-agent-manage\"]"
         },
         {
           "do": "click",
@@ -2643,6 +2675,10 @@
         {
           "do": "click",
           "selector": "a.agent-name[href=\"#/agent/atlas\"]"
+        },
+        {
+          "do": "click",
+          "selector": "[data-action=\"op-agent-manage\"]"
         },
         {
           "do": "click",
