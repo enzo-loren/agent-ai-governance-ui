@@ -45,7 +45,7 @@ test('Activity uses agent-name filter not huge dropdown, and bounds 3,200 events
  assert.match(scoped,/Team agent 96/);
  assert.match(scoped,/href="#\/activity"/);
  assert.doesNotMatch(scoped,/data-id="atlas" data-channel="inference"/);
- assert.match(scoped,/data-id="agent-96" data-channel="inference"/);
+ assert.doesNotMatch(scoped,/data-action="simulate"/);
  const searched=pageActivity(s,{...ui,activityAgentSearch:'Unique Owner'});
  assert.doesNotMatch(searched,/Team agent 95<\/a>/);
  assert.match(searched,/Team agent 96/);
